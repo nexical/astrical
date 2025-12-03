@@ -1,0 +1,199 @@
+---
+/**
+ * ThreeColumn.astro
+ *
+ * This section component renders a three-column layout section with separate left, center, and right content areas.
+ * It provides a flexible layout for content that benefits from triple presentation, such as feature sets, product
+ * categories, team members, or any content that can be organized into three distinct columns.
+ *
+ * Features:
+ * - Three-column responsive grid layout
+ * - Section wrapper with optional background and ID
+ * - Left, center, and right content areas with independent component configurations
+ * - Themeable styling through CSS classes
+ * - Dynamic component generation from configuration
+ * - Responsive design that stacks columns on mobile
+ *
+ * Props (inherited from Section interface):
+ * - id (optional): Section identifier for anchoring
+ * - components: Object mapping component areas to component configurations
+ *   - left: Array of component configurations for the left column
+ *   - center: Array of component configurations for the center column
+ *   - right: Array of component configurations for the right column
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ * - layout: Layout type identifier (inherited, but not used directly here)
+ *
+ * Component Structure:
+ * - SectionWrapper: Outer container with background and ID support
+ * - Column wrapper: Grid container for three-column layout
+ * - Left column: Container for left-side components
+ * - Center column: Container for center-side components
+ * - Right column: Container for right-side components
+ *
+ * Styling Inputs:
+ * - getClasses('Section+ThreeColumn'): Retrieves CSS classes for section elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the SectionWrapper container
+ *   - column_wrapper: Classes for the grid container (for column layout)
+ *   - left: Classes for the left column container
+ *   - center: Classes for the center column container
+ *   - right: Classes for the right column container
+ *
+ * Data Flow:
+ * 1. Receives section configuration through Astro.props
+ * 2. Extracts id, components, classes, and bg properties
+ * 3. Retrieves theme-based CSS classes
+ * 4. Generates components for left, center, and right columns
+ * 5. Renders SectionWrapper with grid and column containers
+ *
+ * Component Generation:
+ * - generateSection: Utility function that processes component configurations
+ * - components.left: Array of component configurations for left column
+ * - components.center: Array of component configurations for center column
+ * - components.right: Array of component configurations for right column
+ * - Maps through configurations to create component instances
+ *
+ * Layout Structure:
+ * - Outer SectionWrapper provides consistent section structure
+ * - Middle column_wrapper provides grid layout (1 column on mobile, 3 on desktop)
+ * - Left column contains components from components.left
+ * - Center column contains components from components.center
+ * - Right column contains components from components.right
+ *
+ * Responsive Behavior:
+ * - Mobile (below md): Columns stack vertically (1 column grid)
+ * - Desktop (md and above): Columns display side-by-side (3 column grid)
+ *
+ * Integration Points:
+ * - SectionWrapper: Provides consistent section structure
+ * - generateSection: Handles component instantiation from configuration
+ * - getClasses: Manages theme-based styling
+ * - twMerge: Utility for combining Tailwind classes with theme classes
+ *
+ * Accessibility:
+ * - data-name attributes for test automation
+ * - Semantic HTML structure through SectionWrapper
+ * - Proper nesting of container elements
+ */
+
+import type { Section as Props } from '~/types';
+import SectionWrapper from '~/components/ui/SectionWrapper.astro';
+import { twMerge } from 'tailwind-merge';
+import { generateSection } from '~/utils/generator';
+import { getClasses } from '~/utils/theme';
+
+// Destructure section properties from Astro.props with defaults
+const { id, components, classes: rawClasses = {}, bg = '' } = Astro.props;
+
+// Retrieve CSS classes for section elements from theme configuration
+// Merges rawClasses (from section config) with theme defaults
+const classes = getClasses('Section+ThreeColumn', rawClasses);
+---
+
+{
+  /*
+    Section wrapper that provides consistent outer container structure.
+    - Accepts id for section anchoring
+    - Applies background styling through bg prop
+    - Uses theme-provided wrapper classes
+    - Sets type to "three-column" for semantic identification
+  */
+}
+<SectionWrapper type="three-column" id={id} classes={classes.wrapper} bg={bg}>
+  {
+    /*
+      Column wrapper container that provides the three-column grid layout.
+      - Uses Tailwind grid classes for responsive three-column layout
+      - Combines Tailwind classes with theme-provided classes via twMerge
+      - On mobile (below md): single column layout (grid-cols-1)
+      - On desktop (md and above): three column layout (grid-cols-3)
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div
+    class={twMerge('grid grid-cols-1 md:grid-cols-3', classes.column_wrapper)}
+    data-name="section-three-column-wrapper"
+  >
+    {
+      /*
+        Left column container for left-side components.
+        - Uses flex column layout for vertical stacking of components
+        - Combines Tailwind classes with theme-provided classes via twMerge
+        - Contains components generated from components.left configuration
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div class={twMerge('flex flex-col', classes.left)} data-name="section-three-column-left">
+      {
+        /*
+          Map through left column component configurations and render components.
+          - generateSection processes component configurations from components.left
+          - Each component is rendered with its props
+        */
+        generateSection(components?.left).map(({ component: Component, props }) => (
+          /*
+            Individual component instance rendered with its props.
+            - Component is dynamically selected based on configuration
+            - Props are passed through from configuration
+          */
+          <Component {...props} />
+        ))
+      }
+    </div>
+
+    {
+      /*
+        Center column container for center-side components.
+        - Uses flex column layout for vertical stacking of components
+        - Combines Tailwind classes with theme-provided classes via twMerge
+        - Contains components generated from components.center configuration
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div class={twMerge('flex flex-col', classes.center)} data-name="section-three-column-center">
+      {
+        /*
+          Map through center column component configurations and render components.
+          - generateSection processes component configurations from components.center
+          - Each component is rendered with its props
+        */
+        generateSection(components?.center).map(({ component: Component, props }) => (
+          /*
+            Individual component instance rendered with its props.
+            - Component is dynamically selected based on configuration
+            - Props are passed through from configuration
+          */
+          <Component {...props} />
+        ))
+      }
+    </div>
+
+    {
+      /*
+        Right column container for right-side components.
+        - Uses flex column layout for vertical stacking of components
+        - Combines Tailwind classes with theme-provided classes via twMerge
+        - Contains components generated from components.right configuration
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div class={twMerge('flex flex-col', classes.right)} data-name="section-three-column-right">
+      {
+        /*
+          Map through right column component configurations and render components.
+          - generateSection processes component configurations from components.right
+          - Each component is rendered with its props
+        */
+        generateSection(components?.right).map(({ component: Component, props }) => (
+          /*
+            Individual component instance rendered with its props.
+            - Component is dynamically selected based on configuration
+            - Props are passed through from configuration
+          */
+          <Component {...props} />
+        ))
+      }
+    </div>
+  </div>
+</SectionWrapper>

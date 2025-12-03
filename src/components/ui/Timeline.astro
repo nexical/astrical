@@ -1,0 +1,220 @@
+---
+/**
+ * Timeline.astro
+ *
+ * This component renders a vertical timeline of sequential steps or events with
+ * optional icons, titles, and descriptions. It's designed to display processes,
+ * workflows, or chronological information in a clear, visually distinct format.
+ *
+ * Features:
+ * - Vertical timeline layout with numbered or icon-based steps
+ * - Support for icons with default fallback
+ * - Rich content with HTML support in titles and descriptions
+ * - Connector lines between timeline items
+ * - Themeable styling through CSS classes
+ * - Per-item custom styling through classes prop
+ * - Accessible structure with proper semantic elements
+ *
+ * Props:
+ * - items: Array of Item objects to display in the timeline
+ *   - title: Item title text (can contain HTML)
+ *   - description: Item description text (can contain HTML)
+ * - defaultIcon: Default icon identifier when item has no icon
+ * - classes: Additional CSS classes for styling customization
+ *
+ * Item Structure:
+ * - title: Item title text (can contain HTML)
+ * - description: Item description text (can contain HTML)
+ * - icon: Optional icon identifier for the item
+ * - classes: Optional CSS classes object for per-item styling
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Timeline'): Retrieves CSS classes for timeline elements
+ *   from the theme's style configuration:
+ *   - container: Base classes for the timeline container
+ *   - panel: Classes for individual timeline item containers
+ *   - icon_wrapper_outer: Classes for outer icon wrapper (contains icon and separator)
+ *   - icon_wrapper_inner: Classes for inner icon wrapper (contains the icon)
+ *   - icon: Classes for Icon components
+ *   - icon_separator: Classes for connector lines between timeline items
+ *   - content_wrapper: Base classes for content wrapper
+ *   - content_wrapper_item: Classes for content wrapper of non-last items
+ *   - content_wrapper_last: Classes for content wrapper of last item
+ *   - title: Classes for item title paragraphs
+ *   - description: Classes for item description paragraphs
+ *
+ * Component Integration:
+ * - Icon: Astro icon component for visual indicators
+ * - twMerge: Utility for combining Tailwind classes with theme classes
+ * - getClasses: Manages theme-based styling
+ * - getComponentClasses: Processes per-item class customizations
+ *
+ * Data Flow:
+ * 1. Receives item array and configuration through Astro.props
+ * 2. Processes items to resolve per-item custom classes
+ * 3. Renders timeline container
+ * 4. Maps through items to create individual timeline entries
+ * 5. Applies theme-based styling with per-item customizations
+ * 6. Conditionally renders icons, content, and connector lines
+ * 7. Omits connector line for the last item
+ *
+ * Layout Structure:
+ * - Timeline container holds all timeline items
+ * - Individual panels for each timeline item
+ * - Icon wrapper (outer) contains icon and separator
+ * - Icon wrapper (inner) contains the actual icon
+ * - Content wrapper contains title and description
+ * - Connector lines between items (except last)
+ *
+ * Accessibility:
+ * - Semantic HTML structure with div containers
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Step-by-step process displays in Steps widgets
+ * - Chronological event timelines
+ * - Workflow or procedure documentation
+ * - Any sequential information requiring timeline presentation
+ */
+
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+import type { Item } from '~/types';
+import { getClasses, getComponentClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface
+ *
+ * @property items - Array of Item objects to display in the timeline
+ * @property defaultIcon - Default icon identifier when item has no icon
+ * @property classes - Additional CSS classes for styling customization
+ */
+export interface Props {
+  items?: Array<Item>;
+  defaultIcon?: string;
+  classes?: Record<string, string>;
+}
+
+// Destructure props with defaults
+const { items = [], defaultIcon, classes: rawClasses = {} } = Astro.props as Props;
+
+// Retrieve CSS classes for timeline elements from theme configuration
+const classes = getClasses('Component+Timeline', rawClasses);
+
+// Process items to resolve per-item custom classes
+const resolvedItems = items.map((item) => ({
+  ...item,
+  resolvedItemClasses: getComponentClasses(item.classes) as Record<string, string>,
+}));
+---
+
+{
+  /*
+    Conditional rendering of timeline container only when items exist.
+    - Checks for resolvedItems array with length > 0
+    - Applies base container classes from theme
+    - Includes data attribute for test automation
+  */
+  resolvedItems && resolvedItems.length > 0 && (
+    <div class={classes.container} data-name="timeline-container">
+      {
+        /*
+          Map through resolved items to create individual timeline entries.
+          - Each item contains icon, title, description, and connector
+          - Applies per-item custom classes when provided
+          - Index used to determine if connector line should be shown
+        */
+        resolvedItems.map(({ title, description, icon, resolvedItemClasses }, index = 0) => (
+          /*
+            Timeline item panel container with theme-based styling.
+            - Merges base panel classes with per-item custom classes
+            - Includes data attribute for test automation
+          */
+          <div class={twMerge(classes.panel, resolvedItemClasses?.panel)} data-name="timeline-panel">
+            {/*
+                Outer icon wrapper that contains icon and separator.
+                - Provides layout structure for timeline icon elements
+                - Includes data attribute for test automation
+              */}
+            <div class={classes.icon_wrapper_outer} data-name="timeline-icon-wrapper-outer">
+              <div>
+                {/*
+                    Inner icon wrapper that contains the actual icon.
+                    - Provides styling context for the icon element
+                    - Includes data attribute for test automation
+                  */}
+                <div class={classes.icon_wrapper_inner} data-name="timeline-icon-wrapper-inner">
+                  {
+                    /*
+                      Conditional rendering of Icon component.
+                      - Uses item icon when provided
+                      - Falls back to defaultIcon when no item icon
+                      - Merges base icon classes with per-item custom classes
+                    */
+                    (icon || defaultIcon) && (
+                      <Icon name={icon || defaultIcon} class={twMerge(classes.icon, resolvedItemClasses?.icon)} />
+                    )
+                  }
+                </div>
+              </div>
+              {
+                /*
+                  Connector line separator rendered for all items except the last.
+                  - Provides visual connection between timeline items
+                  - Only shown when item is not the last in the array
+                  - Includes data attribute for test automation
+                */
+                index !== resolvedItems.length - 1 && (
+                  <div class={classes.icon_separator} data-name="timeline-icon-separator" />
+                )
+              }
+            </div>
+            {/*
+                Content wrapper with conditional classes based on item position.
+                - Uses different classes for regular items vs. last item
+                - Contains title and description content
+                - Includes data attribute for test automation
+              */}
+            <div
+              class={`${classes.content_wrapper} ${index !== resolvedItems.length - 1 ? classes.content_wrapper_item : classes.content_wrapper_last}`}
+              data-name="timeline-content-wrapper"
+            >
+              {
+                /*
+                  Item title paragraph rendered with HTML content support.
+                  - Only rendered when title exists
+                  - Merges base title classes with per-item custom classes
+                  - Uses set:html for safe HTML rendering
+                  - Includes data attribute for test automation
+                */
+                title && (
+                  <p
+                    class={twMerge(classes.title, resolvedItemClasses?.title)}
+                    set:html={title}
+                    data-name="timeline-title"
+                  />
+                )
+              }
+              {
+                /*
+                  Item description paragraph rendered with HTML content support.
+                  - Only rendered when description exists
+                  - Merges base description classes with per-item custom classes
+                  - Uses set:html for safe HTML rendering
+                  - Includes data attribute for test automation
+                */
+                description && (
+                  <p
+                    class={twMerge(classes.description, resolvedItemClasses?.description)}
+                    set:html={description}
+                    data-name="timeline-description"
+                  />
+                )
+              }
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  )
+}

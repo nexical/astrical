@@ -1,0 +1,108 @@
+---
+/**
+ * TitledWidgetWrapper.astro
+ *
+ * This component provides a consistent wrapper structure for titled widget components
+ * with background image support, overlay effects, and integrated headline content.
+ * It serves as a foundational container that ensures visual consistency across
+ * different titled widget types while providing a standardized layout for titles,
+ * subtitles, and taglines.
+ *
+ * Features:
+ * - Semantic section element for proper document structure
+ * - Integrated Headline component for title/subtitle/tagline content
+ * - Optional background image with overlay support via WidgetWrapper
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper ARIA attributes
+ * - Data attributes for test automation
+ *
+ * Props (extends TitledWidget interface):
+ * - type: Widget type identifier for semantic naming and styling
+ * - id (optional): HTML id attribute for the section element
+ * - title (optional): Main widget title content (passed to Headline)
+ * - subtitle (optional): Widget subtitle content (passed to Headline)
+ * - tagline (optional): Widget tagline content (passed to Headline)
+ * - bg (optional): Background image URL string (passed to WidgetWrapper)
+ * - classes (optional): CSS class configuration object with nested structure:
+ *   - wrapper: Classes for the WidgetWrapper container
+ *   - headline: Classes for the Headline component
+ *
+ * Component Integration:
+ * - WidgetWrapper: Provides base container with background/overlay support
+ * - Headline: Renders title, subtitle, and tagline content
+ *
+ * Data Flow:
+ * 1. Receives widget configuration through Astro.props
+ * 2. Delegates background handling to WidgetWrapper component
+ * 3. Renders headline content through Headline component
+ * 4. Wraps additional content through slot mechanism
+ *
+ * Layout Structure:
+ * - WidgetWrapper section element provides semantic container
+ * - Headline component renders hierarchical title content
+ * - Slot renders additional widget-specific content
+ *
+ * Accessibility:
+ * - Semantic section element through WidgetWrapper
+ * - Proper heading hierarchy through Headline component
+ * - Background elements marked as aria-hidden in WidgetWrapper
+ *
+ * Usage Context:
+ * - Base wrapper for all titled widget components
+ * - Provides consistent title/subtitle structure
+ * - Ensures proper semantic structure for widget content
+ * - Used by components like Hero, Content, Features, etc.
+ */
+
+import type { TitledWidget as Props } from '~/types';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Destructure props with defaults
+const {
+  type,
+  id,
+
+  title = '',
+  subtitle = '',
+  tagline = '',
+
+  bg = '',
+  classes = {},
+} = Astro.props;
+---
+
+{
+  /*
+    WidgetWrapper provides the base container structure with background support.
+    - Receives type for semantic identification
+    - Conditionally applies id attribute when provided
+    - Passes background image URL to WidgetWrapper
+    - Passes wrapper classes for styling
+  */
+}
+<WidgetWrapper type={type} id={id} classes={classes.wrapper as Record<string, string>} bg={bg}>
+  {
+    /*
+      Headline component renders hierarchical title content.
+      - Receives type for styling context
+      - Passes title, subtitle, and tagline content
+      - Passes headline classes for styling
+    */
+  }
+  <Headline
+    type={type}
+    title={title}
+    subtitle={subtitle}
+    tagline={tagline}
+    classes={classes.headline as Record<string, string>}
+  />
+  {
+    /*
+      Slot renders additional widget-specific content.
+      - Allows child components to provide unique content
+      - Maintains consistent wrapper structure
+    */
+  }
+  <slot />
+</WidgetWrapper>

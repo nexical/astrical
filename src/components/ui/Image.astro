@@ -1,0 +1,163 @@
+---
+/**
+ * Image.astro
+ *
+ * This component renders optimized images with support for responsive sizing, lazy loading,
+ * and automatic optimization based on the image source type. It handles both local assets
+ * and remote URLs with appropriate optimization strategies.
+ *
+ * Features:
+ * - Automatic image optimization for local assets and compatible remote images
+ * - Responsive image sizing with configurable breakpoints
+ * - Lazy loading by default with configurable loading strategy
+ * - Support for image links with target control
+ * - Accessible alt text requirement
+ * - Cross-origin and referrer policy handling
+ * - Data attributes for test automation
+ *
+ * Props (ImageProps interface):
+ * - src: Image source (string path, ImageMetadata object, or null)
+ * - width: Image width in pixels (string or number, converted to number)
+ * - height: Image height in pixels (string or number, converted to number)
+ * - alt: Alternative text for accessibility (required)
+ * - loading: Loading strategy ('eager' or 'lazy', defaults to 'lazy')
+ * - decoding: Image decoding strategy ('sync', 'async', 'auto', defaults to 'async')
+ * - href: Optional link URL for the image
+ * - target: Link target attribute (_blank, _self, etc.)
+ * - sizes: Responsive sizes attribute for different breakpoints
+ * - aspectRatio: Aspect ratio for responsive sizing
+ * - layout: Layout strategy ('fixed', 'constrained', 'fullWidth', 'cover', 'responsive', 'contained')
+ * - breakpoints: Array of breakpoint widths for responsive images
+ * - backgroundColor: Background color for image placeholders
+ * - formats: Array of image formats for optimization
+ * - placeholder: Placeholder strategy ('dominantColor', 'blurred', 'none', 'tracedSVG')
+ * - All other HTML img attributes are spread to the element
+ *
+ * Image Optimization:
+ * - Local assets: Processed through astroAssetsOptimizer
+ * - Remote URLs: Processed through unpicOptimizer when compatible
+ * - Fallback: Direct URL rendering when optimization not available
+ *
+ * Data Flow:
+ * 1. Receives image configuration through Astro.props
+ * 2. Validates required alt attribute
+ * 3. Normalizes width/height to numbers
+ * 4. Sets default loading and decoding strategies
+ * 5. Resolves image source through findImage utility
+ * 6. Applies appropriate optimization based on source type
+ * 7. Renders optimized image with proper attributes
+ *
+ * Accessibility:
+ * - Required alt attribute validation
+ * - Proper crossorigin and referrerpolicy attributes
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Optimized image rendering throughout the site
+ * - Responsive image handling with automatic sizing
+ * - Linked images with target control
+ * - Background images in content sections
+ */
+
+import type { HTMLAttributes } from 'astro/types';
+import { findImage } from '~/utils/images';
+import {
+  getImagesOptimized,
+  astroAssetsOptimizer,
+  unpicOptimizer,
+  isUnpicCompatible,
+  type ImageProps,
+} from '~/utils/images-optimization';
+
+// Define component props type
+type Props = ImageProps;
+
+// Define internal image type structure
+type ImageType = {
+  src: string;
+  attributes: HTMLAttributes<'img'>;
+  href: string | undefined;
+  target: string | undefined;
+};
+
+// Get all props passed to the component
+const props = Astro.props;
+
+// Validate required alt attribute
+if (props.alt === undefined || props.alt === null) {
+  throw new Error('Image component requires alt attribute for accessibility');
+}
+
+// Normalize width to number if provided as string
+if (typeof props.width === 'string') {
+  props.width = parseInt(props.width);
+}
+
+// Normalize height to number if provided as string
+if (typeof props.height === 'string') {
+  props.height = parseInt(props.height);
+}
+
+// Set default loading strategy to lazy if not specified
+if (!props.loading) {
+  props.loading = 'lazy';
+}
+
+// Set default decoding strategy to async if not specified
+if (!props.decoding) {
+  props.decoding = 'async';
+}
+
+// Resolve the actual image source
+const _image = await findImage(props.src);
+
+// Initialize image object
+let image: ImageType | undefined = undefined;
+
+// Process image based on source type
+if (typeof _image === 'string') {
+  // Handle string image sources
+  if ((_image.startsWith('http://') || _image.startsWith('https://')) && isUnpicCompatible(_image)) {
+    // Optimize remote compatible images
+    image = await getImagesOptimized(_image, props, unpicOptimizer);
+  } else {
+    // Fallback to direct URL rendering
+    image = {
+      src: _image,
+      href: props.href ? props.href : undefined,
+      target: props.target ? props.target : undefined,
+      attributes: { ...props, src: undefined },
+    };
+  }
+} else if (_image) {
+  // Optimize local image assets
+  image = await getImagesOptimized(_image, props, astroAssetsOptimizer);
+}
+---
+
+{
+  /*
+    Conditional rendering based on image processing results.
+    - Renders nothing when image processing fails
+    - Renders linked image when href is provided
+    - Renders plain image when no href is provided
+  */
+  !image ? (
+    // Render nothing when image processing fails
+    <Fragment />
+  ) : image.href ? (
+    // Render linked image with anchor wrapper
+    <a href={image.href} target={image.target} data-name="image-link">
+      <img
+        src={image.src}
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+        data-name="image"
+        {...image.attributes}
+      />
+    </a>
+  ) : (
+    // Render plain image without link
+    <img src={image.src} crossorigin="anonymous" referrerpolicy="no-referrer" data-name="image" {...image.attributes} />
+  )
+}

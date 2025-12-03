@@ -1,0 +1,449 @@
+---
+/**
+ * Pricing.astro
+ *
+ * This component renders a pricing widget that displays multiple pricing plans in a grid layout.
+ * It's designed to showcase different service tiers or product options with features, prices,
+ * and call-to-action buttons. Each pricing plan can include ribbons for highlighting special offers.
+ *
+ * Features:
+ * - Titled widget structure with optional title, subtitle, and tagline
+ * - Grid layout for multiple pricing plans
+ * - Support for currency customization
+ * - Feature lists with icons for each plan
+ * - Optional ribbon badges for special offers
+ * - Multiple call-to-action buttons per plan
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ *
+ * Props (extends TitledWidget interface):
+ * - id (optional): HTML id attribute for the widget container
+ * - title (optional): Widget title (can be passed via slot or prop)
+ * - subtitle (optional): Widget subtitle (can be passed via slot or prop)
+ * - tagline (optional): Widget tagline (can be passed via slot or prop)
+ * - currency: Currency symbol (defaults to '&pound;')
+ * - prices: Array of Price objects representing pricing plans
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ *
+ * Price Structure:
+ * - title: Plan name/title
+ * - subtitle: Plan subtitle/description
+ * - description: Additional plan details
+ * - price: Price amount (number or string)
+ * - period: Billing period (e.g., "per month")
+ * - items: Array of Item objects for feature lists
+ * - callToAction: Single CallToAction object or array of CallToAction objects
+ * - hasRibbon: Whether to display a ribbon badge
+ * - ribbonTitle: Text for the ribbon badge
+ *
+ * Item Structure (for features):
+ * - description: Feature description text
+ * - icon: Optional icon identifier (defaults to checkmark)
+ *
+ * CallToAction Structure:
+ * - variant: Button style variant ('primary', 'secondary', 'tertiary', 'link')
+ * - text: Button display text
+ * - icon: Optional icon identifier
+ * - href: URL for link buttons
+ * - type: Button type ('button', 'submit', 'reset')
+ * - value: Button value attribute
+ * - classes: Additional CSS classes for the button
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Pricing'): Retrieves CSS classes for pricing elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the TitledWidgetWrapper container
+ *   - headline: Classes for the TitledWidgetWrapper container
+ *   - container: Classes for the main pricing container
+ *   - grid: Classes for the pricing plans grid layout
+ *   - item_wrapper: Classes for individual plan wrappers
+ *   - item: Classes for individual pricing plan containers
+ *   - ribbon_wrapper: Classes for ribbon badge container
+ *   - ribbon_title: Classes for ribbon badge text
+ *   - item_content: Classes for plan content container
+ *   - title: Classes for plan title
+ *   - subtitle: Classes for plan subtitle
+ *   - details: Classes for price details container
+ *   - amount_wrapper: Classes for price amount wrapper
+ *   - currency: Classes for currency symbol
+ *   - amount: Classes for price amount
+ *   - period: Classes for billing period
+ *   - features_list: Classes for features list
+ *   - feature_item: Classes for individual feature items
+ *   - feature_icon_wrapper: Classes for feature icon container
+ *   - feature_icon: Classes for feature icon
+ *   - actions_wrapper: Classes for call-to-action buttons container
+ *   - action_button: Classes for call-to-action buttons
+ *
+ * Component Integration:
+ * - TitledWidgetWrapper: Provides consistent titled widget structure
+ * - Button: UI button component for call-to-action buttons
+ * - Icon: Astro icon component for feature icons and defaults
+ * - twMerge: Utility for combining Tailwind classes
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives pricing configuration through Astro.props
+ * 2. Maps through prices array to render individual pricing plans
+ * 3. Renders feature lists with icons for each plan
+ * 4. Conditionally displays ribbons and call-to-action buttons
+ * 5. Wraps content in TitledWidgetWrapper for consistent structure
+ * 6. Applies theme-based styling through getClasses utility
+ *
+ * Layout Structure:
+ * - TitledWidgetWrapper provides outer container with title/subtitle
+ * - Main container holds grid of pricing plans
+ * - Each plan contains title, price, features, and actions
+ * - Ribbon badges highlight special plans
+ *
+ * Responsive Behavior:
+ * - Grid layout adapts to screen size with responsive columns
+ * - Number of columns matches number of pricing plans
+ * - Plans stack vertically on mobile devices
+ *
+ * Accessibility:
+ * - Semantic HTML structure through TitledWidgetWrapper
+ * - Proper heading hierarchy for plan titles
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Display service pricing tiers
+ * - Showcase product pricing options
+ * - Present subscription plans with features
+ * - Integrated in page sections as a conversion-focused component
+ */
+
+import type { TitledWidget, CallToAction, Item } from '~/types';
+import TitledWidgetWrapper from '~/components/ui/TitledWidgetWrapper.astro';
+import Button from '~/components/ui/Button.astro';
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Price interface defining the structure of individual pricing plans
+ *
+ * @property title - Plan name/title
+ * @property subtitle - Plan subtitle/description
+ * @property description - Additional plan details
+ * @property price - Price amount (number or string)
+ * @property period - Billing period (e.g., "per month")
+ * @property items - Array of Item objects for feature lists
+ * @property callToAction - Single CallToAction object or array of CallToAction objects
+ * @property hasRibbon - Whether to display a ribbon badge
+ * @property ribbonTitle - Text for the ribbon badge
+ */
+export interface Price {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  price?: number | string;
+  period?: string;
+  items?: Array<Item>;
+  callToAction?: CallToAction | Array<CallToAction>;
+  hasRibbon?: boolean;
+  ribbonTitle?: string;
+}
+
+/**
+ * Component Props Interface extending TitledWidget
+ *
+ * @property currency - Currency symbol (defaults to '&pound;')
+ * @property prices - Array of Price objects representing pricing plans
+ */
+export interface Props extends TitledWidget {
+  currency?: string;
+  prices?: Array<Price>;
+}
+
+// Destructure props with defaults and slot content rendering
+const {
+  id,
+
+  // Render slot content for title, subtitle, and tagline if not provided as props
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+
+  // Pricing configuration with defaults
+  currency = '&pound;',
+  prices = [],
+
+  // Styling and background options with defaults
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Retrieve CSS classes for pricing elements from theme configuration
+const classes = getClasses('Component+Pricing', rawClasses);
+---
+
+{
+  /*
+    TitledWidgetWrapper provides consistent structure for titled components.
+    - Renders title, subtitle, and tagline content
+    - Applies theme-based styling through classes.wrapper and classes.headline
+    - Supports background styling through bg prop
+    - Sets type to "pricing" for semantic identification
+  */
+}
+<TitledWidgetWrapper
+  type="pricing"
+  id={id}
+  classes={classes}
+  bg={bg}
+  title={title}
+  subtitle={subtitle}
+  tagline={tagline}
+>
+  {
+    /*
+      Main container for pricing widget with theme-based styling.
+      - Contains grid layout for pricing plans
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div class={classes.container} data-name="pricing-container">
+    {
+      /*
+        Grid container for pricing plans with responsive column layout.
+        - Number of columns matches number of pricing plans
+        - Uses twMerge to combine Tailwind grid classes with theme classes
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div
+      class={twMerge(
+        `grid grid-cols-${prices.length} md:grid-cols-${prices.length} lg:grid-cols-${prices.length} xl:grid-cols-${prices.length}`,
+        classes.grid
+      )}
+      data-name="pricing-grid"
+    >
+      {
+        /*
+          Map through prices array to render individual pricing plans.
+          - Only renders when prices array has items
+          - Each plan is rendered in its own grid column
+        */
+        prices &&
+          prices.map(({ title, subtitle, price, period, items, callToAction, hasRibbon = false, ribbonTitle }) => {
+            // Normalize callToAction to array for consistent handling
+            const callToActions: CallToAction[] = Array.isArray(callToAction)
+              ? callToAction
+              : callToAction
+                ? [callToAction]
+                : [];
+
+            return (
+              /*
+                Wrapper for individual pricing plan with theme-based styling.
+                - Provides container for plan content
+                - Includes data-name attribute for test automation
+              */
+              <div class={classes.item_wrapper} data-name="pricing-item-wrapper">
+                {
+                  /*
+                    Pricing plan container only rendered when price and period exist.
+                    - Contains all plan details: title, price, features, actions
+                    - Includes data-name attribute for test automation
+                  */
+                  price && period && (
+                    /*
+                      Individual pricing plan container with theme-based styling.
+                      - Contains plan content and actions
+                      - Includes data-name attribute for test automation
+                    */
+                    <div class={classes.item} data-name="pricing-item">
+                      {
+                        /*
+                          Ribbon badge rendered when hasRibbon is true and ribbonTitle exists.
+                          - Highlights special plans or offers
+                          - Includes data-name attribute for test automation
+                        */
+                        hasRibbon && ribbonTitle && (
+                          /*
+                            Ribbon badge container with theme-based styling.
+                            - Positioned absolutely or relatively based on theme
+                            - Includes data-name attribute for test automation
+                          */
+                          <div class={classes.ribbon_wrapper} data-name="pricing-ribbon-wrapper">
+                            {/*
+                                Ribbon badge text rendered with HTML content support.
+                                - Uses set:html for safe HTML rendering
+                                - Styled with classes.ribbon_title
+                                - Includes data-name attribute for test automation
+                              */}
+                            <span
+                              class={classes.ribbon_title}
+                              set:html={ribbonTitle}
+                              data-name="pricing-ribbon-title"
+                            />
+                          </div>
+                        )
+                      }
+                      {/*
+                          Plan content container with theme-based styling.
+                          - Contains title, subtitle, price details, and features
+                          - Includes data-name attribute for test automation
+                        */}
+                      <div class={classes.item_content} data-name="pricing-item-content">
+                        {
+                          /*
+                            Plan title rendered when title exists.
+                            - Uses h3 for proper heading hierarchy
+                            - Uses set:html for safe HTML rendering
+                            - Styled with classes.title
+                            - Includes data-name attribute for test automation
+                          */
+                          title && <h3 class={classes.title} set:html={title} data-name="pricing-title" />
+                        }
+                        {
+                          /*
+                            Plan subtitle rendered when subtitle exists.
+                            - Uses set:html for safe HTML rendering
+                            - Styled with classes.subtitle
+                            - Includes data-name attribute for test automation
+                          */
+                          subtitle && <p class={classes.subtitle} set:html={subtitle} data-name="pricing-subtitle" />
+                        }
+                        {/*
+                            Price details container with theme-based styling.
+                            - Contains currency, amount, and period
+                            - Includes data-name attribute for test automation
+                          */}
+                        <div class={classes.details} data-name="pricing-details">
+                          {/*
+                              Price amount wrapper with theme-based styling.
+                              - Contains currency symbol and amount
+                              - Includes data-name attribute for test automation
+                            */}
+                          <div class={classes.amount_wrapper} data-name="pricing-amount-wrapper">
+                            {/*
+                                Currency symbol rendered with HTML content support.
+                                - Uses set:html for safe HTML rendering
+                                - Styled with classes.currency
+                                - Includes data-name attribute for test automation
+                              */}
+                            <span class={classes.currency} set:html={currency} data-name="pricing-currency" />
+                            {/*
+                                Price amount rendered with HTML content support.
+                                - Uses set:html for safe HTML rendering
+                                - Styled with classes.amount
+                                - Includes data-name attribute for test automation
+                              */}
+                            <span class={classes.amount} set:html={price} data-name="pricing-amount" />
+                          </div>
+                          {/*
+                              Billing period rendered with HTML content support.
+                              - Uses set:html for safe HTML rendering
+                              - Styled with classes.period
+                              - Includes data-name attribute for test automation
+                            */}
+                          <span class={classes.period} set:html={period} data-name="pricing-period" />
+                        </div>
+                        {
+                          /*
+                            Features list rendered when items exist.
+                            - Displays plan features with icons
+                            - Styled with classes.features_list
+                            - Includes data-name attribute for test automation
+                          */
+                          items && (
+                            /*
+                              Features list with theme-based styling.
+                              - Contains individual feature items
+                              - Styled with classes.features_list
+                              - Includes data-name attribute for test automation
+                            */
+                            <ul class={classes.features_list} data-name="pricing-features-list">
+                              {
+                                /*
+                                  Map through items to render individual feature items.
+                                  - Only renders items with description
+                                  - Includes icon for each feature
+                                */
+                                items.map(
+                                  ({ description, icon }) =>
+                                    description && (
+                                      /*
+                                        Individual feature item with theme-based styling.
+                                        - Contains icon and description
+                                        - Includes data-name attribute for test automation
+                                      */
+                                      <li class={classes.feature_item} data-name="pricing-feature-item">
+                                        {/*
+                                            Feature icon wrapper with theme-based styling.
+                                            - Contains Icon component
+                                            - Includes data-name attribute for test automation
+                                          */}
+                                        <div
+                                          class={classes.feature_icon_wrapper}
+                                          data-name="pricing-feature-icon-wrapper"
+                                        >
+                                          {/*
+                                              Feature icon component.
+                                              - Uses specified icon or default checkmark
+                                              - Styled with classes.feature_icon
+                                            */}
+                                          <Icon name={icon ? icon : 'tabler:check'} class={classes.feature_icon} />
+                                        </div>
+                                        {/*
+                                            Feature description rendered with HTML content support.
+                                            - Uses set:html for safe HTML rendering
+                                          */}
+                                        <span set:html={description} />
+                                      </li>
+                                    )
+                                )
+                              }
+                            </ul>
+                          )
+                        }
+                      </div>
+                      {
+                        /*
+                          Call-to-action buttons container rendered when actions exist.
+                          - Contains one or more Button components
+                          - Styled with classes.actions_wrapper
+                          - Includes data-name attribute for test automation
+                        */
+                        callToActions.length > 0 && (
+                          /*
+                            Call-to-action buttons container with theme-based styling.
+                            - Contains Button components for plan actions
+                            - Includes data-name attribute for test automation
+                          */
+                          <div class={classes.actions_wrapper} data-name="pricing-actions-wrapper">
+                            {
+                              /*
+                                Map through callToActions to render Button components.
+                                - Applies primary variant to ribbon plans
+                                - Merges theme classes with button classes
+                              */
+                              callToActions.map((cta) => (
+                                /*
+                                  Button component configured with call-to-action properties.
+                                  - Applies primary variant when plan has ribbon
+                                  - Merges theme classes with button classes using twMerge
+                                */
+                                <Button
+                                  {...(hasRibbon ? { variant: 'primary' } : {})}
+                                  {...cta}
+                                  class={twMerge(classes.action_button, cta?.class ?? '')}
+                                />
+                              ))
+                            }
+                          </div>
+                        )
+                      }
+                    </div>
+                  )
+                }
+              </div>
+            );
+          })
+      }
+    </div>
+  </div>
+</TitledWidgetWrapper>

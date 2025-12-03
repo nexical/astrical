@@ -1,0 +1,45 @@
+---
+/**
+ * SiteVerification.astro
+ *
+ * This component renders Google Search Console site verification meta tags.
+ * It enables website owners to verify their site ownership with Google Search Console
+ * by adding a verification meta tag to the site's head section.
+ *
+ * Features:
+ * - Conditional rendering based on site configuration
+ * - Google Search Console verification support
+ * - Automatic meta tag generation
+ *
+ * Configuration Dependencies:
+ * - SITE.googleSiteVerificationId: Google Search Console verification token
+ *   - Retrieved from site configuration
+ *   - Only renders when this value is present
+ *
+ * Data Flow:
+ * 1. Checks for SITE.googleSiteVerificationId in configuration
+ * 2. Conditionally renders meta tag when ID is present
+ * 3. Uses the verification ID as the content attribute value
+ *
+ * Usage Context:
+ * - Included in BaseLayout for site-wide verification
+ * - Renders in document head for search engine verification
+ * - Provides site ownership verification for Google Search Console
+ *
+ * Security Considerations:
+ * - Verification ID should be kept private
+ * - Only renders when explicitly configured
+ * - No user input processing
+ */
+import { SITE } from 'site:config';
+---
+
+{
+  /*
+    Google Search Console site verification meta tag.
+    - Only renders when SITE.googleSiteVerificationId is configured
+    - Uses the verification ID as content for site ownership verification
+    - Enables Google Search Console site verification
+  */
+  SITE.googleSiteVerificationId && <meta name="google-site-verification" content={SITE.googleSiteVerificationId} />
+}

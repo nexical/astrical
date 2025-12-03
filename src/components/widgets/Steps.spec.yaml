@@ -1,0 +1,118 @@
+# Steps Component Specification
+
+components:
+  Steps:
+    type: object
+    description: Renders a step-by-step process widget that displays a sequence of actions or procedures in a timeline format.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Steps]
+        description: Specifies the component type. Must be 'Steps'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the widget container.
+      title:
+        type: string
+        description: The main title of the widget. Can also be provided via a 'title' slot.
+      subtitle:
+        type: string
+        description: A subtitle displayed below the main title. Can also be provided via a 'subtitle' slot.
+      tagline:
+        type: string
+        description: A smaller line of text displayed above the title.
+      items:
+        type: array
+        description: An array of 'StepItem' objects, each representing a step in the process.
+        items:
+          $ref: '#/definitions/StepItem'
+      image:
+        description: An image or HTML content to display alongside the steps. Can be an Image object, a string URL, or raw HTML.
+        oneOf:
+          - $ref: '#/definitions/Image'
+          - type: string
+      callToAction:
+        description: An optional call-to-action button or custom HTML content to display below the steps.
+        oneOf:
+          - type: string
+          - $ref: '#/definitions/CallToAction'
+      isReversed:
+        type: boolean
+        description: If true, reverses the order of the content and image columns, placing the image on the left.
+      bg:
+        type: string
+        description: An optional URL for a background image for the widget container.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: Classes for the WidgetWrapper, which provides the outer container and background support.
+            properties:
+              container:
+                type: string
+                description: Classes for the main section element of the widget wrapper.
+              background:
+                type: string
+                description: Classes for the background image container.
+              overlay:
+                type: string
+                description: Classes for the overlay layer on top of the background.
+              wrapper:
+                type: string
+                description: Classes for the inner content wrapper div.
+          container:
+            type: string
+            description: Classes for the main content container that holds the content and image columns.
+          content:
+            type: string
+            description: Classes for the content column containing the headline and timeline steps.
+          headline:
+            type: object
+            description: Classes for the Headline component, which renders the title, subtitle, and tagline.
+            properties:
+              container:
+                type: string
+                description: Classes for the main headline container div.
+              tagline:
+                type: string
+                description: Classes for the tagline paragraph element.
+              title:
+                type: string
+                description: Classes for the main title (h2) element.
+              subtitle:
+                type: string
+                description: Classes for the subtitle paragraph element.
+          items:
+            type: object
+            description: Classes passed to the Timeline component for styling the steps.
+            properties:
+              container:
+                type: string
+                description: Classes for the Timeline container.
+              panel:
+                type: string
+                description: Classes for each individual step panel.
+              title:
+                type: string
+                description: Classes for the title of each step.
+              description:
+                type: string
+                description: Classes for the description of each step.
+              icon:
+                type: string
+                description: Classes for the icon of each step.
+          image_container:
+            type: string
+            description: Classes for the image wrapper container.
+          image:
+            type: string
+            description: Classes for the Image component itself.
+          action_container:
+            type: string
+            description: Classes for the call-to-action container.
+          action_button:
+            type: string
+            description: Classes for the call-to-action Button component.

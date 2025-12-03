@@ -1,0 +1,89 @@
+---
+/**
+ * FormLabel.astro
+ *
+ * This component renders a form field label with optional required indicator.
+ * It provides consistent labeling for form fields with themeable styling and
+ * accessibility support through proper "for" attribute association.
+ *
+ * Features:
+ * - Conditional rendering based on label content
+ * - Required field indicator with bold styling
+ * - Themeable styling through CSS classes
+ * - Accessibility support with proper "for" attribute
+ * - Data attributes for test automation
+ *
+ * Props:
+ * - name: Form field name used for "for" attribute association
+ * - label (optional): Label text to display (component only renders if provided)
+ * - required (optional): Whether field is required (defaults to false)
+ *
+ * Styling Inputs:
+ * - getClasses('Form+Label'): Retrieves CSS classes for label elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the label element wrapper
+ *
+ * Component Integration:
+ * - getClasses: Manages theme-based styling
+ *
+ * Accessibility:
+ * - Proper "for" attribute linking to form field
+ * - Visual indication of required fields
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Used by form field components to render associated labels
+ * - Only renders when label text is provided
+ * - Supports both required and optional field labeling
+ */
+
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface
+ *
+ * @property name - Form field name used for "for" attribute association
+ * @property label - Label text to display (component only renders if provided)
+ * @property required - Whether field is required (defaults to false)
+ */
+export interface Props {
+  name: string;
+  label?: string;
+  required?: boolean;
+}
+
+// Destructure props with defaults
+const { name, label = '', required = false } = Astro.props;
+
+// Retrieve CSS classes for label elements from theme configuration
+const classes = getClasses('Form+Label');
+---
+
+{
+  /*
+    Conditional rendering of label element.
+    - Only renders when label text is provided
+    - Associates with form field via "for" attribute
+    - Applies theme-based styling through classes.container
+    - Includes data-name attribute for test automation
+  */
+}
+{
+  label && (
+    /*
+      Label element associated with form field.
+      - Uses "for" attribute to link to field with matching "name"
+      - Applies theme-based styling through classes.container
+      - Includes data-name attribute for test automation
+    */
+    <label for={name} class={classes.container} data-name="form-label-container">
+      {/*
+          Label text with optional required indicator.
+          - Displays label text content
+          - Shows asterisk indicator in bold when required
+          - Plain text when not required
+        */}
+      {required ? <b>{label}*</b> : label}
+    </label>
+  )
+}

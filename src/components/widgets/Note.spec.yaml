@@ -1,0 +1,61 @@
+# Note Component Specification
+
+components:
+  Note:
+    type: object
+    description: Renders a note widget that displays important information or announcements in a visually distinct container.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Note]
+        description: Specifies the component type. Must be 'Note'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the widget container.
+      subject:
+        type: string
+        required: true
+        description: The main subject or category of the note, displayed with an icon.
+      statement:
+        type: string
+        required: true
+        description: The detailed statement or message content of the note.
+      icon:
+        type: string
+        description: An optional icon name to display next to the subject. Defaults to 'tabler:info-square'.
+      bg:
+        type: string
+        description: An optional URL for a background image for the widget container.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: Classes for the WidgetWrapper, which provides the outer container and background support.
+            properties:
+              container:
+                type: string
+                description: Classes for the main section element of the widget wrapper.
+              background:
+                type: string
+                description: Classes for the background image container.
+              overlay:
+                type: string
+                description: Classes for the overlay layer on top of the background.
+              wrapper:
+                type: string
+                description: Classes for the inner content wrapper div.
+          container:
+            type: string
+            description: Classes for the main note content container.
+          subject:
+            type: string
+            description: Classes for the subject text element.
+          icon:
+            type: string
+            description: Classes for the Icon component.
+          statement:
+            type: string
+            description: Classes for the statement text element.

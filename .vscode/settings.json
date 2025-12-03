@@ -1,0 +1,11 @@
+{
+  "tailwindCSS.includeLanguages": {
+    "yaml": "html"
+  },
+  "files.associations": {
+    "style.yaml": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  }
+}

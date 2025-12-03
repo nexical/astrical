@@ -1,0 +1,92 @@
+---
+/**
+ * Logo.astro
+ *
+ * This component renders the site logo with support for both light and dark color schemes.
+ * It displays different logo variants based on the current theme to ensure proper visibility
+ * and contrast against different background colors. The component uses SVG assets for
+ * crisp rendering at any resolution and includes eager loading for immediate display.
+ *
+ * Features:
+ * - Dual logo support for light and dark themes
+ * - Automatic theme-based logo switching
+ * - SVG format for crisp, scalable graphics
+ * - Eager loading for immediate display
+ * - Themeable styling through CSS classes
+ *
+ * Asset Imports:
+ * - logoLightImage: SVG logo for light theme backgrounds
+ * - logoDarkImage: SVG logo for dark theme backgrounds
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Logo'): Retrieves CSS classes for logo elements
+ *   from the theme's style configuration:
+ *   - image: Base classes for Image components
+ *
+ * Component Integration:
+ * - Image: Astro's built-in image optimization component
+ * - twMerge: Utility for combining Tailwind classes with theme classes
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Imports light and dark SVG logo assets
+ * 2. Retrieves theme-based CSS classes
+ * 3. Renders both logos with conditional visibility
+ * 4. Uses Tailwind classes to show/hide based on theme
+ *
+ * Theme Behavior:
+ * - Light logo: Visible in light mode (block), hidden in dark mode (hidden)
+ * - Dark logo: Hidden in light mode (hidden), visible in dark mode (block)
+ *
+ * Accessibility:
+ * - Proper alt text for screen readers
+ * - Eager loading for immediate logo display
+ *
+ * Usage Context:
+ * - Site header navigation
+ * - Page footers
+ * - Any location requiring branded logo display
+ */
+
+import { twMerge } from 'tailwind-merge';
+import { getClasses } from '~/utils/theme';
+
+// Retrieve CSS classes for logo elements from theme configuration
+const classes = getClasses('Component+Logo');
+---
+
+{
+  /*
+    Light theme logo image.
+    - Uses logoLightImage SVG asset
+    - Visible in light mode (block) and hidden in dark mode (dark:hidden)
+    - Applies theme-based styling through classes.image
+    - Eager loading for immediate display
+    - Alt text for accessibility
+  */
+}
+<img
+  src="/logo/logo-light.svg"
+  alt="Header Logo"
+  width={350}
+  class={twMerge('block dark:hidden', classes.image)}
+  loading="eager"
+/>
+
+{
+  /*
+    Dark theme logo image.
+    - Uses logoDarkImage SVG asset
+    - Hidden in light mode (hidden) and visible in dark mode (dark:block)
+    - Applies theme-based styling through classes.image
+    - Eager loading for immediate display
+    - Alt text for accessibility
+  */
+}
+<img
+  src="/logo/logo-dark.svg"
+  alt="Header Logo"
+  width={350}
+  class={twMerge('hidden dark:block', classes.image)}
+  loading="eager"
+/>

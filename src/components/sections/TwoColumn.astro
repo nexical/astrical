@@ -1,0 +1,167 @@
+---
+/**
+ * TwoColumn.astro
+ *
+ * This section component renders a two-column layout section with separate left and right content areas.
+ * It provides a flexible layout for content that benefits from side-by-side presentation, such as
+ * feature descriptions with images, form and text content, or any complementary content pairs.
+ *
+ * Features:
+ * - Two-column responsive grid layout
+ * - Section wrapper with optional background and ID
+ * - Left and right content areas with independent component configurations
+ * - Themeable styling through CSS classes
+ * - Dynamic component generation from configuration
+ * - Responsive design that stacks columns on mobile
+ *
+ * Props (inherited from Section interface):
+ * - id (optional): Section identifier for anchoring
+ * - components: Object mapping component areas to component configurations
+ *   - left: Array of component configurations for the left column
+ *   - right: Array of component configurations for the right column
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ * - layout: Layout type identifier (inherited, but not used directly here)
+ *
+ * Component Structure:
+ * - SectionWrapper: Outer container with background and ID support
+ * - Column wrapper: Grid container for two-column layout
+ * - Left column: Container for left-side components
+ * - Right column: Container for right-side components
+ *
+ * Styling Inputs:
+ * - getClasses('Section+TwoColumn'): Retrieves CSS classes for section elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the SectionWrapper container
+ *   - column_wrapper: Classes for the grid container (for column layout)
+ *   - left: Classes for the left column container
+ *   - right: Classes for the right column container
+ *
+ * Data Flow:
+ * 1. Receives section configuration through Astro.props
+ * 2. Extracts id, components, classes, and bg properties
+ * 3. Retrieves theme-based CSS classes
+ * 4. Generates components for left and right columns
+ * 5. Renders SectionWrapper with grid and column containers
+ *
+ * Component Generation:
+ * - generateSection: Utility function that processes component configurations
+ * - components.left: Array of component configurations for left column
+ * - components.right: Array of component configurations for right column
+ * - Maps through configurations to create component instances
+ *
+ * Layout Structure:
+ * - Outer SectionWrapper provides consistent section structure
+ * - Middle column_wrapper provides grid layout (1 column on mobile, 2 on desktop)
+ * - Left column contains components from components.left
+ * - Right column contains components from components.right
+ *
+ * Responsive Behavior:
+ * - Mobile (below md): Columns stack vertically (1 column grid)
+ * - Desktop (md and above): Columns display side-by-side (2 column grid)
+ *
+ * Integration Points:
+ * - SectionWrapper: Provides consistent section structure
+ * - generateSection: Handles component instantiation from configuration
+ * - getClasses: Manages theme-based styling
+ * - twMerge: Utility for combining Tailwind classes with theme classes
+ *
+ * Accessibility:
+ * - data-name attributes for test automation
+ * - Semantic HTML structure through SectionWrapper
+ * - Proper nesting of container elements
+ */
+
+import type { Section as Props } from '~/types';
+import SectionWrapper from '~/components/ui/SectionWrapper.astro';
+import { twMerge } from 'tailwind-merge';
+import { generateSection } from '~/utils/generator';
+import { getClasses } from '~/utils/theme';
+
+// Destructure section properties from Astro.props with defaults
+const { id, components, classes: rawClasses = {}, bg = '' } = Astro.props;
+
+// Retrieve CSS classes for section elements from theme configuration
+// Merges rawClasses (from section config) with theme defaults
+const classes = getClasses('Section+TwoColumn', rawClasses);
+---
+
+{
+  /*
+    Section wrapper that provides consistent outer container structure.
+    - Accepts id for section anchoring
+    - Applies background styling through bg prop
+    - Uses theme-provided wrapper classes
+    - Sets type to "two-column" for semantic identification
+  */
+}
+<SectionWrapper type="two-column" id={id} classes={classes.wrapper} bg={bg}>
+  {
+    /*
+      Column wrapper container that provides the two-column grid layout.
+      - Uses Tailwind grid classes for responsive two-column layout
+      - Combines Tailwind classes with theme-provided classes via twMerge
+      - On mobile (below md): single column layout (grid-cols-1)
+      - On desktop (md and above): two column layout (grid-cols-2)
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div
+    class={twMerge('grid grid-cols-1 md:grid-cols-2', classes.column_wrapper)}
+    data-name="section-two-column-wrapper"
+  >
+    {
+      /*
+        Left column container for left-side components.
+        - Uses flex column layout for vertical stacking of components
+        - Combines Tailwind classes with theme-provided classes via twMerge
+        - Contains components generated from components.left configuration
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div class={twMerge('flex flex-col', classes.left)} data-name="section-two-column-left">
+      {
+        /*
+          Map through left column component configurations and render components.
+          - generateSection processes component configurations from components.left
+          - Each component is rendered with its props
+        */
+        generateSection(components?.left).map(({ component: Component, props }) => (
+          /*
+            Individual component instance rendered with its props.
+            - Component is dynamically selected based on configuration
+            - Props are passed through from configuration
+          */
+          <Component {...props} />
+        ))
+      }
+    </div>
+
+    {
+      /*
+        Right column container for right-side components.
+        - Uses flex column layout for vertical stacking of components
+        - Combines Tailwind classes with theme-provided classes via twMerge
+        - Contains components generated from components.right configuration
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div class={twMerge('flex flex-col', classes.right)} data-name="section-two-column-right">
+      {
+        /*
+          Map through right column component configurations and render components.
+          - generateSection processes component configurations from components.right
+          - Each component is rendered with its props
+        */
+        generateSection(components?.right).map(({ component: Component, props }) => (
+          /*
+            Individual component instance rendered with its props.
+            - Component is dynamically selected based on configuration
+            - Props are passed through from configuration
+          */
+          <Component {...props} />
+        ))
+      }
+    </div>
+  </div>
+</SectionWrapper>

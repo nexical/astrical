@@ -1,0 +1,82 @@
+---
+/**
+ * FormError.astro
+ *
+ * This component renders a form field error message container that can be
+ * dynamically updated with error text via JavaScript. It provides a consistent
+ * structure for displaying validation errors adjacent to form fields.
+ *
+ * Features:
+ * - Empty error container ready for dynamic content insertion
+ * - Themeable styling through CSS classes
+ * - Accessible error messaging with proper ID association
+ * - Data attributes for test automation and JavaScript targeting
+ *
+ * Props:
+ * - id: Unique identifier for the error message span element
+ *   This ID is used to target the element for dynamic error message insertion
+ *
+ * Styling Inputs:
+ * - getClasses('Form+Error'): Retrieves CSS classes for error elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the wrapper div element
+ *   - message: Classes for the error message span element
+ *
+ * Component Integration:
+ * - getClasses: Manages theme-based styling
+ *
+ * Accessibility:
+ * - Proper ID attribute for JavaScript targeting
+ * - Semantic HTML structure with div and span elements
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Used by form field components to display validation errors
+ * - Error message content is inserted dynamically via JavaScript
+ * - ID must match the "aria-describedby" attribute of associated form field
+ *
+ * JavaScript Integration:
+ * - Error message span is targeted by ID for content insertion
+ * - Container is shown/hidden based on error state
+ * - Content is typically set by form validation scripts
+ */
+
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface
+ *
+ * @property id - Unique identifier for the error message span element
+ *   Used to target the element for dynamic error message insertion
+ */
+export interface Props {
+  id: string;
+}
+
+// Destructure props
+const { id } = Astro.props;
+
+// Retrieve CSS classes for error elements from theme configuration
+const classes = getClasses('Form+Error');
+---
+
+{
+  /*
+    Error container div that wraps the error message element.
+    - Provides styling context for error messages
+    - Uses theme-based CSS classes for consistent appearance
+    - Includes data-name attribute for test automation
+  */
+}
+<div class={classes.container} data-name="form-error-container">
+  {
+    /*
+      Error message span that receives dynamic error text content.
+      - Targeted by ID for JavaScript content insertion
+      - Uses theme-based CSS classes for styling
+      - Initially empty - content added dynamically via JavaScript
+      - Includes data-name attribute for test automation
+    */
+  }
+  <span id={id} class={classes.message} data-name="form-error-message"></span>
+</div>

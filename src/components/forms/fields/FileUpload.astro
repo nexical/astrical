@@ -1,0 +1,132 @@
+---
+/**
+ * FileUpload.astro
+ *
+ * This component renders a file upload input form field with label and error messaging.
+ * It supports single or multiple file selection, required field validation, and integrates
+ * with the form validation system and theme-based styling.
+ *
+ * Features:
+ * - Single or multiple file upload capability
+ * - Support for all file types through browser default dialog
+ * - Required field validation with visual indicators
+ * - Dynamic error messaging through FormError component
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ * - Data attributes for test automation
+ *
+ * Props (extends BaseField interface):
+ * - name: Unique identifier for the field (used in form data)
+ * - label (optional): Field label text (passed to FormLabel)
+ * - multiple (optional): Whether multiple files can be selected (defaults to false)
+ * - required (optional): Whether field is required (defaults to false)
+ *
+ * Styling Inputs:
+ * - getClasses('Form+FileUpload'): Retrieves CSS classes for file upload elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main wrapper div
+ *   - input: Classes for the file input element
+ *
+ * Component Integration:
+ * - FormLabel: Renders field label with required indicator
+ * - FormError: Renders error message container for validation errors
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives field configuration through Astro.props
+ * 2. Renders file input with appropriate attributes
+ * 3. Integrates with form validation through FormError component
+ * 4. Associates with FormLabel for proper accessibility
+ *
+ * Accessibility:
+ * - Proper "for" attribute linking between label and input
+ * - Unique ID matching name attribute
+ * - Semantic HTML structure with div container
+ * - Required attribute for validation
+ * - Data attributes for test automation
+ *
+ * Browser Behavior:
+ * - Opens native file selection dialog when clicked
+ * - Shows selected file name(s) in input field
+ * - Supports drag-and-drop in most modern browsers
+ * - Accepts all file types by default
+ *
+ * Usage Context:
+ * - Used by Form component for file upload fields
+ * - Integrated with form validation and submission system
+ * - Files are submitted as part of multipart form data
+ */
+
+import type { BaseField } from '~/types';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending BaseField
+ *
+ * @property multiple - Whether multiple files can be selected (defaults to false)
+ */
+export interface Props extends BaseField {
+  multiple?: boolean;
+}
+
+// Destructure props with defaults
+const { name, label = '', required = false, multiple = false } = Astro.props;
+
+// Retrieve CSS classes for file upload elements from theme configuration
+const classes = getClasses('Form+FileUpload');
+---
+
+{
+  /*
+    Main container div for the file upload field.
+    - Provides wrapper for label, file input, and error message
+    - Uses theme-based styling through classes.container
+    - Includes data-name attribute for test automation
+  */
+}
+<div class={classes.container} data-name="form-file-upload-container">
+  {
+    /*
+      Form label associated with the file input.
+      - Uses FormLabel component for consistent labeling
+      - Shows required indicator when required=true
+      - Associated with input via matching name/id
+    */
+  }
+  <FormLabel name={name} label={label} required={required} />
+
+  {
+    /*
+      File input element for file selection.
+      - Type is "file" for file upload functionality
+      - Name and ID match for proper form association
+      - data-field-name for JavaScript targeting
+      - Supports multiple file selection when multiple=true
+      - Uses theme-based styling through classes.input
+      - Required attribute when field is required
+      - Includes data-name attribute for test automation
+    */
+  }
+  <input
+    type="file"
+    name={name}
+    id={name}
+    data-field-name={name}
+    class={classes.input}
+    {...multiple ? { multiple: 'true' } : {}}
+    {...required ? { required: 'true' } : {}}
+    data-name="form-file-upload-input"
+  />
+
+  {
+    /*
+      Error message container for validation errors.
+      - Uses FormError component for consistent error display
+      - ID matches aria-describedby reference in parent form
+      - Content populated dynamically via JavaScript
+    */
+  }
+  <FormError id={`${name}-error`} />
+</div>

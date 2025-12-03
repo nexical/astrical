@@ -1,0 +1,318 @@
+---
+/**
+ * Footer.astro
+ *
+ * This component renders the site footer with navigation links, social media links,
+ * and copyright information. It provides a responsive layout with multiple columns
+ * of links and a bottom section for additional information.
+ *
+ * Features:
+ * - Multi-column navigation link groups
+ * - Social media links with icons
+ * - Secondary navigation links
+ * - Copyright/footnote text
+ * - Themeable styling through CSS classes
+ * - HTML content rendering for titles and text
+ *
+ * Props:
+ * - links: Array of link groups, each containing:
+ *   - title: Group title (HTML content)
+ *   - links: Array of Link objects
+ * - secondaryLinks: Array of secondary navigation links
+ * - socialLinks: Array of social media links with icons
+ * - footNote: Copyright or footnote text (HTML content)
+ *
+ * Link Structure:
+ * - Link objects contain text, href, ariaLabel, and icon properties
+ * - Links support HTML content rendering for rich text
+ * - Social links include icon identifiers for visual representation
+ *
+ * Styling Inputs:
+ * - getClasses('Page+Footer'): Retrieves CSS classes for all footer elements
+ *   from the theme's style configuration:
+ *   - container: Main footer element
+ *   - content_container: Inner wrapper for footer content
+ *   - links_grid: Grid container for link groups
+ *   - links_grid_item: Individual link group container
+ *   - links_group_title: Title for each link group
+ *   - links_list: List of links in a group
+ *   - link_item: Individual link list item
+ *   - link: Regular navigation links
+ *   - bottom_section: Container for social links and footnote
+ *   - social_links_list: List of social media links
+ *   - social_link: Individual social media link
+ *   - social_link_icon: Icon within social media link
+ *   - footnote_container: Container for footnote text
+ *   - secondary_links_container: Container for secondary links
+ *
+ * Component Integration:
+ * - Icon: Astro icon component for social media icons
+ * - Fragment with set:html: For rendering HTML content safely
+ *
+ * Data Flow:
+ * 1. Receives link groups, social links, secondary links, and footnote
+ * 2. Maps through link groups to create columns of navigation links
+ * 3. Renders social media links with icons
+ * 4. Displays secondary links and footnote text
+ *
+ * Responsive Behavior:
+ * - Grid layout for link groups that adapts to screen size
+ * - Stacked layout on mobile devices
+ * - Flexible column arrangement
+ *
+ * Accessibility:
+ * - aria-label attributes on social media links
+ * - Semantic HTML structure
+ * - Proper list markup for navigation
+ * - Data attributes for test automation
+ */
+
+import { Icon } from 'astro-icon/components';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Link interface for footer navigation items
+ *
+ * @property text - Link display text (can contain HTML)
+ * @property href - URL the link points to
+ * @property ariaLabel - Accessible name for the link
+ * @property icon - Icon identifier for social media links
+ */
+export interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+}
+
+/**
+ * Links interface for grouped navigation sections
+ *
+ * @property title - Group title (can contain HTML)
+ * @property links - Array of Link objects in this group
+ */
+export interface Links {
+  title?: string;
+  links: Array<Link>;
+}
+
+/**
+ * Component Props Interface
+ *
+ * @property links - Array of link groups for primary navigation
+ * @property secondaryLinks - Array of secondary navigation links
+ * @property socialLinks - Array of social media links with icons
+ * @property footNote - Copyright or footnote text (can contain HTML)
+ */
+export interface Props {
+  links: Array<Links>;
+  secondaryLinks: Array<Link>;
+  socialLinks: Array<Link>;
+  footNote?: string;
+}
+
+// Destructure props with default empty arrays for safety
+const { socialLinks = [], secondaryLinks = [], links = [], footNote = '' } = Astro.props;
+
+// Retrieve CSS classes for footer elements from theme configuration
+const classes = getClasses('Page+Footer');
+---
+
+{
+  /*
+    Main footer element that serves as the container for all footer content.
+    - Uses theme-provided CSS classes for styling
+    - Includes data attribute for testing/automation
+  */
+}
+<footer class={classes.container} data-name="footer-container">
+  {
+    /*
+      Content container that provides inner spacing and layout structure.
+      - Uses theme-provided CSS classes for styling
+      - Contains link groups and bottom section
+      - Provides responsive layout constraints
+    */
+  }
+  <div class={classes.content_container} data-name="footer-content-container">
+    {
+      /*
+        Grid container for primary navigation link groups.
+        - Uses CSS grid for responsive column layout
+        - Maps through link groups to create columns
+        - Includes data attribute for testing/automation
+      */
+    }
+    <div class={classes.links_grid} data-name="footer-links-grid">
+      {
+        /*
+          Map through link groups to create footer navigation columns.
+          - Each group has a title and list of links
+          - Supports HTML content in titles
+          - Renders links as list items
+        */
+        links.map(({ title, links }) => (
+          /*
+            Individual link group container (column).
+            - Uses theme-provided CSS classes for styling
+            - Contains group title and list of links
+            - Includes data attribute for testing/automation
+          */
+          <div class={classes.links_grid_item} data-name="footer-links-grid-item">
+            {/*
+                Group title displayed above link list.
+                - Uses Fragment with set:html to render HTML content safely
+                - Styled with theme-provided CSS classes
+                - Includes data attribute for testing/automation
+              */}
+            <div class={classes.links_group_title} data-name="footer-links-group-title">
+              <Fragment set:html={title} />
+            </div>
+            {
+              /*
+                Render links list only if links array exists and has items.
+                - Uses conditional rendering to avoid empty lists
+                - Maps through links to create list items
+              */
+              links && Array.isArray(links) && links.length > 0 && (
+                /*
+                  Unordered list containing navigation links.
+                  - Uses theme-provided CSS classes for styling
+                  - Contains individual link list items
+                  - Includes data attribute for testing/automation
+                */
+                <ul class={classes.links_list} data-name="footer-links-list">
+                  {links.map(({ text, href, ariaLabel }) => (
+                    /*
+                      Individual link list item.
+                      - Uses theme-provided CSS classes for styling
+                      - Contains anchor element with href
+                      - Includes data attribute for testing/automation
+                    */
+                    <li class={classes.link_item} data-name="footer-link-item">
+                      {/*
+                          Navigation link with href and aria-label.
+                          - Uses Fragment with set:html to render HTML content safely
+                          - Styled with theme-provided CSS classes
+                          - Includes aria-label for accessibility
+                          - Includes data attribute for testing/automation
+                        */}
+                      <a class={classes.link} href={href} aria-label={ariaLabel} data-name="footer-link">
+                        <Fragment set:html={text} />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          </div>
+        ))
+      }
+    </div>
+
+    {
+      /*
+        Bottom section containing social links and footnote.
+        - Uses theme-provided CSS classes for styling
+        - Includes social media links with icons
+        - Contains copyright/footnote text and secondary links
+        - Includes data attribute for testing/automation
+      */
+    }
+    <div class={classes.bottom_section} data-name="footer-bottom-section">
+      {
+        /*
+          Social media links list rendered only if socialLinks has items.
+          - Maps through social links to create list items
+          - Includes icons for visual representation
+        */
+        socialLinks?.length ? (
+          /*
+            Unordered list containing social media links.
+            - Uses theme-provided CSS classes for styling
+            - Contains individual social link list items
+            - Includes data attribute for testing/automation
+          */
+          <ul class={classes.social_links_list} data-name="footer-social-links-list">
+            {socialLinks.map(({ ariaLabel, href, text, icon }) => (
+              <li>
+                {/*
+                    Individual social media link with icon.
+                    - Uses aria-label for accessibility
+                    - Contains icon component and link text
+                    - Styled with theme-provided CSS classes
+                    - Includes data attribute for testing/automation
+                  */}
+                <a class={classes.social_link} aria-label={ariaLabel} href={href} data-name="footer-social-link">
+                  {/*
+                      Render icon only if icon identifier is provided.
+                      - Uses Astro Icon component for consistent icons
+                      - Styled with theme-provided CSS classes
+                    */}
+                  {icon && <Icon name={icon} class={classes.social_link_icon} />}
+                  {/*
+                      Render link text using Fragment with set:html.
+                      - Allows HTML content in social link text
+                    */}
+                  <Fragment set:html={text} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          ''
+        )
+      }
+
+      {
+        /*
+          Container for footnote text and secondary links.
+          - Uses Fragment with set:html to render footnote HTML content
+          - Contains secondary navigation links
+          - Styled with theme-provided CSS classes
+          - Includes data attribute for testing/automation
+        */
+      }
+      <div class={classes.footnote_container} data-name="footer-footnote-container">
+        {
+          /*
+            Render footnote HTML content using Fragment.
+            - Allows rich text formatting in copyright/footnote
+          */
+        }
+        <Fragment set:html={footNote} />
+        {
+          /*
+            Container for secondary navigation links.
+            - Maps through secondary links to create inline links
+            - Adds separator dots between links
+            - Styled with theme-provided CSS classes
+            - Includes data attribute for testing/automation
+          */
+        }
+        <span class={classes.secondary_links_container} data-name="footer-secondary-links-container">
+          {
+            secondaryLinks.map(({ text, href }, index) => (
+              <>
+                {
+                  /*
+                    Add separator dot before all links except the first.
+                    - Creates visual separation between secondary links
+                  */
+                  index !== 0 ? ' · ' : ''
+                }
+                {/*
+                    Individual secondary navigation link.
+                    - Uses set:html to render HTML content in link text
+                    - Styled with theme-provided CSS classes
+                    - Includes data attribute for testing/automation
+                  */}
+                <a class={classes.link} href={href} set:html={text} data-name="footer-link" />
+              </>
+            ))
+          }
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>

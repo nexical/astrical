@@ -1,0 +1,253 @@
+---
+/**
+ * CustomScripts.astro
+ *
+ * This component provides essential client-side JavaScript functionality for the site.
+ * It handles theme management, mobile menu toggling, social sharing, and header animations.
+ * The script initializes on page load and integrates with Astro's client-side navigation.
+ *
+ * Features:
+ * - Dark/light theme management with localStorage persistence
+ * - Mobile menu toggle functionality
+ * - Social sharing integration across multiple platforms
+ * - Sticky header animation based on scroll position
+ * - Responsive event handling for mobile/desktop interactions
+ * - Astro page transition compatibility
+ *
+ * Configuration Dependencies:
+ * - UI.theme: Site theme configuration for default theme settings
+ *
+ * Component Integration:
+ * - inline script with define:vars for passing defaultTheme configuration
+ * - Event attachment utility for DOM interactions
+ * - Astro lifecycle events for client-side navigation
+ *
+ * Data Flow:
+ * 1. Initializes theme based on localStorage, system preference, or default
+ * 2. Attaches event listeners for menu toggle, theme switch, and social share
+ * 3. Handles scroll events for sticky header behavior
+ * 4. Manages responsive behavior for mobile menu interactions
+ * 5. Integrates with Astro's page transition system
+ *
+ * Event Handling:
+ * - Menu toggle: Expands/collapses mobile navigation menu
+ * - Theme toggle: Switches between dark/light mode
+ * - Social share: Opens sharing dialogs for various platforms
+ * - Scroll events: Controls sticky header appearance
+ * - Screen resize: Manages mobile menu state on breakpoint changes
+ *
+ * Accessibility:
+ * - Proper event delegation for interactive elements
+ * - Smooth scrolling enabled after page transitions
+ * - Menu state management for screen readers
+ *
+ * Usage Context:
+ * - Included in BaseLayout for site-wide JavaScript functionality
+ * - Executes after DOM content is loaded
+ * - Compatible with Astro's view transitions
+ */
+
+import { UI } from 'site:config';
+---
+
+<script is:inline define:vars={{ defaultTheme: UI.theme }}>
+  // Prevent duplicate script execution
+  if (window.basic_script) {
+    return;
+  }
+
+  // Mark script as loaded to prevent re-execution
+  window.basic_script = true;
+
+  /**
+   * Applies the specified theme to the document
+   * @param theme - Theme to apply ('dark' or 'light')
+   */
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  /**
+   * Initializes the theme based on configuration, localStorage, and system preferences
+   */
+  const initTheme = function () {
+    // Use default theme if it's the only option or no localStorage theme exists
+    if ((defaultTheme && defaultTheme.endsWith(':only')) || (!localStorage.theme && defaultTheme !== 'system')) {
+      applyTheme(defaultTheme.replace(':only', ''));
+    }
+    // Use dark theme if explicitly set in localStorage or system prefers dark
+    else if (
+      localStorage.theme === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      applyTheme('dark');
+    }
+    // Default to light theme
+    else {
+      applyTheme('light');
+    }
+  };
+
+  // Initialize theme on script load
+  initTheme();
+
+  /**
+   * Attaches event listeners to DOM elements
+   * @param selector - CSS selector or element collection
+   * @param event - Event type to listen for
+   * @param fn - Event handler function
+   */
+  function attachEvent(selector, event, fn) {
+    const matches = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+    if (matches && matches.length) {
+      matches.forEach((elem) => {
+        elem.addEventListener(event, (e) => fn(e, elem), false);
+      });
+    }
+  }
+
+  /**
+   * Main initialization function that sets up all event listeners
+   */
+  const onLoad = function () {
+    // Track scroll position for header animations
+    let lastKnownScrollPosition = window.scrollY;
+    let ticking = true;
+
+    // Close mobile menu when navigation links are clicked
+    attachEvent('#header nav', 'click', function () {
+      document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
+      document.body.classList.remove('overflow-hidden');
+      document.getElementById('header')?.classList.remove('h-screen');
+      document.getElementById('header')?.classList.remove('expanded');
+      document.getElementById('header')?.classList.remove('bg-page');
+      document.querySelector('#header nav')?.classList.add('hidden');
+      document.querySelector('#header > div > div:last-child')?.classList.add('hidden');
+    });
+
+    // Toggle mobile menu state
+    attachEvent('[data-aw-toggle-menu]', 'click', function (_, elem) {
+      elem.classList.toggle('expanded');
+      document.body.classList.toggle('overflow-hidden');
+      document.getElementById('header')?.classList.toggle('h-screen');
+      document.getElementById('header')?.classList.toggle('expanded');
+      document.getElementById('header')?.classList.toggle('bg-page');
+      document.querySelector('#header nav')?.classList.toggle('hidden');
+      document.querySelector('#header > div > div:last-child')?.classList.toggle('hidden');
+    });
+
+    // Toggle color scheme (dark/light mode)
+    attachEvent('[data-aw-toggle-color-scheme]', 'click', function () {
+      // Don't allow theme switching if theme is locked to one mode
+      if (defaultTheme.endsWith(':only')) {
+        return;
+      }
+      document.documentElement.classList.toggle('dark');
+      localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    });
+
+    // Handle social sharing functionality
+    attachEvent('[data-aw-social-share]', 'click', function (_, elem) {
+      const network = elem.getAttribute('data-aw-social-share');
+      const url = encodeURIComponent(elem.getAttribute('data-aw-url'));
+      const text = encodeURIComponent(elem.getAttribute('data-aw-text'));
+
+      let href;
+      switch (network) {
+        case 'facebook':
+          href = `https://www.facebook.com/sharer.php?u=${url}`;
+          break;
+        case 'twitter':
+          href = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+          break;
+        case 'linkedin':
+          href = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`;
+          break;
+        case 'whatsapp':
+          href = `https://wa.me/?text=${text}%20${url}`;
+          break;
+        case 'mail':
+          href = `mailto:?subject=%22${text}%22&body=${text}%20${url}`;
+          break;
+
+        default:
+          return;
+      }
+
+      // Create and click temporary link to open sharing dialog
+      const newlink = document.createElement('a');
+      newlink.target = '_blank';
+      newlink.href = href;
+      newlink.click();
+    });
+
+    // Handle mobile menu state when screen size changes
+    const screenSize = window.matchMedia('(max-width: 767px)');
+    screenSize.addEventListener('change', function () {
+      document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
+      document.body.classList.remove('overflow-hidden');
+      document.getElementById('header')?.classList.remove('h-screen');
+      document.getElementById('header')?.classList.remove('expanded');
+      document.getElementById('header')?.classList.remove('bg-page');
+      document.querySelector('#header nav')?.classList.add('hidden');
+      document.querySelector('#header > div > div:last-child')?.classList.add('hidden');
+    });
+
+    /**
+     * Apply header styles based on scroll position for sticky header effect
+     */
+    function applyHeaderStylesOnScroll() {
+      const header = document.querySelector('#header[data-aw-sticky-header]');
+      if (!header) return;
+      if (lastKnownScrollPosition > 60 && !header.classList.contains('scroll')) {
+        header.classList.add('scroll');
+      } else if (lastKnownScrollPosition <= 60 && header.classList.contains('scroll')) {
+        header.classList.remove('scroll');
+      }
+      ticking = false;
+    }
+    applyHeaderStylesOnScroll();
+
+    // Handle scroll events for header animation with requestAnimationFrame for performance
+    attachEvent([document], 'scroll', function () {
+      lastKnownScrollPosition = window.scrollY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          applyHeaderStylesOnScroll();
+        });
+        ticking = true;
+      }
+    });
+  };
+
+  /**
+   * Handle page show events (including back/forward navigation)
+   */
+  const onPageShow = function () {
+    document.documentElement.classList.add('motion-safe:scroll-smooth');
+    const elem = document.querySelector('[data-aw-toggle-menu]');
+    if (elem) {
+      elem.classList.remove('expanded');
+    }
+    document.body.classList.remove('overflow-hidden');
+    document.getElementById('header')?.classList.remove('h-screen');
+    document.getElementById('header')?.classList.remove('expanded');
+    document.querySelector('#header nav')?.classList.add('hidden');
+  };
+
+  // Attach main event handlers
+  window.onload = onLoad;
+  window.onpageshow = onPageShow;
+
+  // Re-initialize when Astro performs client-side navigation
+  document.addEventListener('astro:after-swap', () => {
+    initTheme();
+    onLoad();
+    onPageShow();
+  });
+</script>

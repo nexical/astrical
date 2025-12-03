@@ -1,0 +1,6 @@
+# Nexical Artifacts
+plans/
+archive/
+signals/
+state.yml
+.env

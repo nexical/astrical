@@ -1,0 +1,34 @@
+# Page Specification
+
+Page:
+  type: object
+  description: Defines the structure of a content page, including its metadata for SEO and layout, and a list of sections that make up the page body.
+  properties:
+    metadata:
+      type: object
+      description: Contains page-specific layout settings.
+      properties:
+        title:
+          type: string
+          description: The title of the page, used for the <title> tag and social media sharing.
+        description:
+          type: string
+          description: A brief description of the page content, used for SEO and social media previews.
+        announcement:
+          type: boolean
+          description: Controls the visibility of the site-wide announcement banner on this page.
+          default: true
+        header:
+          type: boolean
+          description: Controls the visibility of the site header on this page.
+          default: true
+        footer:
+          type: boolean
+          description: Controls the visibility of the site footer on this page.
+          default: true
+
+    sections:
+      type: array
+      description: An array of section component configurations that define the content and layout of the page body. Each item in the array is a section object.
+      items:
+        $ref: '#/definitions/EmbeddableSection'

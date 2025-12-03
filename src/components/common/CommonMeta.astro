@@ -1,0 +1,66 @@
+---
+/**
+ * CommonMeta.astro
+ *
+ * This component renders essential meta tags and link elements that should be included
+ * in the head section of every page. It provides core SEO and technical metadata
+ * required for proper website functionality and search engine optimization.
+ *
+ * Features:
+ * - Essential character encoding and viewport settings
+ * - Domain verification for search engine tools
+ * - Sitemap link for search engine crawling
+ *
+ * Component Integration:
+ * - getAsset: Utility function for generating absolute asset URLs
+ *
+ * Data Flow:
+ * 1. Sets UTF-8 character encoding for proper text rendering
+ * 2. Configures responsive viewport for mobile compatibility
+ * 3. Includes domain verification for search engine tools
+ * 4. Links to sitemap for search engine crawling
+ *
+ * Usage Context:
+ * - Included in BaseLayout for site-wide meta tag consistency
+ * - Renders in document head for early browser processing
+ * - Provides foundational SEO and technical metadata
+ */
+
+import { getAsset } from '~/utils/permalinks';
+---
+
+{
+  /*
+    Character encoding meta tag.
+    - Sets UTF-8 encoding for proper text rendering
+    - Should be the first meta tag in head section
+  */
+}
+<meta charset="utf-8" />
+
+{
+  /*
+    Viewport meta tag for responsive design.
+    - Sets initial scale to 1.0 for proper mobile rendering
+    - Enables responsive layout across device sizes
+  */
+}
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+{
+  /*
+    Domain verification meta tag.
+    - Used by search engines to verify domain ownership
+    - Specific to the site's verification requirements
+  */
+}
+<meta name="p:domain_verify" content="08150876c1d18be5b02c911b8e105025" />
+
+{
+  /*
+    Sitemap link for search engine crawling.
+    - Uses getAsset utility to generate absolute sitemap URL
+    - Helps search engines discover and index site content
+  */
+}
+<link rel="sitemap" href={getAsset('/sitemap-index.xml')} />

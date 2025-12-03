@@ -1,0 +1,149 @@
+---
+/**
+ * Note.astro
+ *
+ * This component renders a note widget that displays important information, announcements,
+ * or supplementary content in a visually distinct container. It's designed to highlight
+ * key messages with an optional icon and clear subject/statement structure.
+ *
+ * Features:
+ * - Widget structure with optional background styling
+ * - Support for customizable icon and text content
+ * - Clear subject/statement information hierarchy
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ *
+ * Props (extends Widget interface):
+ * - id (optional): HTML id attribute for the widget container
+ * - subject: Main subject or category of the note (displayed with icon)
+ * - statement: Detailed statement or message content
+ * - icon (optional): Icon identifier (defaults to 'tabler:info-square')
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Note'): Retrieves CSS classes for note elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the WidgetWrapper container
+ *   - container: Classes for the main note content container
+ *   - subject: Classes for the subject text element
+ *   - icon: Classes for the Icon component
+ *   - statement: Classes for the statement text element
+ *
+ * Component Integration:
+ * - WidgetWrapper: Provides consistent widget structure
+ * - Icon: Astro icon component for visual indicator
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives note configuration through Astro.props
+ * 2. Renders subject with icon and statement content
+ * 3. Wraps content in WidgetWrapper for consistent structure
+ * 4. Applies theme-based styling through getClasses utility
+ *
+ * Layout Structure:
+ * - WidgetWrapper provides outer container with background styling
+ * - Main container holds subject and statement elements
+ * - Subject element contains icon and subject text
+ * - Statement element contains detailed message content
+ *
+ * Accessibility:
+ * - Semantic HTML structure through WidgetWrapper
+ * - Icon provides visual context for the note type
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Display important announcements or warnings
+ * - Highlight supplementary information
+ * - Provide contextual notes for content sections
+ * - Integrated in page sections as an informational component
+ */
+
+import type { Widget } from '~/types';
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending Widget
+ *
+ * @property subject - Main subject or category of the note
+ * @property statement - Detailed statement or message content
+ * @property icon - Icon identifier (defaults to 'tabler:info-square')
+ */
+export interface Props extends Widget {
+  subject: string;
+  statement: string;
+  icon?: string;
+}
+
+// Destructure props with defaults
+const {
+  id,
+
+  subject,
+  statement,
+  icon = 'tabler:info-square',
+
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Retrieve CSS classes for note elements from theme configuration
+const classes = getClasses('Component+Note', rawClasses);
+---
+
+{
+  /*
+    WidgetWrapper provides consistent structure for widget components.
+    - Applies theme-based styling through classes.wrapper
+    - Supports background styling through bg prop
+    - Sets type to "note" for semantic identification
+  */
+}
+<WidgetWrapper type="note" id={id} classes={classes.wrapper} bg={bg}>
+  {
+    /*
+      Main container for note content with theme-based styling.
+      - Contains subject and statement elements
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div class={classes.container} data-name="note-container">
+    {
+      /*
+        Subject element that displays the note category with icon.
+        - Contains Icon component and subject text
+        - Styled with classes.subject
+        - Includes data-name attribute for test automation
+      */
+    }
+    <span class={classes.subject} data-name="note-subject">
+      {
+        /*
+          Icon component that provides visual context for the note.
+          - Uses specified icon or default info icon
+          - Styled with classes.icon
+        */
+      }
+      <Icon name={icon} class={classes.icon} />
+      {
+        /*
+          Subject text rendered with HTML content support.
+          - Uses Fragment with set:html for safe HTML rendering
+          - Followed by colon for proper punctuation
+        */
+      }
+      <Fragment set:html={subject} />:
+    </span>
+    {
+      /*
+        Statement element that displays the detailed note content.
+        - Uses set:html to render HTML content safely
+        - Styled with classes.statement
+        - Includes data-name attribute for test automation
+      */
+    }
+    <span class={classes.statement} set:html={statement} data-name="note-statement" />
+  </div>
+</WidgetWrapper>

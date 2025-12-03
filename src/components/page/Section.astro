@@ -1,0 +1,82 @@
+---
+/**
+ * Section.astro
+ *
+ * This component serves as a dynamic section renderer that instantiates layout components
+ * based on the provided section configuration. It acts as a bridge between page data
+ * and the actual layout components that render the content.
+ *
+ * Features:
+ * - Dynamic component instantiation based on layout type
+ * - Pass-through of section configuration to layout components
+ * - Fallback rendering for unsupported layouts
+ * - Type-safe interface for section data
+ *
+ * Props:
+ * - section: Section object containing:
+ *   - layout: Layout component identifier (key in supportedLayouts)
+ *   - id: Optional section identifier for anchoring
+ *   - bg: Background styling option
+ *   - classes: CSS class configuration object
+ *   - components: Component configuration mapping
+ *
+ * Component Integration:
+ * - supportedLayouts: Registry of available layout components
+ * - Layout component: Dynamically selected layout component based on section.layout
+ *
+ * Data Flow:
+ * 1. Receives section configuration object
+ * 2. Looks up layout component in supportedLayouts registry
+ * 3. Renders layout component with section props
+ * 4. Falls back to Fragment if layout not found
+ *
+ * Layout Component Interface:
+ * - Receives all section properties as props
+ * - Has access to section components configuration
+ * - Can utilize section id, bg, and classes properties
+ *
+ * Error Handling:
+ * - Renders empty Fragment if layout component not found
+ * - Prevents runtime errors for invalid layout types
+ *
+ * Performance Considerations:
+ * - Uses dynamic import pattern for layout components
+ * - Minimal wrapper component with low overhead
+ * - Direct prop passing to layout components
+ */
+
+import type { Section } from '~/types';
+import { supportedLayouts } from '~/components';
+
+/**
+ * Component Props Interface
+ *
+ * @property section - Section configuration object containing:
+ *   - layout: Identifier for the layout component to render
+ *   - id: Optional section identifier for anchoring
+ *   - bg: Background styling option
+ *   - classes: CSS class configuration object
+ *   - components: Component configuration mapping
+ */
+export interface Props {
+  section: Section;
+}
+
+// Destructure section from Astro.props
+const { section } = Astro.props;
+
+// Look up the layout component based on section.layout identifier
+// This enables dynamic rendering of different section types
+const Layout = supportedLayouts[section.layout];
+---
+
+{
+  /*
+    Conditional rendering of the layout component.
+    - Renders the layout component if found in supportedLayouts
+    - Passes all section properties as props to the layout component
+    - Renders empty Fragment as fallback for unsupported layouts
+    - This pattern prevents errors when layout type is invalid
+  */
+  Layout ? <Layout {...section} /> : <Fragment />
+}

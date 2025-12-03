@@ -1,0 +1,140 @@
+---
+/**
+ * LongText.astro
+ *
+ * This component renders a multi-line textarea form field with label and error messaging.
+ * It supports placeholder text, configurable row height, pre-filled values, and validation.
+ * The component integrates with the form validation system and theme-based styling.
+ *
+ * Features:
+ * - Multi-line text input with configurable height
+ * - Support for pre-filled values from cache
+ * - Required field validation with visual indicators
+ * - Dynamic error messaging through FormError component
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ * - Data attributes for test automation
+ *
+ * Props (extends BaseField interface):
+ * - name: Unique identifier for the field (used in form data)
+ * - label (optional): Field label text (passed to FormLabel)
+ * - placeholder (optional): Placeholder text for the textarea
+ * - rows (optional): Number of visible text lines (defaults to 3)
+ * - required (optional): Whether field is required (defaults to false)
+ * - value (optional): Pre-filled text value (from cache)
+ *
+ * Styling Inputs:
+ * - getClasses('Form+LongText'): Retrieves CSS classes for long text elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main wrapper div
+ *   - input: Classes for the textarea element
+ *
+ * Component Integration:
+ * - FormLabel: Renders field label with required indicator
+ * - FormError: Renders error message container for validation errors
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives field configuration through Astro.props
+ * 2. Applies pre-filled value from cache to textarea content
+ * 3. Integrates with form validation through FormError component
+ * 4. Associates with FormLabel for proper accessibility
+ *
+ * Accessibility:
+ * - Proper "for" attribute linking between label and textarea
+ * - Unique ID matching name attribute
+ * - Semantic HTML structure with div container
+ * - Required attribute for validation
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Used by Form component for multi-line text input fields
+ * - Integrated with form validation and submission system
+ * - Values are submitted as multi-line text strings
+ */
+
+import type { BaseField } from '~/types';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending BaseField
+ *
+ * @property placeholder - Placeholder text for the textarea
+ * @property rows - Number of visible text lines (defaults to 3)
+ */
+export interface Props extends BaseField {
+  placeholder?: string;
+  rows?: number;
+}
+
+// Destructure props with defaults
+const { name, label = '', placeholder = '', rows = 3, required = false, value = undefined } = Astro.props;
+
+// Retrieve CSS classes for long text elements from theme configuration
+const classes = getClasses('Form+LongText');
+---
+
+{
+  /*
+    Main container div for the long text field.
+    - Provides wrapper for label, textarea, and error message
+    - Uses theme-based styling through classes.container
+    - Includes data-name attribute for test automation
+  */
+}
+<div class={classes.container} data-name="form-long-text-container">
+  {
+    /*
+      Form label associated with the textarea.
+      - Uses FormLabel component for consistent labeling
+      - Shows required indicator when required=true
+      - Associated with textarea via matching name/id
+    */
+  }
+  <FormLabel name={name} label={label} required={required} />
+
+  {
+    /*
+      Textarea element for multi-line text entry.
+      - Name and ID match for proper form association
+      - data-field-name for JavaScript targeting
+      - Configurable number of rows for height control
+      - Placeholder text for user guidance
+      - Pre-filled value from cache when available
+      - Uses theme-based styling through classes.input
+      - Required attribute when field is required
+      - Includes data-name attribute for test automation
+    */
+  }
+  <textarea
+    name={name}
+    id={name}
+    data-field-name={name}
+    rows={rows}
+    placeholder={placeholder}
+    class={classes.input}
+    {...required ? { required: 'true' } : {}}
+    data-name="form-long-text-input"
+  >
+    {
+      /*
+        Text content for textarea.
+        - Uses pre-filled value from cache when available
+        - Defaults to empty string when no value provided
+      */
+      value ? value : ''
+    }
+  </textarea>
+
+  {
+    /*
+      Error message container for validation errors.
+      - Uses FormError component for consistent error display
+      - ID matches aria-describedby reference in parent form
+      - Content populated dynamically via JavaScript
+    */
+  }
+  <FormError id={`${name}-error`} />
+</div>

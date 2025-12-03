@@ -1,0 +1,179 @@
+---
+/**
+ * Button.astro
+ *
+ * This component renders either a button or anchor element with configurable styling
+ * variants, icons, and content. It provides a consistent interface for interactive
+ * elements across the site with support for both form submission and navigation.
+ *
+ * Features:
+ * - Multiple styling variants (primary, secondary, tertiary, link)
+ * - Optional icon support with Astro icon integration
+ * - Dual rendering modes (button element or anchor element)
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper attributes
+ * - Data attributes for test automation
+ *
+ * Props (CallToAction interface):
+ * - variant: Button style variant ('primary', 'secondary', 'tertiary', 'link')
+ *   Defaults to 'secondary'
+ * - target: Link target attribute for anchor elements (_blank, _self, etc.)
+ * - text: Button display text content (can be passed via slot or prop)
+ * - icon: Optional icon identifier for Astro icon component
+ * - class: Additional CSS classes to merge with variant classes
+ * - type: Button type attribute ('button', 'submit', 'reset') - determines element type
+ * - value: Button value attribute for form submission
+ * - href: URL for anchor elements (when type is not specified)
+ * - All other HTML attributes are spread to the element
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Button'): Retrieves CSS classes for button elements
+ *   from the theme's style configuration:
+ *   - primary: Classes for primary button variant
+ *   - secondary: Classes for secondary button variant
+ *   - tertiary: Classes for tertiary button variant
+ *   - link: Classes for link-style button variant
+ *   - icon: Classes for Icon component within buttons
+ *
+ * Component Integration:
+ * - Icon: Astro icon component for visual indicators
+ * - twMerge: Utility for combining Tailwind classes with theme classes
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives button configuration through Astro.props
+ * 2. Determines element type based on presence of type prop
+ * 3. Applies appropriate variant styling through classes lookup
+ * 4. Conditionally renders icon when specified
+ * 5. Uses set:html for safe HTML content rendering in text
+ *
+ * Element Types:
+ * - Button element: Rendered when type prop is 'button', 'submit', or 'reset'
+ *   - Includes type, name, and value attributes
+ *   - Used for form interactions and JavaScript actions
+ * - Anchor element: Rendered when type prop is not specified
+ *   - Includes href attribute from props
+ *   - target and rel attributes when target is specified
+ *   - Used for navigation links
+ *
+ * Accessibility:
+ * - Proper element selection based on usage context
+ * - rel="noopener noreferrer" for security with target="_blank"
+ * - Data attributes for test automation with variant-specific naming
+ *
+ * Usage Context:
+ * - Call-to-action buttons in Hero, Content, and other widget components
+ * - Form submission buttons in form fields
+ * - Navigation links styled as buttons
+ * - Interactive elements requiring consistent styling
+ */
+
+import type { CallToAction as Props } from '~/types';
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+import { getClasses } from '~/utils/theme';
+
+// Destructure props with defaults and slot content rendering
+const {
+  // Button variant with default to 'secondary'
+  variant = 'secondary',
+
+  // Link target attribute for anchor elements
+  target,
+
+  // Button display text content (rendered from default slot if not provided)
+  text = await Astro.slots.render('default'),
+
+  // Optional icon identifier for Astro icon component
+  icon = '',
+
+  // Additional CSS classes to merge with variant classes
+  class: className = '',
+
+  // Button type attribute that determines element type
+  type,
+
+  // Button value attribute for form submission
+  value = undefined,
+
+  // Spread rest of props to element
+  ...rest
+} = Astro.props;
+
+// Retrieve CSS classes for button elements from theme configuration
+const classes = getClasses('Component+Button');
+
+// Define variant class mappings for consistent styling
+const variants = {
+  primary: classes.primary,
+  secondary: classes.secondary,
+  tertiary: classes.tertiary,
+  link: classes.link,
+};
+---
+
+{
+  /*
+    Conditional rendering based on button type to determine element type.
+    - Button element: When type is 'button', 'submit', or 'reset'
+    - Anchor element: When type is not specified (for links)
+  */
+  type === 'button' || type === 'submit' || type === 'reset' ? (
+    /*
+      Button element for form interactions and JavaScript actions.
+      - Uses specified type attribute
+      - Applies variant styling merged with additional classes
+      - Includes name and value attributes for form submission
+      - Data attribute for test automation with variant-specific naming
+      - Spreads remaining props to element
+    */
+    <button
+      type={type}
+      class={twMerge(variants[variant] || '', className)}
+      name={type}
+      value={value}
+      data-name={`button-variant-${variant}`}
+      {...rest}
+    >
+      {/*
+          Button text content rendered with HTML support.
+          - Uses Fragment with set:html for safe HTML rendering
+        */}
+      <Fragment set:html={text} />
+      {
+        /*
+          Optional icon rendered when icon prop is specified.
+          - Uses Astro Icon component with theme-based styling
+        */
+        icon && <Icon name={icon} class={classes.icon} />
+      }
+    </button>
+  ) : (
+    /*
+      Anchor element for navigation links styled as buttons.
+      - Applies variant styling merged with additional classes
+      - Includes target and rel attributes when target is specified
+      - Data attribute for test automation with variant-specific naming
+      - Spreads remaining props to element
+    */
+    <a
+      class={twMerge(variants[variant] || '', className)}
+      {...(target ? { target: target, rel: 'noopener noreferrer' } : {})}
+      data-name={`button-variant-${variant}`}
+      {...rest}
+    >
+      {/*
+          Link text content rendered with HTML support.
+          - Uses Fragment with set:html for safe HTML rendering
+        */}
+      <Fragment set:html={text} />
+      {
+        /*
+          Optional icon rendered when icon prop is specified.
+          - Uses Astro Icon component with theme-based styling
+        */
+        icon && <Icon name={icon} class={classes.icon} />
+      }
+    </a>
+  )
+}

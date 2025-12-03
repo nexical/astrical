@@ -1,0 +1,334 @@
+# Form Component Specification
+
+definitions:
+  Option:
+    type: object
+    description: Defines an option for fields like 'Select' or 'Checkbox'.
+    properties:
+      name:
+        type: string
+        required: true
+        description: The value of the option.
+      label:
+        type: string
+        description: The display text for the option.
+
+  CheckboxField:
+    type: object
+    description: A checkbox group field.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Checkbox]
+        description: Field type. Must be 'Checkbox'.
+      name:
+        type: string
+        required: true
+        description: Unique name for the field.
+      label:
+        type: string
+        description: Label for the checkbox group.
+      options:
+        type: array
+        description: Array of options for the checkboxes.
+        items:
+          $ref: '#/definitions/Option'
+      required:
+        type: boolean
+        description: Whether at least one checkbox must be selected.
+      error:
+        type: string
+        description: Error message for validation.
+
+  EmailField:
+    type: object
+    description: An email input field.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Email]
+        description: Field type. Must be 'Email'.
+      name:
+        type: string
+        required: true
+        description: Unique name for the field.
+      label:
+        type: string
+        description: Label for the email field.
+      placeholder:
+        type: string
+        description: Placeholder text for the input.
+      autocomplete:
+        type: string
+        enum: ['on', 'off']
+        description: Browser autocomplete behavior.
+      required:
+        type: boolean
+        description: Whether the field is required.
+      error:
+        type: string
+        description: Error message for validation.
+      validator:
+        type: string
+        description: Name of a custom validator function.
+
+  ShortTextField:
+    type: object
+    description: A single-line text input field.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [ShortText]
+        description: Field type. Must be 'ShortText'.
+      name:
+        type: string
+        required: true
+        description: Unique name for the field.
+      label:
+        type: string
+        description: Label for the text field.
+      placeholder:
+        type: string
+        description: Placeholder text for the input.
+      autocomplete:
+        type: string
+        enum: ['on', 'off']
+        description: Browser autocomplete behavior.
+      required:
+        type: boolean
+        description: Whether the field is required.
+      error:
+        type: string
+        description: Error message for validation.
+      validator:
+        type: string
+        description: Name of a custom validator function.
+
+  LongTextField:
+    type: object
+    description: A multi-line textarea field.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [LongText]
+        description: Field type. Must be 'LongText'.
+      name:
+        type: string
+        required: true
+        description: Unique name for the field.
+      label:
+        type: string
+        description: Label for the textarea.
+      placeholder:
+        type: string
+        description: Placeholder text for the textarea.
+      rows:
+        type: integer
+        description: Number of visible text lines.
+      required:
+        type: boolean
+        description: Whether the field is required.
+      error:
+        type: string
+        description: Error message for validation.
+      validator:
+        type: string
+        description: Name of a custom validator function.
+
+  SelectField:
+    type: object
+    description: A dropdown select field.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Select]
+        description: Field type. Must be 'Select'.
+      name:
+        type: string
+        required: true
+        description: Unique name for the field.
+      label:
+        type: string
+        description: Label for the select field.
+      multiple:
+        type: boolean
+        description: Whether multiple options can be selected.
+      options:
+        type: array
+        description: Array of options for the dropdown.
+        items:
+          $ref: '#/definitions/Option'
+      required:
+        type: boolean
+        description: Whether a selection is required.
+      error:
+        type: string
+        description: Error message for validation.
+
+  FileUploadField:
+    type: object
+    description: A file upload field.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [FileUpload]
+        description: Field type. Must be 'FileUpload'.
+      name:
+        type: string
+        required: true
+        description: Unique name for the field.
+      label:
+        type: string
+        description: Label for the file upload field.
+      required:
+        type: boolean
+        description: Whether a file upload is required.
+      multiple:
+        type: boolean
+        description: Whether multiple files can be uploaded.
+      error:
+        type: string
+        description: Error message for validation.
+
+components:
+  Form:
+    type: object
+    description: Renders a dynamic form with configurable fields, validation, and submission handling. It supports various field types, honeypot spam protection, and client-side error handling.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Form]
+        description: Specifies the component type. Must be 'Form'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the main form container.
+      title:
+        type: string
+        description: The main title of the form. Can also be provided via a 'title' slot.
+      subtitle:
+        type: string
+        description: A subtitle displayed below the main title. Can also be provided via a 'subtitle' slot.
+      tagline:
+        type: string
+        description: A smaller line of text displayed above the title.
+      name:
+        type: string
+        required: true
+        description: A unique name for the form, used for submission processing and identification.
+      redirect:
+        type: string
+        description: An optional URL to redirect to after a successful form submission.
+      recipients:
+        type: array
+        description: An array of email addresses to send submission results to.
+        items:
+          type: string
+      fields:
+        type: array
+        required: true
+        description: An array of field objects that define the structure of the form.
+        items:
+          oneOf:
+            - $ref: '#/definitions/CheckboxField'
+            - $ref: '#/definitions/EmailField'
+            - $ref: '#/definitions/ShortTextField'
+            - $ref: '#/definitions/LongTextField'
+            - $ref: '#/definitions/SelectField'
+            - $ref: '#/definitions/FileUploadField'
+      disclaimer:
+        type: string
+        description: Optional HTML content for a disclaimer checkbox label. If provided, a required checkbox will be rendered.
+      buttonText:
+        type: string
+        description: Custom text for the submit button. Defaults to "Submit".
+      note:
+        type: string
+        description: Optional HTML content for an additional note displayed below the submit button.
+      bg:
+        type: string
+        description: An optional URL for a background image for the form container.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: Classes for the TitledWidgetWrapper, which provides the outer container and background support.
+            properties:
+              container:
+                type: string
+                description: Classes for the main section element of the widget wrapper.
+              background:
+                type: string
+                description: Classes for the background image container.
+              overlay:
+                type: string
+                description: Classes for the overlay layer on top of the background.
+              wrapper:
+                type: string
+                description: Classes for the inner content wrapper div.
+          headline:
+            type: object
+            description: Classes for the Headline component, which renders the title, subtitle, and tagline.
+            properties:
+              container:
+                type: string
+                description: Classes for the main headline container div.
+              tagline:
+                type: string
+                description: Classes for the tagline paragraph element.
+              title:
+                type: string
+                description: Classes for the main title (h2) element.
+              subtitle:
+                type: string
+                description: Classes for the subtitle paragraph element.
+          form_container:
+            type: string
+            description: Classes for the div that contains the HTML form element and its contents.
+          error_container:
+            type: string
+            description: Classes for the container that displays form submission errors.
+          error_message:
+            type: string
+            description: Classes for the error message text itself.
+          honeypot_container:
+            type: string
+            description: Classes for the container of the honeypot field used for spam protection.
+          unsupported_field_error:
+            type: string
+            description: Classes for the error message shown when a field type is not supported.
+          disclaimer_container:
+            type: string
+            description: Classes for the container of the disclaimer section.
+          disclaimer_checkbox_container:
+            type: string
+            description: Classes for the wrapper around the disclaimer checkbox.
+          disclaimer_checkbox:
+            type: string
+            description: Classes for the disclaimer checkbox input element.
+          disclaimer_label_container:
+            type: string
+            description: Classes for the wrapper around the disclaimer label.
+          disclaimer_label:
+            type: string
+            description: Classes for the disclaimer label text.
+          submit_button_container:
+            type: string
+            description: Classes for the wrapper around the submit button.
+          note_container:
+            type: string
+            description: Classes for the container of the note section below the submit button.
+          note_text:
+            type: string
+            description: Classes for the note text itself.
+          success_message:
+            type: string
+            description: Classes for the success message displayed after a successful form submission.

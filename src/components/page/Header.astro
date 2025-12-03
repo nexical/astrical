@@ -1,0 +1,407 @@
+---
+/**
+ * Header.astro
+ *
+ * This component renders the site header with logo, navigation menu, and action buttons.
+ * It supports responsive design with mobile menu toggle, dropdown menus, and theme switching.
+ *
+ * Features:
+ * - Responsive navigation with mobile menu toggle
+ * - Dropdown menus for nested navigation items
+ * - Logo display with home link
+ * - Action buttons (e.g., contact, sign up)
+ * - Theme toggle button
+ * - Sticky header option
+ * - Active link detection
+ * - Flexible positioning (left, center, right)
+ *
+ * Props:
+ * - id (optional): HTML id attribute for the header element (default: 'header')
+ * - links: Array of navigation links, each with:
+ *   - text: Link display text
+ *   - href: Link URL
+ *   - links (optional): Array of submenu items for dropdowns
+ * - actions: Array of CallToAction objects for header buttons
+ * - isSticky: Whether header should stick to top when scrolling (default: false)
+ * - isFullWidth: Whether header should span full viewport width (default: false)
+ * - showToggleTheme: Whether to show theme toggle button (default: false)
+ * - position: Navigation alignment - 'left', 'center', or 'right' (default: 'center')
+ *
+ * Styling Inputs:
+ * - getClasses('Page+Header'): Retrieves CSS classes for all header elements
+ *   from the theme's style configuration:
+ *   - header: Main header element
+ *   - header_container: Header content wrapper
+ *   - logo_container: Container for logo and mobile menu toggle
+ *   - logo_link: Link wrapping the logo
+ *   - toggle_menu_container: Container for mobile menu toggle
+ *   - nav: Navigation element
+ *   - nav_list: List of navigation items
+ *   - nav_list_item_dropdown: List item containing dropdown menu
+ *   - dropdown_button: Button to toggle dropdown menu
+ *   - dropdown_icon: Icon for dropdown indicator
+ *   - dropdown_menu: Dropdown menu container
+ *   - dropdown_menu_link: Links within dropdown menu
+ *   - nav_link: Regular navigation links
+ *   - link_active: Active navigation link (current page)
+ *   - actions_container: Container for action buttons
+ *   - actions_inner_container: Inner wrapper for actions
+ *   - toggle_theme_container: Container for theme toggle
+ *   - toggle_theme_icon: Icon within theme toggle button
+ *   - actions_buttons_container: Container for action buttons
+ *   - action_button: Individual action buttons
+ *
+ * Component Integration:
+ * - Logo: Site logo component
+ * - ToggleTheme: Theme switcher component
+ * - ToggleMenu: Mobile menu toggle component
+ * - Button: UI button component for actions
+ * - Icon: Astro icon component for dropdown indicator
+ *
+ * Data Sources:
+ * - Astro.url: Current page URL for active link detection
+ * - getHomePermalink(): Function to get site home URL
+ *
+ * Responsive Behavior:
+ * - Mobile: Hamburger menu toggle, stacked layout
+ * - Desktop: Horizontal navigation, dropdown menus
+ *
+ * Accessibility:
+ * - aria-label on nav element
+ * - Semantic HTML structure
+ * - Proper button types for interactive elements
+ * - Data attributes for test automation
+ *
+ * State Management:
+ * - Uses ToggleMenu component for mobile menu state
+ * - Uses ToggleTheme component for theme switching state
+ * - Active link detection based on current URL path
+ *
+ * Layout Structure:
+ * 1. Header container (sticky/relative positioning)
+ * 2. Inner container with responsive grid/flex layout
+ * 3. Logo section (left-aligned by default)
+ * 4. Navigation menu (centered by default)
+ * 5. Actions section (right-aligned by default)
+ *
+ * CSS Class Application Logic:
+ * - Conditional classes based on props (sticky, position, fullWidth)
+ * - Active link detection with dynamic class assignment
+ * - Responsive utility classes for different screen sizes
+ * - Data attributes for JavaScript interactions and testing
+ */
+
+import type { CallToAction } from '~/types';
+import { Icon } from 'astro-icon/components';
+import Logo from '~/components/Logo.astro';
+import ToggleTheme from '~/components/ui/ToggleTheme.astro';
+import ToggleMenu from '~/components/ui/ToggleMenu.astro';
+import Button from '~/components/ui/Button.astro';
+import { trimSlash, getHomePermalink } from '~/utils/permalinks';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Link interface for navigation items
+ *
+ * @property text - Display text for the link
+ * @property href - URL the link points to
+ * @property ariaLabel - Accessible name for the link
+ * @property icon - Optional icon identifier
+ */
+export interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+}
+
+/**
+ * MenuLink extends Link with nested links for dropdown menus
+ *
+ * @property links - Array of submenu items
+ */
+export interface MenuLink extends Link {
+  links?: Array<MenuLink>;
+}
+
+/**
+ * Component Props Interface
+ *
+ * @property id - HTML id attribute for the header element
+ * @property links - Array of navigation menu items
+ * @property actions - Array of action buttons
+ * @property isSticky - Whether header sticks to top when scrolling
+ * @property isFullWidth - Whether header spans full viewport width
+ * @property showToggleTheme - Whether to show theme toggle button
+ * @property position - Navigation alignment ('left', 'center', 'right')
+ */
+export interface Props {
+  id?: string;
+  links?: Array<MenuLink>;
+  actions?: Array<CallToAction>;
+  isSticky?: boolean;
+  isFullWidth?: boolean;
+  showToggleTheme?: boolean;
+  position?: string;
+}
+
+// Destructure props with default values
+const {
+  id = 'header',
+  links = [],
+  actions = [],
+  isSticky = false,
+  isFullWidth = false,
+  showToggleTheme = false,
+  position = 'center',
+} = Astro.props;
+
+// Get current path for active link detection
+const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+
+// Retrieve CSS classes for header elements from theme configuration
+const classes = getClasses('Page+Header');
+---
+
+{
+  /*
+    Main header element that serves as the container for all header content.
+    - Applies sticky positioning when isSticky prop is true
+    - Uses theme-provided CSS classes for styling
+    - Includes data attributes for JavaScript interactions and testing
+    - Accepts optional id prop for targeting with CSS/JavaScript
+  */
+}
+<header
+  class:list={[{ sticky: isSticky, relative: !isSticky }, classes.header]}
+  {...isSticky ? { 'data-aw-sticky-header': true } : {}}
+  {...id ? { id } : {}}
+  data-name="header"
+>
+  {
+    /*
+      Header container that provides responsive layout structure.
+      - Uses flexbox for non-centered layouts on xl screens
+      - Uses grid for centered layouts on xl screens
+      - Constrains width to max-w-7xl when not full width
+      - Contains three main sections: logo, navigation, and actions
+    */
+  }
+  <div
+    class:list={[
+      classes.header_container,
+      {
+        'xl:flex xl:justify-between': position !== 'center',
+      },
+      {
+        'xl:grid xl:grid-cols-3 xl:items-center': position === 'center',
+      },
+      {
+        'max-w-7xl': !isFullWidth,
+      },
+    ]}
+    data-name="header-container"
+  >
+    {
+      /*
+        Logo container section that holds the site logo and mobile menu toggle.
+        - Adjusts alignment based on position prop (right-aligned moves logo to the right)
+        - Contains home link with site logo
+        - Includes mobile menu toggle button for responsive navigation
+      */
+    }
+    <div
+      class:list={[{ 'mr-auto rtl:mr-0 rtl:ml-auto': position === 'right' }, classes.logo_container]}
+      data-name="header-logo-container"
+    >
+      {
+        /*
+          Home link that wraps the site logo.
+          - Links to site homepage using getHomePermalink utility
+          - Uses theme-provided CSS classes for styling
+          - Contains the Logo component for consistent branding
+        */
+      }
+      <a class={classes.logo_link} href={getHomePermalink()} data-name="header-logo-link">
+        <Logo />
+      </a>
+      {
+        /*
+          Container for the mobile menu toggle button.
+          - Only visible on smaller screens
+          - Contains ToggleMenu component for mobile navigation
+          - Uses theme-provided CSS classes for styling
+        */
+      }
+      <div class={classes.toggle_menu_container} data-name="header-toggle-menu-container">
+        <ToggleMenu />
+      </div>
+    </div>
+
+    {
+      /*
+        Navigation element that contains the main site navigation menu.
+        - Provides semantic navigation structure
+        - Includes aria-label for accessibility
+        - Contains unordered list of navigation items
+        - Supports dropdown menus for nested navigation
+      */
+    }
+    <nav class={classes.nav} aria-label="Main navigation" data-name="header-nav">
+      {
+        /*
+          Unordered list containing all navigation items.
+          - Uses theme-provided CSS classes for styling
+          - Each list item represents a navigation link or dropdown menu
+          - Supports active link detection based on current page
+        */
+      }
+      <ul class={classes.nav_list} data-name="header-nav-list">
+        {
+          /*
+            Map through navigation links to create list items.
+            - Each link can be a simple link or dropdown menu
+            - Dropdown menus show nested links in a submenu
+            - Active link detection applies special styling
+          */
+          links.map(({ text, href, links }) => (
+            /*
+              List item for navigation entry.
+              - Uses special class for dropdown menu items
+              - Contains either a simple link or dropdown menu structure
+            */
+            <li class={links?.length ? classes.nav_list_item_dropdown : ''} data-name="header-nav-list-item-dropdown">
+              {links?.length ? (
+                /*
+                  Dropdown menu structure for nested navigation.
+                  - Button toggles visibility of submenu
+                  - Icon indicates dropdown availability
+                  - Submenu contains nested navigation links
+                */
+                <>
+                  {/*
+                      Button to toggle dropdown menu visibility.
+                      - Uses theme-provided CSS classes for styling
+                      - Contains text and dropdown icon
+                      - Proper button type for accessibility
+                    */}
+                  <button type="button" class={classes.dropdown_button} data-name="header-dropdown-button">
+                    {text}
+                    {/*
+                        Icon indicating dropdown menu availability.
+                        - Uses tabler:chevron-down icon
+                        - Styled with theme-provided CSS classes
+                      */}
+                    <Icon name="tabler:chevron-down" class={classes.dropdown_icon} />
+                  </button>
+                  {/*
+                      Dropdown menu containing nested links.
+                      - Hidden by default, shown when dropdown button is clicked
+                      - Uses theme-provided CSS classes for styling
+                      - Contains list items with navigation links
+                    */}
+                  <ul class={classes.dropdown_menu} data-name="header-dropdown-menu">
+                    {links.map(({ text: text2, href: href2 }) => (
+                      <li>
+                        {/*
+                            Navigation link within dropdown menu.
+                            - Uses theme-provided CSS classes for styling
+                            - Applies active link styling when current page
+                            - Links to nested page URL
+                          */}
+                        <a
+                          class:list={[classes.dropdown_menu_link, { [classes.link_active]: href2 === currentPath }]}
+                          href={href2}
+                          data-name="header-dropdown-menu-link"
+                        >
+                          {text2}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                /*
+                  Simple navigation link for non-dropdown items.
+                  - Uses theme-provided CSS classes for styling
+                  - Applies active link styling when current page
+                  - Links to page URL
+                */
+                <a
+                  class:list={[classes.nav_link, { [classes.link_active]: href === currentPath }]}
+                  href={href}
+                  data-name="header-nav-link"
+                >
+                  {text}
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {
+      /*
+        Actions container section that holds theme toggle and action buttons.
+        - Adjusts alignment based on position prop (left-aligned moves actions to the left)
+        - Contains inner container for layout organization
+        - Includes theme toggle and call-to-action buttons
+      */
+    }
+    <div
+      class:list={[{ 'ml-auto rtl:ml-0 rtl:mr-auto': position === 'left' }, classes.actions_container]}
+      data-name="header-actions-container"
+    >
+      {
+        /*
+          Inner container for action elements.
+          - Provides additional layout control
+          - Contains theme toggle and action buttons
+          - Uses theme-provided CSS classes for styling
+        */
+      }
+      <div class={classes.actions_inner_container} data-name="header-actions-inner-container">
+        {
+          /*
+            Container for theme toggle button.
+            - Conditionally rendered based on showToggleTheme prop
+            - Contains ToggleTheme component for light/dark mode switching
+            - Uses theme-provided CSS classes for styling
+          */
+        }
+        <div class={classes.toggle_theme_container} data-name="header-toggle-theme-container">
+          {showToggleTheme && <ToggleTheme iconClass={classes.toggle_theme_icon} />}
+        </div>
+        {
+          /*
+            Container for action buttons.
+            - Only rendered when actions array has items
+            - Maps through actions to create Button components
+            - Uses theme-provided CSS classes for styling
+          */
+          actions?.length ? (
+            /*
+              Span element containing all action buttons.
+              - Uses theme-provided CSS classes for styling
+              - Contains Button components for each action
+            */
+            <span class={classes.actions_buttons_container} data-name="header-actions-buttons-container">
+              {actions.map((btnProps) => (
+                /*
+                  Individual action button.
+                  - Uses Button component for consistent styling
+                  - Applies theme-provided CSS classes
+                  - Receives props from actions array
+                */
+                <Button {...btnProps} class={classes.action_button} />
+              ))}
+            </span>
+          ) : (
+            ''
+          )
+        }
+      </div>
+    </div>
+  </div>
+</header>

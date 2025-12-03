@@ -1,0 +1,124 @@
+# Steps2 Component Specification
+
+components:
+  Steps2:
+    type: object
+    description: Renders an enhanced step-by-step process widget that displays a sequence of actions or procedures in a two-column layout. It's designed to guide users through processes, workflows, or instructional content with numbered steps and optional icons, presented alongside header content.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Steps2]
+        description: Specifies the component type. Must be 'Steps2'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the widget container.
+      title:
+        type: string
+        description: The main title of the widget. Can also be provided via a 'title' slot.
+      subtitle:
+        type: string
+        description: A subtitle displayed below the main title. Can also be provided via a 'subtitle' slot.
+      tagline:
+        type: string
+        description: A smaller line of text displayed above the title.
+      items:
+        type: array
+        description: An array of 'StepItem' objects, each representing a step in the process.
+        items:
+          $ref: '#/definitions/StepItem'
+      callToAction:
+        description: An optional call-to-action button or custom HTML content to display.
+        oneOf:
+          - type: string
+          - $ref: '#/definitions/CallToAction'
+      isReversed:
+        type: boolean
+        description: If true, reverses the order of the content and image columns.
+      bg:
+        type: string
+        description: An optional URL for a background image for the widget container.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: Classes for the TitledWidgetWrapper, which provides the outer container and background support.
+            properties:
+              container:
+                type: string
+                description: Classes for the main section element of the widget wrapper.
+              background:
+                type: string
+                description: Classes for the background image container.
+              overlay:
+                type: string
+                description: Classes for the overlay layer on top of the background.
+              wrapper:
+                type: string
+                description: Classes for the inner content wrapper div.
+          grid:
+            type: string
+            description: Classes for the main grid layout container.
+          grid_reversed:
+            type: string
+            description: Classes for reversed grid layout.
+          column_1:
+            type: string
+            description: Classes for the first column (headline and CTA).
+          column_1_reversed:
+            type: string
+            description: Classes for first column in reversed layout.
+          column_1_normal:
+            type: string
+            description: Classes for first column in normal layout.
+          column_2:
+            type: string
+            description: Classes for the second column (steps list).
+          headline:
+            type: object
+            description: Classes for the Headline component, which renders the title, subtitle, and tagline.
+            properties:
+              container:
+                type: string
+                description: Classes for the main headline container div.
+              tagline:
+                type: string
+                description: Classes for the tagline paragraph element.
+              title:
+                type: string
+                description: Classes for the main title (h2) element.
+              subtitle:
+                type: string
+                description: Classes for the subtitle paragraph element.
+          action_container:
+            type: string
+            description: Classes for call-to-action container.
+          action_button:
+            type: string
+            description: Classes for call-to-action Button component.
+          items_list:
+            type: string
+            description: Classes for the steps list container (ul element).
+          item:
+            type: string
+            description: Classes for individual step list items (li elements).
+          item_icon_container:
+            type: string
+            description: Classes for step icon number containers.
+          item_icon:
+            type: string
+            description: Classes for step icon/number elements.
+          icon:
+            type: string
+            description: Classes for Icon components.
+          item_content:
+            type: string
+            description: Classes for step content containers.
+          item_title:
+            type: string
+            description: Classes for step title headings (h3 elements).
+          item_description:
+            type: string
+            description: Classes for step description paragraphs.

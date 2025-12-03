@@ -1,0 +1,104 @@
+---
+/**
+ * Header.astro
+ *
+ * This section component renders a header section with a main content area.
+ * It serves as a structured container that can hold various components like
+ * titles, subtitles, and other header-specific elements.
+ *
+ * Features:
+ * - Section wrapper with optional background and ID
+ * - Main content area for header components
+ * - Themeable styling through CSS classes
+ * - Dynamic component generation from configuration
+ *
+ * Props (inherited from Section interface):
+ * - id (optional): Section identifier for anchoring
+ * - components: Object mapping component areas to component configurations
+ *   - main: Array of component configurations for the main content area
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ * - layout: Layout type identifier (inherited, but not used directly here)
+ *
+ * Component Structure:
+ * - SectionWrapper: Outer container with background and ID support
+ * - Main content area: Container for dynamically generated components
+ *
+ * Styling Inputs:
+ * - getClasses('Section+Header'): Retrieves CSS classes for section elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the SectionWrapper container
+ *   - main: Classes for the main content area div
+ *
+ * Data Flow:
+ * 1. Receives section configuration through Astro.props
+ * 2. Extracts id, components, classes, and bg properties
+ * 3. Retrieves theme-based CSS classes
+ * 4. Generates components for the main area
+ * 5. Renders SectionWrapper with main content area
+ *
+ * Component Generation:
+ * - generateSection: Utility function that processes component configurations
+ * - components.main: Array of component configurations for main content area
+ * - Maps through configurations to create component instances
+ *
+ * Integration Points:
+ * - SectionWrapper: Provides consistent section structure
+ * - generateSection: Handles component instantiation from configuration
+ * - getClasses: Manages theme-based styling
+ *
+ * Accessibility:
+ * - data-name attributes for test automation
+ * - Semantic HTML structure through SectionWrapper
+ */
+
+import type { Section as Props } from '~/types';
+import SectionWrapper from '~/components/ui/SectionWrapper.astro';
+import { generateSection } from '~/utils/generator';
+import { getClasses } from '~/utils/theme';
+
+// Destructure section properties from Astro.props with defaults
+const { id, components, classes: rawClasses = {}, bg = '' } = Astro.props;
+
+// Retrieve CSS classes for section elements from theme configuration
+// Merges rawClasses (from section config) with theme defaults
+const classes = getClasses('Section+Header', rawClasses);
+---
+
+{
+  /*
+    Section wrapper that provides consistent outer container structure.
+    - Accepts id for section anchoring
+    - Applies background styling through bg prop
+    - Uses theme-provided wrapper classes
+    - Sets type to "header" for semantic identification
+  */
+}
+<SectionWrapper type="header" id={id} classes={classes.wrapper} bg={bg}>
+  {
+    /*
+      Main content area container for header components.
+      - Uses theme-provided CSS classes for styling
+      - Contains dynamically generated components
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div class={classes.main} data-name="section-header-main">
+    {
+      /*
+        Map through main component configurations and render components.
+        - generateSection processes component configurations
+        - components?.main provides array of component configurations
+        - Each component is rendered with its props
+      */
+      generateSection(components?.main).map(({ component: Component, props }) => (
+        /*
+          Individual component instance rendered with its props.
+          - Component is dynamically selected based on configuration
+          - Props are passed through from configuration
+        */
+        <Component {...props} />
+      ))
+    }
+  </div>
+</SectionWrapper>

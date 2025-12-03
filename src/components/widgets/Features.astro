@@ -1,0 +1,144 @@
+---
+/**
+ * Features.astro
+ *
+ * This component renders a features widget that displays a collection of feature items
+ * in a responsive grid layout. It's designed to showcase product capabilities, services,
+ * or key benefits with optional icons for visual enhancement.
+ *
+ * Features:
+ * - Titled widget structure with optional title, subtitle, and tagline
+ * - Responsive grid layout for feature items
+ * - Support for configurable number of columns
+ * - Optional default icon for feature items
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ *
+ * Props (extends TitledWidget interface):
+ * - id (optional): HTML id attribute for the widget container
+ * - title (optional): Widget title (can be passed via slot or prop)
+ * - subtitle (optional): Widget subtitle (can be passed via slot or prop)
+ * - tagline (optional): Widget tagline (can be passed via slot or prop)
+ * - items: Array of Item objects representing feature items
+ *   - Item.title: Feature title text
+ *   - Item.description: Feature description text
+ *   - Item.icon (optional): Icon identifier for the feature
+ * - columns: Number of columns for item grid layout (defaults to 2)
+ * - defaultIcon: Default icon identifier for items without icons
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ *
+ * Item Structure:
+ * - title: Feature title text
+ * - description: Feature description text
+ * - icon: Optional icon identifier (uses defaultIcon if not provided)
+ * - classes: Additional CSS classes for the item
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Features'): Retrieves CSS classes for feature elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the TitledWidgetWrapper container
+ *   - headline: Classes for the TitledWidgetWrapper container
+ *   - items: Object containing classes for ItemGrid items
+ *
+ * Component Integration:
+ * - TitledWidgetWrapper: Provides consistent titled widget structure
+ * - ItemGrid: Component for rendering feature items in grid layout
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives feature configuration through Astro.props
+ * 2. Renders feature items through ItemGrid component
+ * 3. Wraps content in TitledWidgetWrapper for consistent structure
+ * 4. Applies theme-based styling through getClasses utility
+ *
+ * Layout Structure:
+ * - TitledWidgetWrapper provides outer container with title/subtitle
+ * - ItemGrid renders feature items in configurable column layout
+ * - Items display as title/description pairs with optional icons
+ *
+ * Responsive Behavior:
+ * - Grid layout adapts to screen size based on columns prop
+ * - Flexible column count for different device sizes
+ *
+ * Accessibility:
+ * - Semantic HTML structure through TitledWidgetWrapper
+ * - Proper heading hierarchy for feature titles
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Showcase product features and capabilities
+ * - Present service offerings with descriptions
+ * - Highlight key benefits in marketing pages
+ * - Integrated in page sections as a feature-focused component
+ */
+
+import type { TitledWidget, Item } from '~/types';
+import TitledWidgetWrapper from '~/components/ui/TitledWidgetWrapper.astro';
+import ItemGrid from '~/components/ui/ItemGrid.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending TitledWidget
+ *
+ * @property items - Array of Item objects representing feature items
+ * @property columns - Number of columns for item grid layout (defaults to 2)
+ * @property defaultIcon - Default icon identifier for items without icons
+ */
+export interface Props extends TitledWidget {
+  items?: Array<Item>;
+  columns?: number;
+  defaultIcon?: string;
+}
+
+// Destructure props with defaults and slot content rendering
+const {
+  id,
+
+  // Render slot content for title, subtitle, and tagline if not provided as props
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+
+  // Feature items and layout configuration with defaults
+  items = [],
+  columns = 2,
+  defaultIcon,
+
+  // Styling and background options with defaults
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Retrieve CSS classes for feature elements from theme configuration
+const classes = getClasses('Component+Features', rawClasses);
+---
+
+{
+  /*
+    TitledWidgetWrapper provides consistent structure for titled components.
+    - Renders title, subtitle, and tagline content
+    - Applies theme-based styling through classes.wrapper and classes.headline
+    - Supports background styling through bg prop
+    - Sets type to "features" for semantic identification
+  */
+}
+<TitledWidgetWrapper
+  type="features"
+  id={id}
+  classes={classes}
+  bg={bg}
+  title={title}
+  subtitle={subtitle}
+  tagline={tagline}
+>
+  {
+    /*
+      ItemGrid component renders feature items in configurable grid layout.
+      - Displays items in specified number of columns
+      - Uses provided defaultIcon or theme default for items
+      - Applies theme-based styling to items through classes.items
+    */
+  }
+  <ItemGrid items={items} columns={columns} defaultIcon={defaultIcon} classes={classes.items} />
+</TitledWidgetWrapper>

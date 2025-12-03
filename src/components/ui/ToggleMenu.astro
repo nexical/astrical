@@ -1,0 +1,137 @@
+---
+/**
+ * ToggleMenu.astro
+ *
+ * This component renders a mobile menu toggle button that controls the visibility
+ * of navigation menus on smaller screens. It uses a hamburger-style icon that
+ * transforms into an X when activated, providing visual feedback for the menu state.
+ *
+ * Features:
+ * - Mobile-friendly menu toggle button
+ * - Hamburger-to-X icon animation
+ * - Accessible with proper ARIA attributes
+ * - Themeable styling through CSS classes
+ * - Customizable label for accessibility
+ * - Data attributes for JavaScript interactions
+ *
+ * Props:
+ * - label: Accessible label for the toggle button (defaults to 'Toggle Menu')
+ * - class: Additional CSS classes to override default styling
+ *
+ * Styling Inputs:
+ * - getClasses('Component+ToggleMenu'): Retrieves CSS classes for toggle menu elements
+ *   from the theme's style configuration:
+ *   - button_default: Default classes for the button element
+ *   - label: Classes for the visible label text span
+ *   - span_1: Classes for the first hamburger line (top)
+ *   - span_2: Classes for the second hamburger line (middle)
+ *   - span_3: Classes for the third hamburger line (bottom)
+ *
+ * Component Integration:
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives optional label and class props
+ * 2. Applies default label 'Toggle Menu' if not provided
+ * 3. Uses theme default button classes unless overridden
+ * 4. Renders button with hamburger icon spans
+ * 5. Includes data attributes for JavaScript menu control
+ *
+ * Layout Structure:
+ * - button element as the main toggle container
+ * - Visible label text (optional)
+ * - Three span elements forming the hamburger icon
+ *
+ * Accessibility:
+ * - aria-label attribute for screen readers
+ * - aria-hidden on icon spans (decorative)
+ * - Proper button type for semantic meaning
+ * - Data attributes for test automation
+ *
+ * JavaScript Integration:
+ * - data-aw-toggle-menu attribute for menu control scripts
+ * - Button click handler managed by external JavaScript
+ *
+ * Usage Context:
+ * - Mobile navigation menu toggle in Header component
+ * - Responsive design hamburger menu control
+ * - Any context requiring mobile menu visibility toggle
+ */
+
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface
+ *
+ * @property label - Accessible label for the toggle button
+ * @property class - Additional CSS classes to override default styling
+ */
+export interface Props {
+  label?: string;
+  class?: string;
+}
+
+// Retrieve CSS classes for toggle menu elements from theme configuration
+const classes = getClasses('Component+ToggleMenu');
+
+// Destructure props with defaults
+const { label = 'Toggle Menu', class: className = classes.button_default } = Astro.props;
+---
+
+{
+  /*
+    Toggle button element that controls mobile menu visibility.
+    - Uses button type for proper semantic meaning
+    - Applies custom or default CSS classes
+    - Includes aria-label for accessibility
+    - data-aw-toggle-menu attribute for JavaScript control
+    - data-name attribute for test automation
+  */
+}
+<button type="button" class={className} aria-label={label} data-aw-toggle-menu data-name="toggle-menu-button">
+  {
+    /*
+      Visible label text span (typically hidden visually but available for screen readers).
+      - Contains the accessible label text
+      - Styled with classes.label from theme configuration
+      - data-name attribute for test automation
+    */
+  }
+  <span class={classes.label} data-name="toggle-menu-label">{label}</span>
+  {
+    /*
+      Slot for custom icon content (falls back to default hamburger spans).
+      - Allows customization of the toggle icon
+      - Contains three spans by default for hamburger animation
+    */
+  }
+  <slot>
+    {
+      /*
+        First hamburger line (top) - decorative element.
+        - aria-hidden since it's visual only
+        - Styled with classes.span_1 from theme configuration
+        - data-name attribute for test automation
+      */
+    }
+    <span aria-hidden="true" class={classes.span_1} data-name="toggle-menu-span-1"></span>
+    {
+      /*
+        Second hamburger line (middle) - decorative element.
+        - aria-hidden since it's visual only
+        - Styled with classes.span_2 from theme configuration
+        - data-name attribute for test automation
+      */
+    }
+    <span aria-hidden="true" class={classes.span_2} data-name="toggle-menu-span-2"></span>
+    {
+      /*
+        Third hamburger line (bottom) - decorative element.
+        - aria-hidden since it's visual only
+        - Styled with classes.span_3 from theme configuration
+        - data-name attribute for test automation
+      */
+    }
+    <span aria-hidden="true" class={classes.span_3} data-name="toggle-menu-span-3"></span>
+  </slot>
+</button>

@@ -1,0 +1,80 @@
+---
+/**
+ * MarkdownLayout.astro
+ *
+ * This layout component is specifically designed for rendering markdown content pages.
+ * It provides a structured container with title and content areas, and wraps the
+ * content in the main PageLayout for consistent site-wide structure.
+ *
+ * Features:
+ * - Renders markdown frontmatter title in an H1 tag
+ * - Provides structured content container with themeable styling
+ * - Wraps content in PageLayout for consistent site structure
+ * - Supports theme-based CSS class customization
+ *
+ * Props:
+ * - frontmatter: Object containing markdown frontmatter data
+ *   - title (optional): The page title to display
+ *
+ * Styling Inputs:
+ * - getClasses('Layout+Markdown'): Retrieves CSS classes for container, title,
+ *   and content elements from the theme's style configuration
+ *   - container: Classes for the main section container
+ *   - title: Classes for the H1 title element
+ *   - content: Classes for the content div wrapper
+ *
+ * Data Flow:
+ * 1. Receives frontmatter with title data
+ * 2. Creates metadata object with title for SEO
+ * 3. Retrieves theme-based CSS classes
+ * 4. Renders content within PageLayout structure
+ * 5. Displays title in H1 and markdown content in styled container
+ *
+ * Theme Integration:
+ * - Uses UI.theme setting to determine styling
+ * - CSS classes are resolved through getClasses utility
+ * - Follows theme configuration patterns established in BaseLayout
+ */
+
+import type { MetaData } from '~/types';
+import Layout from '~/layouts/PageLayout.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface
+ *
+ * @property frontmatter - Markdown frontmatter object containing:
+ *   - title: Optional page title to display as H1 heading
+ */
+export interface Props {
+  frontmatter: {
+    title?: string;
+  };
+}
+
+// Destructure frontmatter from Astro.props
+const { frontmatter } = Astro.props;
+
+// Create metadata object for SEO with title from frontmatter
+const metadata: MetaData = {
+  title: frontmatter?.title,
+};
+
+// Retrieve CSS classes for markdown layout elements from theme configuration
+// These classes enable theme-specific styling of the markdown content container
+const classes = getClasses('Layout+Markdown');
+---
+
+<Layout metadata={metadata}>
+  {/* Main content section with themeable container */}
+  <section class={classes.container} data-name="layout-container">
+    {/* Display frontmatter title as H1 heading */}
+    <h1 class={classes.title} data-name="layout-title">{frontmatter.title}</h1>
+
+    {/* Wrapper div for markdown content with themeable styling */}
+    <div class={classes.content} data-name="layout-content">
+      {/* Markdown content is rendered here */}
+      <slot />
+    </div>
+  </section>
+</Layout>

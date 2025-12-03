@@ -1,0 +1,329 @@
+---
+/**
+ * Hero.astro
+ *
+ * This component renders a prominent hero widget that serves as the main focal point
+ * for a page. It typically displays a compelling headline, supporting content, call-to-action
+ * buttons, and a featured image. The hero section is designed to immediately capture
+ * user attention and communicate the primary value proposition.
+ *
+ * Features:
+ * - Prominent widget structure with optional title, subtitle, and tagline
+ * - Support for rich content and multiple call-to-action options
+ * - Flexible image handling (HTML content or responsive image)
+ * - Responsive layout that adapts to different screen sizes
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ *
+ * Props (extends TitledWidget interface):
+ * - id (optional): HTML id attribute for the widget container
+ * - title (optional): Main headline text (can be passed via slot or prop)
+ * - subtitle (optional): Supporting text below title (can be passed via slot or prop)
+ * - tagline (optional): Smaller text above title (can be passed via slot or prop)
+ * - content (optional): Additional HTML content below subtitle
+ * - actions: Either a string of HTML content or array of CallToAction objects
+ *   - When array: Each object configures a Button component
+ *   - When string: Rendered as raw HTML content
+ * - image (optional): Either HTML string or ImageMedia object for visual content
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ *
+ * CallToAction Structure:
+ * - variant: Button style variant ('primary', 'secondary', 'tertiary', 'link')
+ * - text: Button display text
+ * - icon: Optional icon identifier
+ * - href: URL for link buttons
+ * - type: Button type ('button', 'submit', 'reset')
+ * - value: Button value attribute
+ * - classes: Additional CSS classes for the button
+ *
+ * ImageMedia Structure:
+ * - src: Image source (string path or ImageMetadata object)
+ * - alt (optional): Alternative text for the image
+ * - href (optional): Link URL for the image
+ * - target (optional): Link target attribute (_blank, _self, etc.)
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Hero'): Retrieves CSS classes for hero elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the WidgetWrapper container
+ *   - container: Classes for the main hero content container
+ *   - headline.container: Classes for the headline section container
+ *   - headline.tagline: Classes for the tagline text element
+ *   - headline.title: Classes for the main title heading
+ *   - subtitle_container: Classes for the subtitle/actions container
+ *   - headline.subtitle: Classes for the subtitle text element
+ *   - actions_container: Classes for the actions wrapper div
+ *   - action_item: Classes for individual action button wrappers
+ *   - action_button: Classes for Button component instances
+ *   - content_wrapper: Classes for additional content container
+ *   - image_container: Classes for image wrapper container
+ *   - image: Classes for Image component
+ *
+ * Component Integration:
+ * - WidgetWrapper: Provides consistent widget structure
+ * - Image: Custom image component for responsive images with link support
+ * - Button: UI button component for action buttons
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives hero configuration through Astro.props
+ * 2. Renders headline content in hierarchical order (tagline, title, subtitle)
+ * 3. Conditionally displays actions, content, and image sections
+ * 4. Wraps content in WidgetWrapper for consistent structure
+ * 5. Applies theme-based styling through getClasses utility
+ *
+ * Layout Structure:
+ * - WidgetWrapper provides outer container with background styling
+ * - Main container holds headline and image sections
+ * - Headline section contains tagline, title, subtitle, actions, and content
+ * - Image section displays visual content opposite the headline
+ *
+ * Responsive Behavior:
+ * - Flexible layout that adapts to screen size
+ * - Image uses responsive sizing with multiple breakpoints
+ * - Content sections stack vertically on mobile
+ *
+ * Accessibility:
+ * - Semantic HTML structure through WidgetWrapper
+ * - Proper heading hierarchy (h1 for main title)
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Primary page entrance point above the fold
+ * - Communicate main value proposition immediately
+ * - Drive user engagement through prominent CTAs
+ * - Integrated as the first section in marketing pages
+ */
+
+import type { TitledWidget, CallToAction, ImageMedia } from '~/types';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Image from '~/components/ui/Image.astro';
+import Button from '~/components/ui/Button.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending TitledWidget
+ *
+ * @property content - Additional HTML content below subtitle
+ * @property actions - Either HTML string content or array of CallToAction objects
+ * @property image - Either HTML string or ImageMedia object for visual content
+ */
+export interface Props extends TitledWidget {
+  content?: string;
+  actions?: string | CallToAction[];
+  image?: string | ImageMedia;
+}
+
+// Destructure props with defaults and slot content rendering
+const {
+  id,
+
+  // Render slot content for title, subtitle, and tagline if not provided as props
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+
+  // Render slot content for content, actions, and image if not provided as props
+  content = await Astro.slots.render('content'),
+  actions = await Astro.slots.render('actions'),
+  image = await Astro.slots.render('image'),
+
+  // Styling and background options with defaults
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Retrieve CSS classes for hero elements from theme configuration
+const classes = getClasses('Component+Hero', rawClasses);
+---
+
+{
+  /*
+    WidgetWrapper provides consistent structure for widget components.
+    - Applies theme-based styling through classes.wrapper
+    - Supports background styling through bg prop
+    - Sets type to "hero" for semantic identification
+  */
+}
+<WidgetWrapper type="hero" id={id} classes={classes.wrapper} bg={bg}>
+  {
+    /*
+      Main container for hero content with theme-based styling.
+      - Contains headline and image sections in a flexible layout
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div class={classes.container} data-name="hero-container">
+    {
+      /*
+        Headline section container with theme-based styling.
+        - Contains tagline, title, subtitle, actions, and additional content
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div class={classes.headline.container} data-name="hero-headline-container">
+      {
+        /*
+          Tagline element rendered when tagline content exists.
+          - Uses set:html to render HTML content safely
+          - Styled with classes.headline.tagline
+          - Includes data-name attribute for test automation
+        */
+        tagline && <p class={classes.headline.tagline} set:html={tagline} data-name="hero-headline-tagline" />
+      }
+
+      {
+        /*
+          Main title heading rendered when title content exists.
+          - Uses h1 for proper heading hierarchy
+          - Uses set:html to render HTML content safely
+          - Styled with classes.headline.title
+          - Includes data-name attribute for test automation
+        */
+        title && <h1 class={classes.headline.title} set:html={title} data-name="hero-headline-title" />
+      }
+
+      {
+        /*
+          Subtitle container that holds subtitle text and action buttons.
+          - Provides layout context for subtitle and actions
+          - Includes data-name attribute for test automation
+        */
+      }
+      <div class={classes.subtitle_container} data-name="hero-subtitle-container">
+        {
+          /*
+            Subtitle element rendered when subtitle content exists.
+            - Uses set:html to render HTML content safely
+            - Styled with classes.headline.subtitle
+            - Includes data-name attribute for test automation
+          */
+          subtitle && <p class={classes.headline.subtitle} set:html={subtitle} data-name="hero-headline-subtitle" />
+        }
+
+        {
+          /*
+            Actions section rendered when actions data exists.
+            - Supports both array of buttons and HTML content
+            - Includes data-name attribute for test automation
+          */
+          actions && (
+            /*
+              Actions container with theme-based styling.
+              - Provides layout context for action buttons
+              - Includes data-name attribute for test automation
+            */
+            <div class={classes.actions_container} data-name="hero-actions-container">
+              {
+                /*
+                  Conditional rendering based on actions data type.
+                  - Array: Render Button components for each action
+                  - String: Render raw HTML content
+                */
+                Array.isArray(actions) ? (
+                  /*
+                    Map through actions array to render Button components.
+                    - Each action configures a Button instance
+                    - Wrapped in individual action containers
+                  */
+                  actions.map((action) => (
+                    /*
+                      Individual action wrapper with theme-based styling.
+                      - Provides consistent spacing for buttons
+                      - Includes data-name attribute for test automation
+                    */
+                    <div class={classes.action_item} data-name="hero-action-item">
+                      {/*
+                          Button component configured with action properties.
+                          - Uses spread operator to pass all action props
+                          - Applies theme-based styling through classes.action_button
+                        */}
+                      <Button {...(action || {})} class={classes.action_button} />
+                    </div>
+                  ))
+                ) : (
+                  /*
+                    Render raw HTML content when actions is a string.
+                    - Uses Fragment with set:html for safe HTML rendering
+                  */
+                  <Fragment set:html={actions} />
+                )
+              }
+            </div>
+          )
+        }
+      </div>
+
+      {
+        /*
+          Additional content section rendered when content exists.
+          - Uses Fragment with set:html for safe HTML rendering
+          - Wrapped in content wrapper with theme-based styling
+          - Includes data-name attribute for test automation
+        */
+        content && (
+          <div class={classes.content_wrapper} data-name="hero-content-wrapper">
+            <Fragment set:html={content} />
+          </div>
+        )
+      }
+    </div>
+
+    {
+      /*
+        Image section container for visual content.
+        - Provides layout context for image or HTML content
+      */
+    }
+    <div>
+      {
+        /*
+          Image section rendered when image data exists.
+          - Supports both HTML content and ImageMedia objects
+          - Includes data-name attribute for test automation
+        */
+        image && (
+          /*
+            Image container with theme-based styling.
+            - Provides consistent sizing and positioning
+            - Includes data-name attribute for test automation
+          */
+          <div class={classes.image_container} data-name="hero-image-container">
+            {
+              /*
+                Conditional rendering based on image data type.
+                - String: Render raw HTML content
+                - Object: Render Image component with responsive features
+              */
+              typeof image === 'string' ? (
+                /*
+                  Render raw HTML content when image is a string.
+                  - Uses Fragment with set:html for safe HTML rendering
+                */
+                <Fragment set:html={image} />
+              ) : (
+                /*
+                  Render Image component when image is an ImageMedia object.
+                  - Provides responsive image optimization with multiple breakpoints
+                  - Eager loading for immediate display
+                  - Fixed dimensions with responsive layout
+                  - Applies theme-based styling through classes.image
+                */
+                <Image
+                  class={classes.image}
+                  widths={[400, 768, 1024, 2040]}
+                  sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
+                  loading="eager"
+                  width={1024}
+                  height={576}
+                  {...image}
+                />
+              )
+            }
+          </div>
+        )
+      }
+    </div>
+  </div>
+</WidgetWrapper>

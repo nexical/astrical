@@ -1,0 +1,152 @@
+---
+/**
+ * Analytics.astro
+ *
+ * This component integrates multiple analytics services into the site including
+ * Google Analytics, Google Tag Manager, and Facebook Pixel. It dynamically
+ * injects the appropriate tracking scripts based on the site configuration.
+ *
+ * Features:
+ * - Google Analytics integration via @astrolib/analytics
+ * - Google Tag Manager script injection with data layer setup
+ * - Facebook Pixel script injection with page view tracking
+ * - Conditional rendering based on analytics configuration
+ * - Automatic ID sanitization for security
+ * - Themeable through site configuration
+ *
+ * Configuration Dependencies:
+ * - ANALYTICS: Site configuration object containing vendor IDs
+ *   - vendors.googleAnalytics.id: Google Analytics measurement ID
+ *   - vendors.googleTagManager.id: Google Tag Manager container ID
+ *   - vendors.facebook.id: Facebook Pixel ID
+ *
+ * Component Integration:
+ * - GoogleAnalytics: @astrolib/analytics component for GA4 integration
+ * - Fragment: For injecting raw HTML script snippets
+ *
+ * Data Flow:
+ * 1. Extracts analytics IDs from site configuration
+ * 2. Converts IDs to strings for script injection
+ * 3. Generates script snippets for GTM and Facebook Pixel
+ * 4. Conditionally renders analytics scripts based on configuration
+ *
+ * Security Considerations:
+ * - JSON.stringify used to sanitize IDs before script injection
+ * - Script snippets use proper escaping to prevent XSS
+ *
+ * Usage Context:
+ * - Included in BaseLayout for site-wide analytics tracking
+ * - Renders in document head for early script loading
+ * - Supports multiple concurrent analytics platforms
+ */
+
+import { GoogleAnalytics } from '@astrolib/analytics';
+import { ANALYTICS } from 'site:config';
+
+// Extract and sanitize Google Analytics ID from configuration
+const googleAnalyticsId = ANALYTICS?.vendors?.googleAnalytics?.id ? String(ANALYTICS.vendors.googleAnalytics.id) : null;
+
+// Extract and sanitize Google Tag Manager ID from configuration
+const googleTagManagerId = ANALYTICS?.vendors?.googleTagManager?.id
+  ? String(ANALYTICS.vendors.googleTagManager.id)
+  : null;
+
+// Extract and sanitize Facebook Pixel ID from configuration
+const facebookId = ANALYTICS?.vendors?.facebook?.id ? String(ANALYTICS.vendors.facebook.id) : null;
+
+/**
+ * Generates Google Tag Manager initialization script
+ *
+ * @param id - Google Tag Manager container ID
+ * @returns HTML script snippet for GTM initialization
+ */
+const googleTagManagerSnippet = (id: string) => {
+  // Sanitize ID for safe script injection
+  const sanitizedId = JSON.stringify(id);
+
+  // GTM initialization script with data layer setup
+  return `
+<!-- Google Tag Manager -->
+<script>
+  ;(function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    const firstScript = d.getElementsByTagName(s)[0];
+    const script = d.createElement(s);
+    const dataLayerSuffix = l !== 'dataLayer' ? '&l=' + l : '';
+
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayerSuffix;
+    firstScript.parentNode?.insertBefore(script, firstScript);
+  })(window, document, 'script', 'dataLayer', __GTM_ID__);
+</script>
+<!-- End Google Tag Manager -->
+`.replace('__GTM_ID__', sanitizedId);
+};
+
+/**
+ * Generates Facebook Pixel initialization script
+ *
+ * @param id - Facebook Pixel ID
+ * @returns HTML script snippet for Facebook Pixel initialization
+ */
+const facebookPixelSnippet = (id: string) => {
+  // Sanitize ID for safe script injection
+  const sanitizedId = JSON.stringify(id);
+
+  // Facebook Pixel initialization script with PageView tracking
+  return `
+<!-- Meta Pixel Code -->
+<script>
+  !(function (f, b, e, v, n, t, s) {
+    if (f.fbq) return;
+    n = f.fbq = function () {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+    };
+    if (!f._fbq) f._fbq = n;
+    n.push = n;
+    n.loaded = true;
+    n.version = '2.0';
+    n.queue = [];
+    t = b.createElement(e);
+    t.async = true;
+    t.src = v;
+    s = b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t, s);
+  })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', __FB_ID__);
+  fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->
+`.replace('__FB_ID__', sanitizedId);
+};
+---
+
+{
+  /*
+    Google Analytics component from @astrolib/analytics.
+    - Only renders when googleAnalyticsId is configured
+    - Provides GA4 tracking integration
+  */
+}
+{googleAnalyticsId ? <GoogleAnalytics id={googleAnalyticsId} /> : null}
+
+{
+  /*
+    Google Tag Manager script injection.
+    - Only renders when googleTagManagerId is configured
+    - Uses Fragment with set:html for raw script injection
+    - Provides GTM container initialization
+  */
+}
+{googleTagManagerId ? <Fragment set:html={googleTagManagerSnippet(googleTagManagerId)} /> : null}
+
+{
+  /*
+    Facebook Pixel script injection.
+    - Only renders when facebookId is configured
+    - Uses Fragment with set:html for raw script injection
+    - Provides Facebook Pixel initialization with PageView tracking
+  */
+}
+{facebookId ? <Fragment set:html={facebookPixelSnippet(facebookId)} /> : null}

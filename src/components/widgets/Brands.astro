@@ -1,0 +1,189 @@
+---
+/**
+ * Brands.astro
+ *
+ * This component renders a brand showcase widget that displays a collection of brand icons
+ * and images in a horizontal layout. It's designed to showcase partner companies, sponsors,
+ * or technology stack with either icon-based or image-based brand representations.
+ *
+ * Features:
+ * - Dual display mode: icon-based and image-based brand representations
+ * - Titled widget structure with optional title, subtitle, and tagline
+ * - Responsive grid layout for brand items
+ * - Themeable styling through CSS classes
+ * - Support for linked brand images
+ * - Accessible structure with proper labeling
+ *
+ * Props (extends TitledWidget interface):
+ * - id (optional): HTML id attribute for the widget container
+ * - title (optional): Widget title (can be passed via slot or prop)
+ * - subtitle (optional): Widget subtitle (can be passed via slot or prop)
+ * - tagline (optional): Widget tagline (can be passed via slot or prop)
+ * - icons (optional): Array of icon names for icon-based brand display
+ * - images (optional): Array of ImageMedia objects for image-based brand display
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ *
+ * ImageMedia Structure:
+ * - src: Image source (string path or ImageMetadata object)
+ * - alt (optional): Alternative text for the image
+ * - href (optional): Link URL for the image
+ * - target (optional): Link target attribute (_blank, _self, etc.)
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Brands'): Retrieves CSS classes for brand elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the TitledWidgetWrapper container
+ *   - headline: Classes for the TitledWidgetWrapper container
+ *   - container: Classes for the main brand items container
+ *   - icon: Classes for individual icon elements
+ *   - image_container: Classes for image wrapper containers
+ *   - image: Classes for image elements
+ *
+ * Component Integration:
+ * - TitledWidgetWrapper: Provides consistent titled widget structure
+ * - Icon: Astro icon component for rendering brand icons
+ * - Image: Custom image component for brand images with link support
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives brand configuration through Astro.props
+ * 2. Renders either icons or images based on provided data
+ * 3. Wraps content in TitledWidgetWrapper for consistent structure
+ * 4. Applies theme-based styling through getClasses utility
+ *
+ * Layout Structure:
+ * - TitledWidgetWrapper provides outer container with title/subtitle
+ * - Main container holds brand items in a horizontal layout
+ * - Icons rendered as Astro Icon components
+ * - Images rendered through custom Image component with link support
+ *
+ * Accessibility:
+ * - Proper alt attributes for images
+ * - Semantic HTML structure through TitledWidgetWrapper
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Showcase technology stack
+ * - Display partner companies or sponsors
+ * - Present client logos or certifications
+ * - Integrated in page sections as a branded component
+ */
+
+import type { TitledWidget, ImageMedia } from '~/types';
+import TitledWidgetWrapper from '~/components/ui/TitledWidgetWrapper.astro';
+import Image from '~/components/ui/Image.astro';
+import { Icon } from 'astro-icon/components';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending TitledWidget
+ *
+ * @property icons - Array of icon names for icon-based brand display
+ * @property images - Array of ImageMedia objects for image-based brand display
+ */
+export interface Props extends TitledWidget {
+  icons?: Array<string>;
+  images?: Array<ImageMedia>;
+}
+
+// Destructure props with defaults and slot content rendering
+const {
+  id,
+
+  // Render slot content for title, subtitle, and tagline if not provided as props
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+
+  // Brand display data with empty defaults
+  icons = [],
+  images = [],
+
+  // Styling and background options with defaults
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Retrieve CSS classes for brand elements from theme configuration
+const classes = getClasses('Component+Brands', rawClasses);
+---
+
+{
+  /*
+    TitledWidgetWrapper provides consistent structure for titled components.
+    - Renders title, subtitle, and tagline content
+    - Applies theme-based styling through classes.wrapper and classes.headline
+    - Supports background styling through bg prop
+    - Sets type to "brands" for semantic identification
+  */
+}
+<TitledWidgetWrapper
+  type="brands"
+  id={id}
+  classes={classes}
+  bg={bg}
+  title={title}
+  subtitle={subtitle}
+  tagline={tagline}
+>
+  {
+    /*
+      Main container for brand items with theme-based styling.
+      - Uses flex or grid layout based on theme configuration
+      - Contains both icons and images in a horizontal arrangement
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div class={classes.container} data-name="brands-container">
+    {
+      /*
+        Map through icon names and render Astro Icon components.
+        - Only renders when icons array has items
+        - Uses theme-based styling through classes.icon
+        - Icons are displayed at consistent size based on theme
+      */
+      icons && icons.map((icon) => <Icon name={icon} class={classes.icon} />)
+    }
+
+    {
+      /*
+        Map through image objects and render brand images.
+        - Only renders when images array has items
+        - Each image is wrapped in a container for consistent styling
+        - Uses custom Image component for responsive image handling
+      */
+      images &&
+        images.map(
+          (image) =>
+            image.src && (
+              /*
+                Container for individual brand image with theme-based styling.
+                - Provides consistent sizing and spacing
+                - Includes data-name attribute for test automation
+              */
+              <div class={classes.image_container} data-name="brands-image-container">
+                {/*
+                    Brand image rendered through custom Image component.
+                    - Supports responsive image optimization
+                    - Optional linking through href and target props
+                    - Fixed layout with theme-based dimensions (120x48)
+                    - Alt text for accessibility
+                    - Theme-based styling through classes.image
+                  */}
+                <Image
+                  src={image.src}
+                  alt={image.alt || ''}
+                  href={image.href}
+                  target={image.target}
+                  class={classes.image}
+                  width={120}
+                  height={48}
+                  layout="fixed"
+                />
+              </div>
+            )
+        )
+    }
+  </div>
+</TitledWidgetWrapper>

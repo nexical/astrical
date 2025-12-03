@@ -1,0 +1,17 @@
+# Generated or external assets
+.astro
+.dist
+.wrangler
+node_modules
+src/components/common/Analytics.astro
+
+# Landing-page workspaces managed outside the main toolchain
+landing-pages/**
+
+# Tooling and IDE configs
+.vscode
+.claude
+sandbox.config.json
+
+# Build output
+public/_image/signature/esignature.html

@@ -1,0 +1,61 @@
+# TwoColumn Section Specification
+
+sections:
+  TwoColumn:
+    type: object
+    description: Renders a two-column layout section with separate left and right content areas. It provides a flexible layout for content that benefits from side-by-side presentation.
+    properties:
+      layout:
+        type: string
+        required: true
+        enum: [TwoColumn]
+        description: Specifies the layout type for the section. Must be 'TwoColumn'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the section, used for anchoring.
+      bg:
+        type: string
+        description: An optional URL for a background image for the section container.
+      components:
+        type: object
+        description: An object that defines the components to be rendered within the left and right columns.
+        properties:
+          left:
+            type: array
+            description: An array of component configurations for the left column.
+            items:
+              $ref: '#/definitions/EmbeddableComponent'
+          right:
+            type: array
+            description: An array of component configurations for the right column.
+            items:
+              $ref: '#/definitions/EmbeddableComponent'
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: CSS classes for the outer SectionWrapper container. This object is passed to the underlying SectionWrapper component to style its elements.
+            properties:
+              container:
+                type: string
+                description: Classes for the main <section> element of the wrapper.
+              background:
+                type: string
+                description: Classes for the background image container of the wrapper.
+              overlay:
+                type: string
+                description: Classes for the overlay layer of the wrapper.
+              wrapper:
+                type: string
+                description: Classes for the inner content <div> of the wrapper.
+          column_wrapper:
+            type: string
+            description: CSS classes for the grid container that provides the two-column layout.
+          left:
+            type: string
+            description: CSS classes for the left column container.
+          right:
+            type: string
+            description: CSS classes for the right column container.

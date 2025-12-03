@@ -1,0 +1,69 @@
+# SectionHeader Component Specification
+
+components:
+  SectionHeader:
+    type: object
+    description: Renders a section header with a title, subtitle, tagline, and an optional separator line. It's used to create clear visual divisions between content sections.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [SectionHeader]
+        description: Specifies the component type. Must be 'SectionHeader'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the widget container.
+      title:
+        type: string
+        description: The main title of the header. Can also be provided via a 'title' slot.
+      subtitle:
+        type: string
+        description: A subtitle displayed below the main title. Can also be provided via a 'subtitle' slot.
+      tagline:
+        type: string
+        description: A smaller line of text displayed above the title. Can also be provided via a 'tagline' slot.
+      separator:
+        type: boolean
+        description: If true, displays a horizontal separator line below the header content.
+      bg:
+        type: string
+        description: An optional URL for a background image for the widget container.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: Classes for the TitledWidgetWrapper, which provides the outer container and background support.
+            properties:
+              container:
+                type: string
+                description: Classes for the main section element of the widget wrapper.
+              background:
+                type: string
+                description: Classes for the background image container.
+              overlay:
+                type: string
+                description: Classes for the overlay layer on top of the background.
+              wrapper:
+                type: string
+                description: Classes for the inner content wrapper div.
+          headline:
+            type: object
+            description: Classes for the Headline component, which renders the title, subtitle, and tagline.
+            properties:
+              container:
+                type: string
+                description: Classes for the main headline container div.
+              tagline:
+                type: string
+                description: Classes for the tagline paragraph element.
+              title:
+                type: string
+                description: Classes for the main title (h2) element.
+              subtitle:
+                type: string
+                description: Classes for the subtitle paragraph element.
+          separator:
+            type: string
+            description: Classes for the horizontal rule (<hr>) separator element.

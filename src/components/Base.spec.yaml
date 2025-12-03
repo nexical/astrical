@@ -1,0 +1,146 @@
+# Base types and reusable components for all specifications
+
+definitions:
+  # Reusable components
+  Image:
+    type: object
+    description: Defines an image with properties for source, alt text, linking, and responsive sizing.
+    properties:
+      src:
+        type: string
+        required: true
+        description: The path or URL to the image source file.
+      alt:
+        type: string
+        description: Alternative text for the image, crucial for accessibility.
+      href:
+        type: string
+        description: An optional URL to make the image a clickable link.
+      target:
+        type: string
+        description: The target attribute for the link (e.g., '_blank' to open in a new tab).
+      width:
+        type: number
+        description: The intrinsic width of the image in pixels.
+      height:
+        type: number
+        description: The intrinsic height of the image in pixels.
+      class:
+        type: string
+        description: CSS classes to apply to the image element.
+      sizes:
+        type: string
+        description: A string defining the size of the image at different breakpoints for responsive loading.
+      widths:
+        type: array
+        description: An array of image widths to generate for the srcset attribute.
+        items: { type: number }
+
+  CallToAction:
+    type: object
+    description: Defines a call-to-action element, typically a button or a link, with various styling and behavior options.
+    properties:
+      variant:
+        type: string
+        enum: [primary, secondary, tertiary, link]
+        description: The visual style of the call-to-action (e.g., 'primary' for a main button).
+      text:
+        type: string
+        description: The display text for the button or link.
+      href:
+        type: string
+        description: The URL that the call-to-action links to.
+      target:
+        type: string
+        description: The target attribute for the link (e.g., '_blank').
+      icon:
+        type: string
+        description: The name of an icon to display alongside the text.
+      type:
+        type: string
+        enum: [button, submit, reset]
+        description: The type attribute for a button element, used within forms.
+      value:
+        type: string
+        description: The value attribute for a button element.
+
+  Item:
+    type: object
+    description: A generic content item used in lists, grids, or cards. It can contain a title, description, icon, image, and a call-to-action.
+    properties:
+      title:
+        type: string
+        description: The main title of the item.
+      subtitle:
+        type: string
+        description: A subtitle or secondary line of text.
+      description:
+        type: string
+        description: A longer text description for the item.
+      icon:
+        type: string
+        description: The name of an icon to represent the item.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for the item's container.
+      callToAction:
+        description: An optional call-to-action associated with the item.
+        oneOf:
+          - $ref: '#/definitions/CallToAction'
+      image:
+        description: An optional image for the item. Can be an Image object or a simple URL string.
+        oneOf:
+          - $ref: '#/definitions/Image'
+          - { type: string }
+
+  StepItem:
+    type: object
+    description: Defines a single step in the process, including its title, description, and an optional icon.
+    properties:
+      title:
+        type: string
+        description: The title or name of the step.
+      description:
+        type: string
+        description: A detailed explanation of the step.
+      icon:
+        type: string
+        description: An optional icon name to provide a visual representation for the step.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for this specific step item. The internal structure depends on the `Timeline` component's implementation.
+
+  ComponentReference:
+    type: object
+    description: Allows referencing and embedding a shared component from the 'shared' content directory, with the ability to override some of its properties.
+    properties:
+      component:
+        type: string
+        required: true
+        description: The filename (without extension) of the shared component to embed (e.g., 'my-shared-component' for 'shared/my-shared-component.yaml').
+      # Additional properties that can override shared component properties
+      title:
+        type: string
+        description: Overrides the title of the referenced component.
+      subtitle:
+        type: string
+        description: Overrides the subtitle of the referenced component.
+      tagline:
+        type: string
+        description: Overrides the tagline of the referenced component.
+      bg:
+        type: string
+        description: Overrides the background image URL of the referenced component.
+      classes:
+        type: object
+        description: Merges with and overrides the classes of the referenced component.
+      # Note: Specific component properties would be defined in their respective spec files
+
+  EmbeddableSection:
+    description: A reusable definition for sections that can be embedded within site pages. This provides a single source of truth for all available section components.
+    oneOf: []
+
+  EmbeddableComponent:
+    description: A reusable definition for components that can be embedded within section layouts (e.g., main, left, right). This provides a single source of truth for all available content components.
+    oneOf:
+      - $ref: '#/definitions/ComponentReference'

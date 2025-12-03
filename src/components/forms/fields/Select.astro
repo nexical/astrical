@@ -1,0 +1,162 @@
+---
+/**
+ * Select.astro
+ *
+ * This component renders a dropdown select form field with single or multiple selection options.
+ * It supports pre-filled values, required field validation, and dynamic error messaging.
+ * The component integrates with the form validation system and theme-based styling.
+ *
+ * Features:
+ * - Single or multiple selection dropdown
+ * - Support for pre-filled values from cache
+ * - Required field validation with visual indicators
+ * - Dynamic error messaging through FormError component
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ * - Data attributes for test automation
+ *
+ * Props (extends BaseField interface):
+ * - name: Unique identifier for the field (used in form data)
+ * - label (optional): Field label text (passed to FormLabel)
+ * - multiple: Whether multiple options can be selected (boolean)
+ * - options: Array of Option objects defining select choices
+ *   - Option.name: Unique identifier for the option
+ *   - Option.label: Display text for the option
+ * - required (optional): Whether field is required (defaults to false)
+ * - value (optional): Pre-filled value(s) (from cache)
+ *   - Single selection: string value
+ *   - Multiple selection: array of string values
+ *
+ * Option Structure (Option interface):
+ * - name: Unique identifier for the select option
+ * - label: Display text for the select option (defaults to name if not provided)
+ *
+ * Styling Inputs:
+ * - getClasses('Form+Select'): Retrieves CSS classes for select elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main wrapper div
+ *   - input: Classes for the select element
+ *
+ * Component Integration:
+ * - FormLabel: Renders field label with required indicator
+ * - FormError: Renders error message container for validation errors
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives field configuration through Astro.props
+ * 2. Maps through options to create select options
+ * 3. Applies pre-filled values from cache to selection states
+ * 4. Integrates with form validation through FormError component
+ * 5. Associates with FormLabel for proper accessibility
+ *
+ * Accessibility:
+ * - Proper "for" attribute linking between label and select
+ * - Unique ID matching name attribute
+ * - Semantic HTML structure with div container
+ * - Required attribute for validation
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Used by Form component for dropdown selection fields
+ * - Integrated with form validation and submission system
+ * - Values are submitted as single strings or arrays of strings
+ */
+
+import type { BaseField, Option } from '~/types';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending BaseField
+ *
+ * @property multiple - Whether multiple options can be selected
+ * @property options - Array of Option objects defining select choices
+ */
+export interface Props extends BaseField {
+  multiple: boolean;
+  options: Array<Option>;
+}
+
+// Destructure props with defaults
+const { name, label = '', multiple = false, options = [], required = false, value = undefined } = Astro.props;
+
+// Retrieve CSS classes for select elements from theme configuration
+const classes = getClasses('Form+Select');
+---
+
+{
+  /*
+    Main container div for the select field.
+    - Provides wrapper for label, select, and error message
+    - Uses theme-based styling through classes.container
+    - Includes data-name attribute for test automation
+  */
+}
+<div class={classes.container} data-name="form-select-container">
+  {
+    /*
+      Form label associated with the select input.
+      - Uses FormLabel component for consistent labeling
+      - Shows required indicator when required=true
+      - Associated with select via matching name/id
+    */
+  }
+  <FormLabel name={name} label={label} required={required} />
+
+  {
+    /*
+      Select element for dropdown selection.
+      - Name and ID match for proper form association
+      - data-field-name for JavaScript targeting
+      - Supports multiple selection when multiple=true
+      - Uses theme-based styling through classes.input
+      - Required attribute when field is required
+      - Includes data-name attribute for test automation
+    */
+  }
+  <select
+    name={name}
+    id={name}
+    data-field-name={name}
+    class={classes.input}
+    {...multiple ? { multiple: true } : {}}
+    {...required ? { required: true } : {}}
+    data-name="form-select-input"
+  >
+    {
+      /*
+        Map through options to create select option elements.
+        - Each option has a value and display text
+        - Only renders options that have a name property
+      */
+      options.map(({ name: optionName, label: optionLabel = '' }) => (
+        /*
+          Individual select option element.
+          - Value is the option name for form submission
+          - Selected state based on pre-filled values
+          - Uses Fragment with set:html to render label HTML content
+          - Label defaults to option name if not provided
+        */
+        <option
+          value={optionName}
+          {...((Array.isArray(value) && value.includes(optionName)) || (value && value == optionName)
+            ? { selected: true }
+            : {})}
+        >
+          <Fragment set:html={optionLabel ? optionLabel : optionName} />
+        </option>
+      ))
+    }
+  </select>
+
+  {
+    /*
+      Error message container for validation errors.
+      - Uses FormError component for consistent error display
+      - ID matches aria-describedby reference in parent form
+      - Content populated dynamically via JavaScript
+    */
+  }
+  <FormError id={`${name}-error`} />
+</div>

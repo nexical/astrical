@@ -1,0 +1,129 @@
+---
+/**
+ * ToggleTheme.astro
+ *
+ * This component renders a theme toggle button that allows users to switch between
+ * light and dark color schemes. It uses an icon-based interface and integrates with
+ * the site's theme configuration to determine visibility and default settings.
+ *
+ * Features:
+ * - Light/dark mode toggle functionality
+ * - Icon-based interface with customizable icon
+ * - Conditional rendering based on theme configuration
+ * - Accessible with proper ARIA attributes
+ * - Themeable styling through CSS classes
+ * - Customizable label for accessibility
+ * - Data attributes for JavaScript interactions
+ *
+ * Props:
+ * - label: Accessible label for the toggle button
+ *   (defaults to 'Toggle between Dark and Light mode')
+ * - class: Additional CSS classes to override default button styling
+ * - iconClass: Additional CSS classes to override default icon styling
+ * - iconName: Icon identifier to override default theme icon
+ *
+ * Theme Configuration Integration:
+ * - Checks UI.theme setting to determine visibility
+ * - Hidden when theme ends with ':only' (single theme mode)
+ * - Uses theme-provided default icon when iconName not specified
+ *
+ * Styling Inputs:
+ * - getClasses('Component+ToggleTheme'): Retrieves CSS classes for toggle theme elements
+ *   from the theme's style configuration:
+ *   - button_default: Default classes for the button element
+ *   - icon_default: Default classes for the icon element
+ *   - icon_name_default: Default icon identifier from theme configuration
+ *
+ * Component Integration:
+ * - Icon: Astro icon component for visual theme indicator
+ * - UI: Site configuration for theme settings
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives optional label, class, iconClass, and iconName props
+ * 2. Checks theme configuration to determine visibility
+ * 3. Applies default values from theme configuration
+ * 4. Renders button with icon when theme toggle is enabled
+ * 5. Includes data attributes for JavaScript theme control
+ *
+ * Layout Structure:
+ * - button element as the main toggle container
+ * - Icon component for visual theme indicator
+ *
+ * Accessibility:
+ * - aria-label attribute for screen readers
+ * - Proper button type for semantic meaning
+ * - Data attributes for test automation
+ *
+ * JavaScript Integration:
+ * - data-aw-toggle-color-scheme attribute for theme control scripts
+ * - Button click handler managed by external JavaScript
+ *
+ * Usage Context:
+ * - Theme switcher in Header component
+ * - User preference control for light/dark mode
+ * - Any context requiring color scheme toggling
+ */
+
+import { Icon } from 'astro-icon/components';
+import { UI } from 'site:config';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface
+ *
+ * @property label - Accessible label for the toggle button
+ * @property class - Additional CSS classes to override default button styling
+ * @property iconClass - Additional CSS classes to override default icon styling
+ * @property iconName - Icon identifier to override default theme icon
+ */
+export interface Props {
+  label?: string;
+  class?: string;
+  iconClass?: string;
+  iconName?: string;
+}
+
+// Retrieve CSS classes for toggle theme elements from theme configuration
+const classes = getClasses('Component+ToggleTheme');
+
+// Destructure props with defaults from theme configuration
+const {
+  label = 'Toggle between Dark and Light mode',
+  class: className = classes.button_default,
+  iconClass = classes.icon_default,
+  iconName = classes.icon_name_default,
+} = Astro.props;
+---
+
+{
+  /*
+    Conditional rendering based on theme configuration.
+    - Only renders when theme is not set to single mode (:only suffix)
+    - Provides theme toggle functionality for multi-theme sites
+  */
+  !(UI.theme && UI.theme.endsWith(':only')) && (
+    /*
+      Toggle button element that controls color scheme switching.
+      - Uses button type for proper semantic meaning
+      - Applies custom or default CSS classes
+      - Includes aria-label for accessibility
+      - data-aw-toggle-color-scheme attribute for JavaScript control
+      - data-name attribute for test automation
+    */
+    <button
+      type="button"
+      class={className}
+      aria-label={label}
+      data-aw-toggle-color-scheme
+      data-name="toggle-theme-button"
+    >
+      {/*
+          Icon component that visually indicates current theme state.
+          - Uses specified or default icon identifier
+          - Applies custom or default icon CSS classes
+        */}
+      <Icon name={iconName} class={iconClass} />
+    </button>
+  )
+}

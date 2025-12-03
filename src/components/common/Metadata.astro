@@ -1,0 +1,148 @@
+---
+/**
+ * Metadata.astro
+ *
+ * This component manages SEO metadata for pages using the @astrolib/seo library.
+ * It combines site-wide default metadata with page-specific overrides to generate
+ * comprehensive meta tags including title, description, OpenGraph, and Twitter cards.
+ *
+ * Features:
+ * - Dynamic SEO metadata generation based on page props
+ * - Site-wide default metadata configuration
+ * - Page-specific metadata overrides
+ * - OpenGraph image processing and optimization
+ * - Canonical URL generation
+ * - Robot indexing control
+ * - Multi-language support through I18N configuration
+ *
+ * Props (extends MetaData interface):
+ * - title: Page-specific title (overrides site default)
+ * - ignoreTitleTemplate: Whether to ignore the title template (default: false)
+ * - canonical: Canonical URL for the page (auto-generated if not provided)
+ * - robots: Robot indexing configuration (index/follow settings)
+ * - description: Page-specific description (overrides site default)
+ * - openGraph: OpenGraph metadata configuration
+ * - twitter: Twitter card metadata configuration
+ * - dontUseTitleTemplate: Alternative prop for ignoring title template
+ *
+ * Configuration Dependencies:
+ * - SITE: Site configuration containing name and basic info
+ * - METADATA: Site-wide default metadata configuration
+ * - I18N: Internationalization settings (language, text direction)
+ *
+ * Component Integration:
+ * - AstroSeo: @astrolib/seo component for generating meta tags
+ * - merge: Lodash utility for deep merging metadata objects
+ * - getCanonical: Utility for generating canonical URLs
+ * - adaptOpenGraphImages: Utility for processing OpenGraph images
+ *
+ * Data Flow:
+ * 1. Receives page-specific metadata through Astro.props
+ * 2. Merges with site-wide defaults using lodash.merge
+ * 3. Processes OpenGraph images through adaptOpenGraphImages
+ * 4. Renders AstroSeo component with combined metadata
+ *
+ * Metadata Priority (highest to lowest):
+ * 1. Page-specific props passed to component
+ * 2. Site-wide METADATA configuration
+ * 3. Base defaults defined in component
+ *
+ * OpenGraph Image Processing:
+ * - Images are processed through adaptOpenGraphImages utility
+ * - Supports both local assets and remote URLs
+ * - Automatic optimization and format conversion
+ *
+ * Usage Context:
+ * - Included in BaseLayout for page metadata generation
+ * - Renders in document head for SEO purposes
+ * - Provides comprehensive metadata for search engines and social media
+ */
+
+import merge from 'lodash.merge';
+import { AstroSeo } from '@astrolib/seo';
+
+import type { Props as AstroSeoProps } from '@astrolib/seo';
+
+import { SITE, METADATA, I18N } from 'site:config';
+import type { MetaData } from '~/types';
+import { getCanonical } from '~/utils/permalinks';
+
+import { adaptOpenGraphImages } from '~/utils/images';
+
+/**
+ * Component Props Interface extending MetaData
+ *
+ * @property dontUseTitleTemplate - Alternative prop for ignoring title template
+ */
+export interface Props extends MetaData {
+  dontUseTitleTemplate?: boolean;
+}
+
+// Destructure props with defaults
+const {
+  title,
+  ignoreTitleTemplate = false,
+  canonical = String(getCanonical(String(Astro.url.pathname))),
+  robots = {},
+  description,
+  openGraph = {},
+  twitter = {},
+} = Astro.props;
+
+// Merge metadata configurations in priority order
+// 1. Base defaults
+// 2. Site-wide METADATA configuration
+// 3. Page-specific props
+const seoProps: AstroSeoProps = merge(
+  {
+    // Base default values
+    title: '',
+    titleTemplate: '%s',
+    canonical: canonical,
+    noindex: true,
+    nofollow: true,
+    description: undefined,
+    openGraph: {
+      url: canonical,
+      site_name: SITE?.name,
+      images: [],
+      locale: I18N?.language || 'en',
+      type: 'website',
+    },
+    twitter: {
+      cardType: openGraph?.images?.length ? 'summary_large_image' : 'summary',
+    },
+  },
+  {
+    // Site-wide METADATA configuration
+    title: METADATA?.title?.default,
+    titleTemplate: METADATA?.title?.template,
+    noindex: typeof METADATA?.robots?.index !== 'undefined' ? !METADATA.robots.index : undefined,
+    nofollow: typeof METADATA?.robots?.follow !== 'undefined' ? !METADATA.robots.follow : undefined,
+    description: METADATA?.description,
+    openGraph: METADATA?.openGraph,
+    twitter: METADATA?.twitter,
+  },
+  {
+    // Page-specific props
+    title: title,
+    titleTemplate: ignoreTitleTemplate ? '%s' : undefined,
+    canonical: canonical,
+    noindex: typeof robots?.index !== 'undefined' ? !robots.index : undefined,
+    nofollow: typeof robots?.follow !== 'undefined' ? !robots.follow : undefined,
+    description: description,
+    openGraph: { url: canonical, ...openGraph },
+    twitter: twitter,
+  }
+);
+---
+
+{
+  /*
+    AstroSeo component that generates comprehensive meta tags.
+    - Spreads merged seoProps configuration
+    - Processes OpenGraph images through adaptOpenGraphImages utility
+    - Renders all necessary meta tags for SEO and social sharing
+  */
+}
+<AstroSeo {...{ ...seoProps, openGraph: await adaptOpenGraphImages(seoProps?.openGraph, Astro.site) }} />

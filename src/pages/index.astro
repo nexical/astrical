@@ -1,0 +1,98 @@
+---
+/**
+ * index.astro
+ *
+ * This is the main entry point for the home page of the website. It serves as the
+ * primary landing page that renders dynamic content based on the site's data configuration.
+ * The page uses a section-based architecture where content is organized into reusable
+ * components that can be configured through YAML data files.
+ *
+ * Features:
+ * - Dynamic page rendering based on data configuration
+ * - Section-based content architecture
+ * - Themeable styling through CSS classes
+ * - Static site generation with prerendering
+ *
+ * Data Flow:
+ * 1. Loads page data from YAML configuration files via getSpecs('pages')
+ * 2. Retrieves home page specific data using pageSlug 'home'
+ * 3. Gets layout configuration for consistent page structure
+ * 4. Maps through sections to render dynamic components
+ * 5. Wraps content in PageLayout for consistent site structure
+ *
+ * Component Integration:
+ * - PageLayout: Provides consistent page structure with header/footer
+ * - SectionComponent: Renders individual content sections dynamically
+ * - getLayout: Retrieves layout configuration for the page
+ * - getSpecs: Loads page data from YAML configuration
+ *
+ * Props and Configuration:
+ * - pageSlug: Identifier for the home page data ('home')
+ * - allPages: Complete collection of page configurations from YAML
+ * - pageData: Specific data for the home page
+ * - layoutProps: Layout configuration for consistent page structure
+ *
+ * Prerendering:
+ * - prerender = true: Enables static site generation for better performance
+ * - Content is generated at build time for fast loading
+ *
+ * Section Architecture:
+ * - Sections are defined in YAML configuration files
+ * - Each section specifies a layout type and component configuration
+ * - SectionComponent dynamically renders appropriate layout components
+ * - Supports various section types (Header, Footer, SingleColumn, etc.)
+ *
+ * Type Safety:
+ * - PageType: Interface for page data structure
+ * - SectionType: Interface for section data structure
+ * - Type casting ensures proper data handling
+ *
+ * Usage Context:
+ * - Main landing page for the website
+ * - Renders dynamic content from data configuration
+ * - Provides entry point to site navigation
+ */
+
+import type { Page as PageType, Section as SectionType } from '~/types';
+import Layout from '~/layouts/PageLayout.astro';
+import { getLayout } from '~/utils/router';
+import { getSpecs } from '~/utils/loader';
+import SectionComponent from '~/components/page/Section.astro';
+
+// Enable static site generation for better performance
+export const prerender = true;
+
+// Define the page slug for data lookup
+const pageSlug = 'home';
+
+// Load all page configurations from YAML data files
+const allPages = getSpecs('pages');
+
+// Extract home page specific data and cast to proper type
+const pageData: PageType | undefined = allPages[pageSlug] as PageType | undefined;
+
+// Retrieve layout configuration for consistent page structure
+const layoutProps = getLayout(pageSlug);
+---
+
+{
+  /*
+    PageLayout component provides consistent site structure.
+    - Wraps content with header, footer, and base layout
+    - Spreads layoutProps for page-specific configuration
+    - Contains dynamically rendered sections
+  */
+}
+<Layout {...layoutProps}>
+  {
+    /*
+      Conditional rendering of sections when pageData exists.
+      - Checks for pageData and sections array
+      - Maps through sections to render SectionComponent for each
+      - Casts sections to SectionType array for type safety
+    */
+    pageData &&
+      pageData.sections &&
+      (pageData.sections as SectionType[]).map((section) => <SectionComponent section={section} />)
+  }
+</Layout>

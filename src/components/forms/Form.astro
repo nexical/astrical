@@ -1,0 +1,446 @@
+---
+/**
+ * Form.astro
+ *
+ * This component renders a dynamic form with configurable fields, validation, and submission handling.
+ * It supports various field types, honeypot spam protection, disclaimer checkboxes, and client-side
+ * error handling with server-side submission processing.
+ *
+ * Features:
+ * - Dynamic form field generation from configuration
+ * - Client-side validation and error display
+ * - Honeypot spam protection field
+ * - Optional disclaimer checkbox requirement
+ * - Form submission with redirect or success message
+ * - Themeable styling through CSS classes
+ * - Error state management through cache utilities
+ * - Accessible form structure with proper labeling
+ *
+ * Props (extends TitledWidget interface):
+ * - name: Unique identifier for the form (used in submission processing)
+ * - redirect (optional): URL to redirect to after successful submission
+ * - fields: Array of FormItem objects defining form fields
+ * - disclaimer (optional): HTML content for disclaimer checkbox label
+ * - buttonText (optional): Custom text for submit button (defaults to "Submit")
+ * - note (optional): Additional HTML note displayed below submit button
+ * - title (optional): Form title (can be passed via slot)
+ * - subtitle (optional): Form subtitle (can be passed via slot)
+ * - tagline (optional): Form tagline (can be passed via slot)
+ * - id (optional): HTML id attribute for the form container
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ *
+ * Form Item Structure (FormItem interface):
+ * - type: Field type identifier (determines which component to render)
+ * - name: Unique field name (used in form data)
+ * - label (optional): Field label text
+ * - required (optional): Whether field is required
+ * - options (optional): Array of options for select/radio/checkbox groups
+ * - default (optional): Default value for the field
+ * - validator (optional): Validation function identifier
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Form'): Retrieves CSS classes for form elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the TitledWidgetWrapper container
+ *   - headline: Classes for the TitledWidgetWrapper container
+ *   - form_container: Classes for the main form container div
+ *   - error_container: Classes for form error message container
+ *   - error_message: Classes for error message text
+ *   - honeypot_container: Classes for honeypot field container
+ *   - unsupported_field_error: Classes for unsupported field type error
+ *   - disclaimer_container: Classes for disclaimer section container
+ *   - disclaimer_checkbox_container: Classes for disclaimer checkbox wrapper
+ *   - disclaimer_checkbox: Classes for disclaimer checkbox input
+ *   - disclaimer_label_container: Classes for disclaimer label wrapper
+ *   - disclaimer_label: Classes for disclaimer label text
+ *   - submit_button_container: Classes for submit button wrapper
+ *   - note_container: Classes for note section container
+ *   - note_text: Classes for note text
+ *   - success_message: Classes for success message display
+ *
+ * Data Flow:
+ * 1. Receives form configuration through Astro.props
+ * 2. Retrieves error/values from cache for pre-filling
+ * 3. Generates form fields dynamically using getFormField utility
+ * 4. Renders form with title/subtitle via TitledWidgetWrapper
+ * 5. Handles form submission with client-side JavaScript
+ * 6. Processes submission through /api/submit-form endpoint
+ * 7. Redirects or shows success/error messages based on result
+ *
+ * Component Integration:
+ * - TitledWidgetWrapper: Provides consistent titled container structure
+ * - getFormField: Maps field configurations to actual form components
+ * - Button: Submit button component
+ * - getVar/getObject: Cache utilities for error/value persistence
+ * - getClasses: Theme-based styling management
+ *
+ * Security Features:
+ * - Honeypot field for spam protection (hidden from users)
+ * - Server-side processing through /api/submit-form endpoint
+ * - Form name hidden field for identification
+ *
+ * Client-Side JavaScript:
+ * - Handles form submission via fetch API
+ * - Displays success/error messages
+ * - Manages form state after submission
+ * - Redirects on successful submission when configured
+ *
+ * Accessibility:
+ * - Proper labeling for all form fields
+ * - Semantic HTML structure
+ * - Error messages associated with form container
+ * - Data attributes for test automation
+ */
+
+import type { FormItem, TitledWidget } from '~/types';
+import TitledWidgetWrapper from '~/components/ui/TitledWidgetWrapper.astro';
+import Button from '~/components/ui/Button.astro';
+import { getVar, getObject } from '~/utils/cache';
+import { getFormField } from '~/utils/generator';
+import { getClasses } from '~/utils/theme';
+import { nanoid } from 'nanoid';
+
+/**
+ * Component Props Interface extending TitledWidget
+ *
+ * @property name - Unique identifier for the form
+ * @property redirect - URL to redirect after successful submission
+ * @property fields - Array of form field configurations
+ * @property disclaimer - HTML content for disclaimer checkbox
+ * @property buttonText - Custom text for submit button
+ * @property note - Additional HTML note below submit button
+ */
+export interface Props extends TitledWidget {
+  name: string;
+  redirect?: string;
+  fields: Array<FormItem>;
+  disclaimer?: string;
+  buttonText?: string;
+  note?: string;
+}
+
+// Generate unique ID for form container to scope JavaScript interactions
+const uniqueId = nanoid();
+
+// Destructure props with defaults and slot content rendering
+const {
+  id,
+  name,
+
+  // Render slot content for title, subtitle, and tagline if not provided as props
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+
+  redirect,
+  fields = [],
+  disclaimer = '',
+  buttonText = '',
+  note = '',
+
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Retrieve form error state from cache (for displaying submission errors)
+const error = getVar(`${name}_error`);
+
+// Retrieve field-specific errors from cache (for validation errors)
+const errors = getObject(`${name}_errors`);
+
+// Retrieve previously submitted values from cache (for pre-filling)
+const values = getObject(`${name}_values`);
+
+// Retrieve CSS classes for form elements from theme configuration
+const classes = getClasses('Component+Form', rawClasses);
+---
+
+{
+  /*
+    Main container div with unique ID for JavaScript scoping.
+    - Provides root element for form and JavaScript interactions
+    - Contains TitledWidgetWrapper for consistent titled container structure
+  */
+}
+<div id={uniqueId}>
+  {
+    /*
+      TitledWidgetWrapper provides consistent structure for titled components.
+      - Renders title, subtitle, and tagline content
+      - Applies theme-based styling through classes.wrapper and classes.headline
+      - Supports background styling through bg prop
+    */
+  }
+  <TitledWidgetWrapper
+    type="form"
+    id={id}
+    classes={classes}
+    bg={bg}
+    title={title}
+    subtitle={subtitle}
+    tagline={tagline}
+  >
+    {
+      /*
+        Main form container with theme-based styling.
+        - Contains form element and all form-related content
+        - Includes data-name attribute for test automation
+      */
+    }
+    <div class={classes.form_container} data-name="form-container">
+      {
+        /*
+          Error display container for form submission errors.
+          - Only rendered when error state exists
+          - Displays error message from cache
+          - Uses theme-based styling for error container and message
+        */
+      }
+      <div id="form-error">
+        {
+          error && (
+            /*
+              Error container with theme-based styling.
+              - Displays error message using set:html for HTML content
+              - Includes data-name attributes for test automation
+            */
+            <div class={classes.error_container} data-name="form-error-container">
+              <span class={classes.error_message} set:html={(error as Error).message} data-name="form-error-message" />
+            </div>
+          )
+        }
+      </div>
+
+      {
+        /*
+          Main form element with name and submission handling.
+          - Includes hidden field for form identification
+          - Supports redirect after successful submission
+          - Handles submission through client-side JavaScript
+        */
+      }
+      <form id={name} name={name} data-form-name={name} data-redirect={redirect}>
+        {
+          /*
+            Hidden field containing form name for server-side identification.
+            - Used by server to determine which form processor to use
+          */
+        }
+        <input type="hidden" name="form-name" value={name} />
+
+        {
+          /*
+            Honeypot field for spam protection.
+            - Hidden from users but visible to bots
+            - If filled, submission is rejected as spam
+            - Uses theme-based styling for container
+          */
+        }
+        <p class={classes.honeypot_container} data-name="form-honeypot-container">
+          <label>
+            Don't fill this out if you're human: <input name="bot-field" />
+          </label>
+        </p>
+
+        {
+          /*
+            Map through form field configurations to generate form fields.
+            - Uses getFormField utility to map configuration to components
+            - Passes error and value state from cache
+            - Handles unsupported field types with error display
+          */
+          fields.map((item) => {
+            // Get form field component based on item configuration
+            const component = getFormField(name, item);
+
+            // Handle case where field type is not supported
+            if (!component.tag) {
+              console.error(`Error: Component for field type "${item.type}" is not defined.`);
+              return (
+                /*
+                  Error display for unsupported field types.
+                  - Uses theme-based styling for error message
+                  - Includes data-name attribute for test automation
+                */
+                <p class={classes.unsupported_field_error} data-name="form-unsupported-field-error">
+                  Error: Unsupported field type: {item.type}
+                </p>
+              );
+            }
+
+            // Render form field component with error/value state and props
+            return <component.tag error={errors[item.name]} value={values[item.name]} {...component.props} />;
+          })
+        }
+
+        {
+          /*
+            Optional disclaimer section with required checkbox.
+            - Only rendered when disclaimer content is provided
+            - Uses theme-based styling for container and elements
+          */
+          disclaimer && (
+            /*
+              Disclaimer container with checkbox and label.
+              - Required checkbox must be checked to submit form
+              - Uses theme-based styling for all elements
+            */
+            <div class={classes.disclaimer_container} data-name="form-disclaimer-container">
+              {/*
+                  Container for disclaimer checkbox.
+                  - Uses theme-based styling
+                  - Includes data-name attribute for test automation
+                */}
+              <div class={classes.disclaimer_checkbox_container} data-name="form-disclaimer-checkbox-container">
+                {/*
+                    Required checkbox input for disclaimer agreement.
+                    - Must be checked for form submission
+                    - Uses theme-based styling
+                    - Includes data-name attribute for test automation
+                  */}
+                <input
+                  id="disclaimer"
+                  name="disclaimer"
+                  type="checkbox"
+                  class={classes.disclaimer_checkbox}
+                  required
+                  data-name="form-disclaimer-checkbox"
+                />
+              </div>
+              {/*
+                  Container for disclaimer label.
+                  - Uses theme-based styling
+                  - Includes data-name attribute for test automation
+                */}
+              <div class={classes.disclaimer_label_container} data-name="form-disclaimer-label-container">
+                {/*
+                    Label for disclaimer checkbox with HTML content.
+                    - Associated with checkbox via for attribute
+                    - Uses set:html to render HTML content
+                    - Uses theme-based styling
+                    - Includes data-name attribute for test automation
+                  */}
+                <label
+                  for="disclaimer"
+                  class={classes.disclaimer_label}
+                  set:html={disclaimer}
+                  data-name="form-disclaimer-label"
+                />
+              </div>
+            </div>
+          )
+        }
+
+        {
+          /*
+            Submit button container with primary button.
+            - Uses theme-based styling for container
+            - Includes data-name attribute for test automation
+          */
+        }
+        <div class={classes.submit_button_container} data-name="form-submit-button-container">
+          {
+            /*
+              Primary submit button with customizable text.
+              - Uses Button component for consistent styling
+              - Displays custom text or defaults to "Submit"
+            */
+          }
+          <Button variant="primary" type="submit" value="primary">
+            <Fragment set:html={buttonText ? buttonText : 'Submit'} />
+          </Button>
+        </div>
+
+        {
+          /*
+            Optional note section below submit button.
+            - Only rendered when note content is provided
+            - Uses theme-based styling for container and text
+          */
+          note && (
+            /*
+              Note container with HTML content.
+              - Uses theme-based styling for container and text
+              - Includes data-name attribute for test automation
+            */
+            <div class={classes.note_container} data-name="form-note-container">
+              <p class={classes.note_text} set:html={note} data-name="form-note-text" />
+            </div>
+          )
+        }
+      </form>
+    </div>
+  </TitledWidgetWrapper>
+</div>
+
+{
+  /*
+    Client-side JavaScript for form submission handling.
+    - Uses inline script with define:vars for passing data
+    - Handles form submission via fetch API
+    - Manages success/error states and redirects
+    - Scoped to unique form container ID
+  */
+}
+<script is:inline define:vars={{ uniqueId, classes }}>
+  // Get form container and form element by unique ID
+  const container = document.getElementById(uniqueId);
+  const form = container.querySelector('form');
+
+  // Add submit event listener to handle form submission
+  form.addEventListener('submit', async (event) => {
+    // Prevent default form submission to handle with JavaScript
+    event.preventDefault();
+
+    // Create FormData object from form elements
+    const formData = new FormData(event.target);
+    const formName = formData.get('form-name');
+
+    // Submit form data to server endpoint
+    try {
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        body: formData,
+      });
+
+      // Parse JSON response from server
+      const result = await response.json();
+
+      if (result.success) {
+        // Handle successful submission
+        if (form.dataset.redirect) {
+          // Redirect if redirect URL is configured
+          window.location.href = `/${form.dataset.redirect}`;
+        } else {
+          // Show success message if no redirect
+          displaySuccess(formName);
+        }
+      } else {
+        // Handle server error response
+        displayError(result.error || 'Submission failed');
+      }
+    } catch {
+      // Handle network error
+      displayError('Network error. Please try again.');
+    }
+  });
+
+  // Function to display error message in form container
+  function displayError(message) {
+    const errorContainer = container.querySelector('#form-error');
+    if (errorContainer) {
+      errorContainer.innerHTML = `<div class="${classes.error_container}">
+        <span class="${classes.error_message}">${message}</span>
+      </div>`;
+    }
+  }
+
+  // Function to display success message and clear form
+  function displaySuccess(formName) {
+    const formContainer = container.querySelector(`#${formName}`);
+    if (formContainer) {
+      formContainer.innerHTML = `<div class="${classes.success_message}">Form submitted successfully!</div>`;
+    }
+  }
+</script>

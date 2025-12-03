@@ -1,0 +1,121 @@
+---
+/**
+ * Headline.astro
+ *
+ * This component renders a consistent hierarchical headline structure with optional
+ * tagline, title, and subtitle elements. It's designed to provide standardized
+ * heading presentation across different widget and section components.
+ *
+ * Features:
+ * - Hierarchical heading structure (tagline, title, subtitle)
+ * - Support for HTML content in all text elements
+ * - Conditional rendering based on content presence
+ * - Themeable styling through CSS classes
+ * - Type-specific data attributes for test automation
+ * - Accessible structure with proper heading levels
+ *
+ * Props (extends Headline interface):
+ * - type: Component type identifier for styling context and data attributes
+ * - title (optional): Main headline title content (can be passed via slot or prop)
+ * - subtitle (optional): Supporting subtitle content (can be passed via slot or prop)
+ * - tagline (optional): Smaller tagline content above the title
+ * - classes (optional): CSS class configuration object
+ *
+ * Styling Inputs:
+ * - getClasses('Component+Headline'): Retrieves CSS classes for headline elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main headline container div
+ *   - tagline: Classes for the tagline paragraph element
+ *   - title: Classes for the main title heading (h2) element
+ *   - subtitle: Classes for the subtitle paragraph element
+ *
+ * Component Integration:
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives headline configuration through Astro.props
+ * 2. Conditionally renders tagline, title, and subtitle based on content presence
+ * 3. Applies theme-based styling through getClasses utility
+ * 4. Uses set:html for safe HTML content rendering
+ *
+ * Layout Structure:
+ * - Container div wraps all headline elements
+ * - Tagline paragraph (if content exists)
+ * - Title heading (h2) (if content exists)
+ * - Subtitle paragraph (if content exists)
+ *
+ * Accessibility:
+ * - Proper heading hierarchy with h2 for main title
+ * - Semantic HTML structure with appropriate elements
+ * - Type-specific data attributes for test automation
+ *
+ * Usage Context:
+ * - Provides consistent headline structure for widget components
+ * - Used by TitledWidgetWrapper to render title content
+ * - Integrated in Hero, Content, Features, and other titled components
+ */
+
+import type { Headline as Props } from '~/types';
+import { getClasses } from '~/utils/theme';
+
+// Destructure props with defaults and slot content rendering
+const {
+  type,
+
+  // Render slot content for title and subtitle if not provided as props
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+
+  // Tagline content (no slot rendering)
+  tagline,
+
+  // Styling options with defaults
+  classes: rawClasses = {},
+} = Astro.props;
+
+// Retrieve CSS classes for headline elements from theme configuration
+const classes = getClasses('Component+Headline', rawClasses);
+---
+
+{
+  /*
+    Conditional rendering of headline container only when content exists.
+    - Checks for presence of title, subtitle, or tagline
+    - Provides wrapper for all headline elements
+    - Applies theme-based styling through classes.container
+    - Includes type-specific data attribute for test automation
+  */
+  (title || subtitle || tagline) && (
+    <div class={classes.container} data-name={`${type}-headline-container`}>
+      {
+        /*
+          Tagline paragraph rendered when tagline content exists.
+          - Uses set:html to render HTML content safely
+          - Styled with classes.tagline
+          - Includes type-specific data attribute for test automation
+        */
+        tagline && <p class={classes.tagline} set:html={tagline} data-name={`${type}-headline-tagline`} />
+      }
+
+      {
+        /*
+          Main title heading (h2) rendered when title content exists.
+          - Uses set:html to render HTML content safely
+          - Styled with classes.title
+          - Includes type-specific data attribute for test automation
+        */
+        title && <h2 class={classes.title} set:html={title} data-name={`${type}-headline-title`} />
+      }
+
+      {
+        /*
+          Subtitle paragraph rendered when subtitle content exists.
+          - Uses set:html to render HTML content safely
+          - Styled with classes.subtitle
+          - Includes type-specific data attribute for test automation
+        */
+        subtitle && <p class={classes.subtitle} set:html={subtitle} data-name={`${type}-headline-subtitle`} />
+      }
+    </div>
+  )
+}

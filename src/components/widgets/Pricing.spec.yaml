@@ -1,0 +1,165 @@
+# Pricing Component Specification
+
+components:
+  Pricing:
+    type: object
+    description: Renders a pricing widget that displays multiple pricing plans in a grid layout. It's designed to showcase different service tiers or product options with features, prices, and call-to-action buttons.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Pricing]
+        description: Specifies the component type. Must be 'Pricing'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the widget container.
+      title:
+        type: string
+        description: The main title of the widget. Can also be provided via a 'title' slot.
+      subtitle:
+        type: string
+        description: A subtitle displayed below the main title. Can also be provided via a 'subtitle' slot.
+      tagline:
+        type: string
+        description: A smaller line of text displayed above the title.
+      currency:
+        type: string
+        description: The currency symbol to display for prices. Defaults to '&pound;'.
+      prices:
+        type: array
+        description: An array of 'Price' objects, each representing a pricing plan.
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+              description: The title of the pricing plan.
+            subtitle:
+              type: string
+              description: A subtitle for the pricing plan.
+            description:
+              type: string
+              description: Additional details about the plan.
+            price:
+              type: [string, number]
+              description: The price of the plan.
+            period:
+              type: string
+              description: The billing period (e.g., "per month").
+            items:
+              type: array
+              description: A list of features included in the plan.
+              items:
+                $ref: '#/definitions/Item'
+            callToAction:
+              description: A single call-to-action or an array of them for the plan.
+              oneOf:
+                - $ref: '#/definitions/CallToAction'
+                - type: array
+                  items:
+                    $ref: '#/definitions/CallToAction'
+            hasRibbon:
+              type: boolean
+              description: If true, displays a promotional ribbon on the plan.
+            ribbonTitle:
+              type: string
+              description: The text to display on the ribbon.
+      bg:
+        type: string
+        description: An optional URL for a background image for the widget container.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: Classes for the TitledWidgetWrapper, which provides the outer container and background support.
+            properties:
+              container:
+                type: string
+                description: Classes for the main section element of the widget wrapper.
+              background:
+                type: string
+                description: Classes for the background image container.
+              overlay:
+                type: string
+                description: Classes for the overlay layer on top of the background.
+              wrapper:
+                type: string
+                description: Classes for the inner content wrapper div.
+          headline:
+            type: object
+            description: Classes for the Headline component, which renders the title, subtitle, and tagline.
+            properties:
+              container:
+                type: string
+                description: Classes for the main headline container div.
+              tagline:
+                type: string
+                description: Classes for the tagline paragraph element.
+              title:
+                type: string
+                description: Classes for the main title (h2) element.
+              subtitle:
+                type: string
+                description: Classes for the subtitle paragraph element.
+          container:
+            type: string
+            description: Classes for the main pricing container div.
+          grid:
+            type: string
+            description: Classes for the grid layout that contains the pricing plans.
+          item_wrapper:
+            type: string
+            description: Classes for the wrapper of each individual pricing plan.
+          item:
+            type: string
+            description: Classes for the container of each pricing plan's content.
+          ribbon_wrapper:
+            type: string
+            description: Classes for the container of the promotional ribbon.
+          ribbon_title:
+            type: string
+            description: Classes for the text inside the ribbon.
+          item_content:
+            type: string
+            description: Classes for the content area within a pricing plan.
+          title:
+            type: string
+            description: Classes for the title of an individual pricing plan.
+          subtitle:
+            type: string
+            description: Classes for the subtitle of an individual pricing plan.
+          details:
+            type: string
+            description: Classes for the container holding the price details (amount, currency, period).
+          amount_wrapper:
+            type: string
+            description: Classes for the wrapper around the currency and price amount.
+          currency:
+            type: string
+            description: Classes for the currency symbol.
+          amount:
+            type: string
+            description: Classes for the price amount.
+          period:
+            type: string
+            description: Classes for the billing period text.
+          features_list:
+            type: string
+            description: Classes for the <ul> element of the features list.
+          feature_item:
+            type: string
+            description: Classes for each <li> feature item.
+          feature_icon_wrapper:
+            type: string
+            description: Classes for the wrapper around the feature icon.
+          feature_icon:
+            type: string
+            description: Classes for the feature icon itself.
+          actions_wrapper:
+            type: string
+            description: Classes for the container of the call-to-action buttons.
+          action_button:
+            type: string
+            description: Classes for each call-to-action button.

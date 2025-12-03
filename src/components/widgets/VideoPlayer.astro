@@ -1,0 +1,123 @@
+---
+/**
+ * VideoPlayer.astro
+ *
+ * This component renders a YouTube video player widget with optional title, subtitle,
+ * and tagline content. It's designed to embed YouTube videos in a consistent layout
+ * with proper responsive sizing and accessibility features.
+ *
+ * Features:
+ * - Titled widget structure with optional title, subtitle, and tagline
+ * - Embedded YouTube video player using astro-embed component
+ * - Responsive video sizing with aspect ratio preservation
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ *
+ * Props (extends TitledWidget interface):
+ * - id (optional): HTML id attribute for the widget container
+ * - title (optional): Widget title (can be passed via slot or prop)
+ * - subtitle (optional): Widget subtitle (can be passed via slot or prop)
+ * - tagline (optional): Widget tagline (can be passed via slot or prop)
+ * - youtubeId: YouTube video ID for the embedded video
+ * - classes (optional): CSS class configuration object
+ * - bg (optional): Background image URL string
+ *
+ * Styling Inputs:
+ * - getClasses('Component+VideoPlayer'): Retrieves CSS classes for video player elements
+ *   from the theme's style configuration:
+ *   - wrapper: Classes for the TitledWidgetWrapper container
+ *   - headline: Classes for the TitledWidgetWrapper container
+ *   - video_player: Classes for the YouTube player container
+ *
+ * Component Integration:
+ * - TitledWidgetWrapper: Provides consistent titled widget structure
+ * - YouTube: Astro-embed component for YouTube video embedding
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives YouTube video ID and optional title content through Astro.props
+ * 2. Renders title, subtitle, and tagline content through TitledWidgetWrapper
+ * 3. Embeds YouTube video using astro-embed YouTube component
+ * 4. Applies theme-based styling through getClasses utility
+ *
+ * Layout Structure:
+ * - TitledWidgetWrapper provides outer container with title/subtitle/tagline
+ * - YouTube component renders embedded video player
+ * - Video player maintains responsive aspect ratio
+ *
+ * Accessibility:
+ * - Semantic HTML structure through TitledWidgetWrapper
+ * - YouTube component provides accessible video embedding
+ * - Video title passed to YouTube player for context
+ *
+ * Usage Context:
+ * - Embed YouTube videos in marketing or educational content
+ * - Showcase product demos or tutorials
+ * - Present video testimonials or presentations
+ * - Integrated in page sections as a media-focused component
+ */
+
+import type { TitledWidget } from '~/types';
+import TitledWidgetWrapper from '~/components/ui/TitledWidgetWrapper.astro';
+import { YouTube } from 'astro-embed';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending TitledWidget
+ *
+ * @property youtubeId - YouTube video ID for the embedded video
+ */
+export interface Props extends TitledWidget {
+  youtubeId: string;
+}
+
+// Destructure props with defaults and slot content rendering
+const {
+  id,
+
+  // Render slot content for title, subtitle, and tagline if not provided as props
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+
+  // YouTube video ID required for embedding
+  youtubeId,
+
+  // Styling and background options with defaults
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Retrieve CSS classes for video player elements from theme configuration
+const classes = getClasses('Component+VideoPlayer', rawClasses);
+---
+
+{
+  /*
+    TitledWidgetWrapper provides consistent structure for titled components.
+    - Renders title, subtitle, and tagline content
+    - Applies theme-based styling through classes.wrapper and classes.headline
+    - Supports background styling through bg prop
+    - Sets type to "video-player" for semantic identification
+  */
+}
+<TitledWidgetWrapper
+  type="video-player"
+  id={id}
+  classes={classes}
+  bg={bg}
+  title={title}
+  subtitle={subtitle}
+  tagline={tagline}
+>
+  {
+    /*
+      YouTube video player component from astro-embed.
+      - Uses provided YouTube video ID for embedding
+      - Passes title for accessibility context
+      - Applies theme-based styling through classes.video_player
+      - Provides responsive video embedding with proper aspect ratio
+    */
+  }
+  <YouTube id={youtubeId} title={title} class={classes.video_player} />
+</TitledWidgetWrapper>

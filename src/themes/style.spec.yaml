@@ -1,0 +1,1715 @@
+# -----------------------------------------------------------------------------
+# Layout+Base Style Group
+# -----------------------------------------------------------------------------
+Layout+Base:
+  type: object
+  description: |
+    Defines the foundational styles for the entire website by targeting the
+    `<html>` and `<body>` elements. These styles are critical for establishing
+    the global look and feel, including typography and color schemes.
+  properties:
+    html:
+      type: string
+      description: |
+        Applies CSS classes directly to the `<html>` tag. This is useful
+        for setting up responsive base font sizes or other global
+        properties. For example, `2xl:text-[20px]` increases the root
+        font size on extra-large screens, allowing for scalable typography
+        across the site using `rem` units.
+    body:
+      type: string
+      description: |
+        Applies CSS classes to the `<body>` tag. This is where the primary
+        typographic and background styles are set.
+        - Font styling: Use Tailwind CSS utilities like `antialiased`,
+          `font-sans`, `font-serif`, etc., to set the default font family.
+        - Text color: `text-default` is a placeholder for a custom color
+          defined in the theme's palette.
+        - Background color: `bg-page` is a placeholder for the main page
+          background color, also from the theme's palette.
+        - Text spacing: `tracking-tight` or similar utilities can be used
+          to adjust letter spacing for readability.
+
+# -----------------------------------------------------------------------------
+# Layout+Page Style Group
+# -----------------------------------------------------------------------------
+Layout+Page:
+  type: object
+  description: |
+    Provides styling for the main content area of the standard page layout.
+    This group targets the `<main>` HTML element that wraps the primary content
+    of a page, as defined in `src/layouts/PageLayout.astro`.
+  properties:
+    main:
+      type: string
+      description: |
+        Applies CSS classes directly to the `<main>` element. This can be
+        used to set global padding, margins, or other structural styles
+        for the main content container. It is often left empty to allow
+        individual sections to control their own styling.
+
+# -----------------------------------------------------------------------------
+# Layout+Markdown Style Group
+# -----------------------------------------------------------------------------
+Layout+Markdown:
+  type: object
+  description: |
+    Styles the layout for pages generated from Markdown files, such as blog posts,
+    documentation, or legal pages. This group controls the main container, the
+    page title, and the content area where the Markdown is rendered.
+  properties:
+    container:
+      type: string
+      description: |
+        Applies CSS classes to the main `<section>` wrapper. It is
+        used to define the page's padding, margins, and maximum width,
+        creating a centered content column.
+    title:
+      type: string
+      description: |
+        Styles the `<h1>` page title. This should use the theme's primary
+        heading font (`font-heading`) and be sized appropriately for a
+        main page title.
+    content:
+      type: string
+      description: |
+        Styles the `<div>` that contains the HTML rendered from
+        Markdown. This property heavily relies on the `@tailwindcss/typography`
+        plugin (`prose` classes) to provide sensible defaults for all
+        typographic elements.
+
+# -----------------------------------------------------------------------------
+# Page+Announcement Style Group
+# -----------------------------------------------------------------------------
+Page+Announcement:
+  type: object
+  description: |
+    Styles the site-wide announcement banner that appears at the very top of
+    the page, above the main header.
+  properties:
+    container:
+      type: string
+      description: |
+        Applies CSS classes to the main `<div>` that wraps the
+        announcement content. This is the primary property for styling
+        the banner's appearance, including background color, text style,
+        and layout.
+
+# -----------------------------------------------------------------------------
+# Page+Header Style Group
+# -----------------------------------------------------------------------------
+Page+Header:
+  type: object
+  description: |
+    Styles the main site header, which includes the logo, navigation menu,
+    dropdowns, and action buttons.
+  properties:
+    header:
+      type: string
+      description: |
+        The main `<header>` element. Controls positioning (e.g., `sticky`),
+        z-index, background, and bottom border.
+    header_container:
+      type: string
+      description: |
+        The inner wrapper that constrains content width and sets padding.
+    logo_container:
+      type: string
+      description: |
+        The container for the logo and mobile menu toggle, controlling their alignment.
+    logo_link:
+      type: string
+      description: |
+        The `<a>` tag wrapping the logo.
+    toggle_menu_container:
+      type: string
+      description: |
+        The container for the mobile menu toggle button, visible on smaller screens.
+    nav:
+      type: string
+      description: |
+        The `<nav>` element containing the main navigation menu.
+    nav_list:
+      type: string
+      description: |
+        The `<ul>` element for the navigation links.
+    nav_list_item_dropdown:
+      type: string
+      description: |
+        The `<li>` element that acts as a dropdown container.
+    dropdown_button:
+      type: string
+      description: |
+        The button that toggles a dropdown menu.
+    dropdown_icon:
+      type: string
+      description: |
+        The dropdown arrow icon.
+    dropdown_menu:
+      type: string
+      description: |
+        The dropdown menu container.
+    dropdown_menu_link:
+      type: string
+      description: |
+        A link inside a dropdown menu.
+    nav_link:
+      type: string
+      description: |
+        A standard navigation link.
+    link_active:
+      type: string
+      description: |
+        The class name applied to the currently active navigation link.
+    actions_container:
+      type: string
+      description: |
+        The container for header actions like the theme toggle and CTA buttons.
+    actions_inner_container:
+      type: string
+      description: |
+        An inner wrapper for action items.
+    toggle_theme_container:
+      type: string
+      description: |
+        The container for the theme toggle button.
+    toggle_theme_icon:
+      type: string
+      description: |
+        The icon inside the theme toggle button.
+    actions_buttons_container:
+      type: string
+      description: |
+        The container for call-to-action buttons in the header.
+    action_button:
+      type: string
+      description: |
+        Styles for individual call-to-action buttons in the header.
+
+# -----------------------------------------------------------------------------
+# Page+Footer Style Group
+# -----------------------------------------------------------------------------
+Page+Footer:
+  type: object
+  description: |
+    Styles the site footer, which typically contains navigation links, social
+    media icons, and copyright information.
+  properties:
+    container:
+      type: string
+      description: |
+        The main `<footer>` element.
+    content_container:
+      type: string
+      description: |
+        An inner wrapper that sets the max-width and padding for the footer content.
+    links_grid:
+      type: string
+      description: |
+        The grid container for the multi-column navigation link section.
+    links_grid_item:
+      type: string
+      description: |
+        A single column within the links grid.
+    links_group_title:
+      type: string
+      description: |
+        The title for a group of links in a column.
+    links_list:
+      type: string
+      description: |
+        The `<ul>` element containing the links.
+    link_item:
+      type: string
+      description: |
+        An `<li>` element for a single link.
+    link:
+      type: string
+      description: |
+        An `<a>` tag for a footer link.
+    bottom_section:
+      type: string
+      description: |
+        The container for the social links and footnote at the bottom of the footer.
+    social_links_list:
+      type: string
+      description: |
+        The `<ul>` for the list of social media icons.
+    social_link:
+      type: string
+      description: |
+        An `<a>` tag for a social media icon link.
+    social_link_icon:
+      type: string
+      description: |
+        The icon for a social media link.
+    footnote_container:
+      type: string
+      description: |
+        The container for the copyright and footnote text.
+    secondary_links_container:
+      type: string
+      description: |
+        The container for secondary links, often displayed next to the footnote.
+
+# -----------------------------------------------------------------------------
+# Component+SectionWrapper Style Group
+# -----------------------------------------------------------------------------
+Component+SectionWrapper:
+  type: object
+  description: |
+    Provides the base styling for the generic section wrapper, which is the
+    foundational container for all content sections on a page.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the outermost `<section>` element. It's primarily used
+        to define the default vertical padding (`py-*`) between sections.
+    background:
+      type: string
+      description: |
+        Applies classes to the `<div>` that holds the background image.
+    overlay:
+      type: string
+      description: |
+        Styles the overlay `<div>` that sits on top of the background
+        image to improve text contrast.
+    wrapper:
+      type: string
+      description: |
+        Styles the inner `<div>` that contains the section's slot/content.
+        This is where content width is typically constrained.
+
+# -----------------------------------------------------------------------------
+# Root Level Style Variables
+# -----------------------------------------------------------------------------
+section_columns:
+  type: string
+  description: |
+    Defines the default gap between columns in multi-column section layouts
+    (e.g., TwoColumn, ThreeColumn).
+section_column:
+  type: string
+  description: |
+    Defines the default gap between components rendered vertically inside
+    a single column of a section layout.
+
+# -----------------------------------------------------------------------------
+# Section Layout Style Groups
+# -----------------------------------------------------------------------------
+Section+Header:
+  type: object
+  description: |
+    Styles for the "Header" section layout, a specialized section typically
+    used at the top of a page for introductory content.
+  properties:
+    wrapper:
+      type: object
+      description: |
+        Overrides for the embedded `SectionWrapper` component styles.
+      properties:
+        container:
+          type: string
+          description: |
+            Overrides the `container` style of `Component+SectionWrapper`.
+            Typically used to remove vertical padding.
+        background:
+          type: string
+          description: |
+            Overrides the `background` style of `Component+SectionWrapper`.
+        overlay:
+          type: string
+          description: |
+            Overrides the `overlay` style of `Component+SectionWrapper`.
+        wrapper:
+          type: string
+          description: |
+            Overrides the `wrapper` style of `Component+SectionWrapper`.
+    main:
+      type: string
+      description: |
+        Styles the main content `<div>` inside the section, which holds
+        dynamically generated components.
+
+Section+Footer:
+  type: object
+  description: |
+    Styles for the "Footer" section layout, a specialized section for
+    footer-specific content.
+  properties:
+    wrapper:
+      type: object
+      description: |
+        Overrides for the embedded `SectionWrapper` component styles.
+      properties:
+        container:
+          type: string
+          description: |
+            Overrides the `container` style of `Component+SectionWrapper`.
+            Typically used to remove vertical padding.
+    main:
+      type: string
+      description: |
+        Styles the main content `<div>` inside the section.
+
+Section+SingleColumn:
+  type: object
+  description: |
+    Styles for the "SingleColumn" section layout, which provides a simple,
+    centered, single-column content area.
+  properties:
+    column_wrapper:
+      type: string
+      description: |
+        Styles the middle container `<div>` that provides layout
+        constraints, typically for setting `max-w-*` and `mx-auto`.
+    main:
+      type: string
+      description: |
+        Styles the inner `<div>` that holds the dynamically generated
+        components.
+
+Section+TwoColumn:
+  type: object
+  description: |
+    Styles for the "TwoColumn" section layout, which provides a responsive,
+    side-by-side, two-column content area.
+  properties:
+    column_wrapper:
+      type: string
+      description: |
+        Styles the middle `div` that acts as a grid container for
+        the two columns, controlling the gap between them.
+    left:
+      type: string
+      description: |
+        Styles the `div` for the left column.
+    right:
+      type: string
+      description: |
+        Styles the `div` for the right column.
+
+Section+ThreeColumn:
+  type: object
+  description: |
+    Styles for the "ThreeColumn" section layout, which provides a responsive,
+    three-column content area.
+  properties:
+    column_wrapper:
+      type: string
+      description: |
+        Styles the middle `div` that acts as a grid container for
+        the three columns, controlling the gap between them.
+    left:
+      type: string
+      description: |
+        Styles the `div` for the left column.
+    center:
+      type: string
+      description: |
+        Styles the `div` for the center column.
+    right:
+      type: string
+      description: |
+        Styles the `div` for the right column.
+
+# -----------------------------------------------------------------------------
+# Component Style Groups
+# -----------------------------------------------------------------------------
+Component+Logo:
+  type: object
+  description: |
+    Styles the site logo, which is displayed in key branding areas like the
+    site header.
+  properties:
+    image:
+      type: string
+      description: |
+        Applies CSS classes to the Astro `Image` components for both the
+        light and dark logos, primarily to control the logo's size.
+
+Component+Timeline:
+  type: object
+  description: |
+    Styles a vertical timeline component, used for displaying a sequence of
+    events or steps.
+  properties:
+    container:
+      type: string
+      description: |
+        The main wrapper for the entire timeline.
+    panel:
+      type: string
+      description: |
+        The container for a single timeline item (icon and content).
+    icon_wrapper_outer:
+      type: string
+      description: |
+        Wraps the icon and the vertical separator line.
+    icon_wrapper_inner:
+      type: string
+      description: |
+        A wrapper around just the icon, useful for centering.
+    icon_separator:
+      type: string
+      description: |
+        The vertical line connecting timeline items.
+    icon:
+      type: string
+      description: |
+        Styles the icon for each timeline item.
+    content_wrapper:
+      type: string
+      description: |
+        The container for the title and description.
+    content_wrapper_item:
+      type: string
+      description: |
+        Adds bottom padding to all but the last item to create vertical spacing.
+    content_wrapper_last:
+      type: string
+      description: |
+        Styles for the last item's content wrapper, typically removing bottom padding.
+    title:
+      type: string
+      description: |
+        Styles the title of a timeline item.
+    description:
+      type: string
+      description: |
+        Styles the description text of a timeline item.
+
+Component+ItemGrid:
+  type: object
+  description: |
+    Styles a responsive grid of items, where each item consists of an icon
+    positioned to the side of its content.
+  properties:
+    container:
+      type: string
+      description: |
+        The main grid container. Controls the gap between items.
+    container_4:
+      type: string
+      description: |
+        Responsive classes for a 4-column grid layout.
+    container_3:
+      type: string
+      description: |
+        Responsive classes for a 3-column grid layout.
+    container_2:
+      type: string
+      description: |
+        Responsive classes for a 2-column grid layout.
+    panel:
+      type: string
+      description: |
+        Styles a single item's container.
+    icon_wrapper:
+      type: string
+      description: |
+        A wrapper for the icon.
+    icon:
+      type: string
+      description: |
+        Styles the icon itself, including size, color, and margin.
+    content_wrapper:
+      type: string
+      description: |
+        A wrapper for the text content and action button.
+    title:
+      type: string
+      description: |
+        Styles the item's title.
+    description:
+      type: string
+      description: |
+        Styles the item's description text.
+    action:
+      type: string
+      description: |
+        Styles the container for the call-to-action button.
+
+Component+ItemGrid2:
+  type: object
+  description: |
+    Styles an enhanced, responsive grid of items where the icon is typically
+    placed above the content.
+  properties:
+    container:
+      type: string
+      description: |
+        The main grid container. Controls the gap between items.
+    container_4:
+      type: string
+      description: |
+        Responsive classes for a 4-column grid layout.
+    container_3:
+      type: string
+      description: |
+        Responsive classes for a 3-column grid layout.
+    container_2:
+      type: string
+      description: |
+        Responsive classes for a 2-column grid layout.
+    panel:
+      type: string
+      description: |
+        Styles a single item's container.
+    title:
+      type: string
+      description: |
+        Styles the item's title.
+    description:
+      type: string
+      description: |
+        Styles the item's description text.
+    icon:
+      type: string
+      description: |
+        Styles the icon, including size, color, and bottom margin.
+    action:
+      type: string
+      description: |
+        Styles the container for the call-to-action button.
+    button:
+      type: string
+      description: |
+        Applies additional CSS classes to the embedded `Button` component.
+
+Component+DListItem:
+  type: object
+  description: |
+    Styles a definition list item, which consists of a term (`<dt>`) and its
+    corresponding description (`<dd>`).
+  properties:
+    item:
+      type: string
+      description: |
+        Applies CSS classes to the `<div>` that wraps the description
+        content (the `<dd>` part).
+
+Component+Button:
+  type: object
+  description: |
+    Styles the versatile `Button` component, which supports multiple visual variants.
+  properties:
+    icon:
+      type: string
+      description: |
+        Styles the optional `Icon` component embedded within the button.
+    primary:
+      type: string
+      description: |
+        Classes for the primary call-to-action button variant.
+    secondary:
+      type: string
+      description: |
+        Classes for the secondary button variant.
+    tertiary:
+      type: string
+      description: |
+        Classes for the tertiary, often less prominent, button variant.
+    link:
+      type: string
+      description: |
+        Classes for a button that looks like a plain text link.
+
+Component+Expander:
+  type: object
+  description: |
+    Styles the `Expander` component, which renders a collapsible content section
+    using `<details>` and `<summary>` elements.
+  properties:
+    title:
+      type: string
+      description: |
+        Styles the `<summary>` element, which serves as the clickable title.
+    description:
+      type: string
+      description: |
+        Styles the `<div>` that contains the collapsible content.
+
+Component+ToggleMenu:
+  type: object
+  description: |
+    Styles the mobile menu toggle button ("hamburger" icon).
+  properties:
+    button_default:
+      type: string
+      description: |
+        Styles the main `<button>` element.
+    label:
+      type: string
+      description: |
+        Styles the accessible label for the button (typically screen-reader only).
+    span_1:
+      type: string
+      description: |
+        Styles the top horizontal line of the hamburger icon and its animation.
+    span_2:
+      type: string
+      description: |
+        Styles the middle horizontal line of the hamburger icon and its animation.
+    span_3:
+      type: string
+      description: |
+        Styles the bottom horizontal line of the hamburger icon and its animation.
+
+Component+ToggleTheme:
+  type: object
+  description: |
+    Styles the theme toggle button for switching between light and dark modes.
+  properties:
+    button_default:
+      type: string
+      description: |
+        Styles the main `<button>` element.
+    icon_default:
+      type: string
+      description: |
+        Applies CSS classes to the `Icon` component, primarily for size.
+    icon_name_default:
+      type: string
+      description: |
+        The default icon to display (e.g., a sun icon).
+
+Component+WidgetWrapper:
+  type: object
+  description: |
+    Provides styling for the `WidgetWrapper` component, a standardized
+    container for most content widgets.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the outermost `<section>` element.
+    background:
+      type: string
+      description: |
+        Applies classes to the `<div>` that holds a background image.
+    overlay:
+      type: string
+      description: |
+        Styles the overlay `<div>` that sits on top of a background image.
+    wrapper:
+      type: string
+      description: |
+        Styles the inner `<div>` that contains the widget's content, controlling
+        layout constraints like max-width and padding.
+
+Component+Headline:
+  type: object
+  description: |
+    Styles the `Headline` component, which provides a consistent structure
+    for titles, subtitles, and taglines.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps all headline elements.
+    tagline:
+      type: string
+      description: |
+        Styles the small text that appears above the main title.
+    title:
+      type: string
+      description: |
+        Styles the main `<h2>` heading element.
+    subtitle:
+      type: string
+      description: |
+        Styles the descriptive text that appears below the main title.
+
+Component+Form:
+  type: object
+  description: |
+    Styles the main `Form` component, handling the form's container, error
+    messages, and other structural elements.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    form_container:
+      type: string
+      description: Styles the main wrapper for the form content.
+    error_container:
+      type: string
+      description: Styles the container for server-side submission errors.
+    error_message:
+      type: string
+      description: Styles the server-side submission error message text.
+    honeypot_container:
+      type: string
+      description: For the hidden spam-protection field.
+    unsupported_field_error:
+      type: string
+      description: For developer-facing errors about unsupported field types.
+    disclaimer_container:
+      type: string
+      description: Styles the container for the optional disclaimer checkbox and label.
+    disclaimer_checkbox_container:
+      type: string
+      description: Styles the container for the disclaimer checkbox input.
+    disclaimer_checkbox:
+      type: string
+      description: Styles the disclaimer checkbox input itself.
+    disclaimer_label_container:
+      type: string
+      description: Styles the container for the disclaimer label.
+    disclaimer_label:
+      type: string
+      description: Styles the disclaimer label text.
+    submit_button_container:
+      type: string
+      description: A wrapper for the submit button.
+    note_container:
+      type: string
+      description: Styles the container for the optional note text below the submit button.
+    note_text:
+      type: string
+      description: Styles the optional note text.
+    success_message:
+      type: string
+      description: Styles the message shown after a successful submission.
+
+# -----------------------------------------------------------------------------
+# Form Field Style Groups
+# -----------------------------------------------------------------------------
+Form+Error:
+  type: object
+  description: |
+    Styles the `FormError` component, which displays validation error messages
+    for individual form fields.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the `<div>` that wraps the error message.
+    message:
+      type: string
+      description: |
+        Styles the `<span>` that holds the error text.
+
+Form+Label:
+  type: object
+  description: |
+    Styles the `FormLabel` component, which renders the <label> for a form field.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the `<label>` element itself.
+
+Form+Checkbox:
+  type: object
+  description: |
+    Styles the `Checkbox` form field, which allows for multiple selections.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps the entire checkbox group.
+    input_container:
+      type: string
+      description: |
+        Styles the `<div>` that contains all the individual checkbox options.
+    option_container:
+      type: string
+      description: |
+        Styles the `<div>` that wraps a single checkbox input and its label.
+    option_checkbox:
+      type: string
+      description: |
+        Styles the `<input type="checkbox">` element itself.
+    option_label:
+      type: string
+      description: |
+        Styles the `<label>` for an individual checkbox option.
+
+Form+ShortText:
+  type: object
+  description: |
+    Styles the `ShortText` form field, a standard single-line text input.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps the field.
+    input:
+      type: string
+      description: |
+        Styles the `<input type="text">` element itself.
+
+Form+LongText:
+  type: object
+  description: |
+    Styles the `LongText` form field, a multi-line <textarea> input.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps the field.
+    input:
+      type: string
+      description: |
+        Styles the `<textarea>` element itself.
+
+Form+Email:
+  type: object
+  description: |
+    Styles the `Email` form field, a specialized text input for email addresses.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps the field.
+    input:
+      type: string
+      description: |
+        Styles the `<input type="email">` element itself.
+
+Form+Select:
+  type: object
+  description: |
+    Styles the `Select` form field, a dropdown menu.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps the field.
+    input:
+      type: string
+      description: |
+        Styles the `<select>` element itself.
+
+Form+FileUpload:
+  type: object
+  description: |
+    Styles the `FileUpload` form field.
+  properties:
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps the field.
+    input:
+      type: string
+      description: |
+        Styles the `<input type="file">` element itself.
+
+# -----------------------------------------------------------------------------
+# Widget Style Groups
+# -----------------------------------------------------------------------------
+Component+Brands:
+  type: object
+  description: |
+    Styles the `Brands` widget, used to showcase a collection of logos.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    container:
+      type: string
+      description: |
+        Styles the `<div>` that wraps all the brand icons and images.
+    icon:
+      type: string
+      description: |
+        Styles the `Icon` components when using icon-based brands.
+    image_container:
+      type: string
+      description: |
+        Styles the wrapper `<div>` for each brand image.
+    image:
+      type: string
+      description: |
+        Styles the `Image` component for each brand image.
+
+Component+CallToAction:
+  type: object
+  description: |
+    Styles the `CallToAction` widget, a prominent block for user actions.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    container:
+      type: string
+      description: |
+        Styles the main `<div>` that wraps the action buttons.
+    actions_container:
+      type: string
+      description: |
+        Styles the `<div>` that wraps the group of action buttons.
+    action_wrapper:
+      type: string
+      description: |
+        Styles the wrapper for each individual action button.
+    action_button:
+      type: string
+      description: |
+        Applies additional CSS classes to the embedded `Button` components.
+
+Component+Content:
+  type: object
+  description: |
+    Styles the `Content` widget for displaying mixed content in a two-column layout.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    container:
+      type: string
+      description: Styles the main content container `<div>`.
+    grid:
+      type: string
+      description: Styles the flexbox container for the two columns.
+    grid_reversed:
+      type: string
+      description: Styles for the reversed layout.
+    column_1:
+      type: string
+      description: Styles the first column (text content).
+    column_1_no_image:
+      type: string
+      description: Styles the first column when there is no image.
+    content:
+      type: string
+      description: Styles the `<div>` that wraps the main HTML text content.
+    items:
+      type: object
+      description: Overrides for the embedded `ItemGrid` component styles.
+      properties:
+        icon_wrapper: { type: string, description: 'Overrides `ItemGrid.icon_wrapper`.' }
+        content_wrapper: { type: string, description: 'Overrides `ItemGrid.content_wrapper`.' }
+        container: { type: string, description: 'Overrides `ItemGrid.container`.' }
+        panel: { type: string, description: 'Overrides `ItemGrid.panel`.' }
+        title: { type: string, description: 'Overrides `ItemGrid.title`.' }
+        description: { type: string, description: 'Overrides `ItemGrid.description`.' }
+        icon: { type: string, description: 'Overrides `ItemGrid.icon`.' }
+        action: { type: string, description: 'Overrides `ItemGrid.action`.' }
+    column_2:
+      type: string
+      description: Styles the second column (image).
+    image_container:
+      type: string
+      description: Styles the wrapper `<div>` for the image.
+    image:
+      type: string
+      description: Styles the `Image` component itself.
+    call_to_action_container:
+      type: string
+      description: Styles the wrapper for the entire call-to-action block.
+    call_to_action:
+      type: string
+      description: Styles the inner wrapper for the `Button` component.
+
+Component+FAQs:
+  type: object
+  description: |
+    Styles the `FAQs` widget, which displays a list of questions and answers.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    item_container:
+      type: string
+      description: Styles the grid container for multiple columns.
+    item_container_1:
+      type: string
+      description: Styles the grid container for a single column layout.
+    items:
+      type: object
+      description: Overrides for the embedded `ItemGrid` component styles.
+      properties:
+        panel: { type: string, description: 'Overrides `ItemGrid.panel`.' }
+        icon: { type: string, description: 'Overrides `ItemGrid.icon`.' }
+    default_icon:
+      type: string
+      description: The name of the icon to use for each FAQ item.
+
+Component+Features:
+  type: object
+  description: |
+    Styles the `Features` widget, which displays a collection of feature items.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    items:
+      type: object
+      description: Overrides for the embedded `ItemGrid` component styles.
+      properties:
+        container: { type: string, description: 'Overrides `ItemGrid.container`.' }
+        icon: { type: string, description: 'Overrides `ItemGrid.icon`.' }
+        title: { type: string, description: 'Overrides `ItemGrid.title`.' }
+
+Component+Features2:
+  type: object
+  description: |
+    Styles the `Features2` widget, an enhanced version with styled panels.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    items:
+      type: object
+      description: Overrides for the embedded `ItemGrid2` component styles.
+      properties:
+        container: { type: string, description: 'Overrides `ItemGrid2.container`.' }
+        panel: { type: string, description: 'Overrides `ItemGrid2.panel`.' }
+        icon: { type: string, description: 'Overrides `ItemGrid2.icon`.' }
+
+Component+Features3:
+  type: object
+  description: |
+    Styles the `Features3` widget, which displays features alongside an image.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    container:
+      type: string
+      description: Styles the main `<div>` that contains the image section.
+    image_container:
+      type: string
+      description: Styles the wrapper `<div>` for the image.
+    image:
+      type: string
+      description: Styles the `Image` component itself.
+    items:
+      type: object
+      description: Overrides for the embedded `ItemGrid` component styles.
+      properties:
+        container: { type: string, description: 'Overrides `ItemGrid.container`.' }
+        panel: { type: string, description: 'Overrides `ItemGrid.panel`.' }
+        title: { type: string, description: 'Overrides `ItemGrid.title`.' }
+        description: { type: string, description: 'Overrides `ItemGrid.description`.' }
+        icon: { type: string, description: 'Overrides `ItemGrid.icon`.' }
+
+Component+Hero:
+  type: object
+  description: |
+    Styles the `Hero` widget, a prominent section for the top of a page.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    container:
+      type: string
+      description: Styles the main `<div>` that holds the hero's content.
+    headline:
+      type: object
+      description: Styles for the headline elements.
+      properties:
+        container: { type: string, description: 'Wrapper for tagline, title, and subtitle.' }
+        tagline: { type: string, description: 'The small `<p>` element above the main title.' }
+        title: { type: string, description: 'The main `<h1>` title.' }
+        subtitle: { type: string, description: 'The descriptive `<p>` element below the title.' }
+    subtitle_container:
+      type: string
+      description: Styles the `<div>` that wraps the subtitle and action buttons.
+    actions_container:
+      type: string
+      description: Styles the `<div>` that wraps the group of action buttons.
+    action_item:
+      type: string
+      description: Styles the wrapper for each individual action button.
+    action_button:
+      type: string
+      description: Applies additional CSS classes to the embedded `Button` components.
+    content_wrapper:
+      type: string
+      description: Styles the `<div>` that wraps any additional HTML content.
+    image_container:
+      type: string
+      description: Styles the wrapper `<div>` for the hero image.
+    image:
+      type: string
+      description: Styles the `Image` component itself.
+
+Component+Hero2:
+  type: object
+  description: |
+    Styles the `Hero2` widget, an enhanced hero section with a two-column layout.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    container:
+      type: string
+      description: Styles the main `<div>` that holds the hero's content grid.
+    grid:
+      type: string
+      description: Styles the grid container for the two columns (text and image).
+    headline:
+      type: object
+      description: Styles for the headline elements in the first column.
+      properties:
+        container: { type: string, description: 'Wrapper for the text content column.' }
+        tagline: { type: string, description: 'The small `<p>` element above the main title.' }
+        title: { type: string, description: 'The main `<h1>` title.' }
+        subtitle: { type: string, description: 'The descriptive `<p>` element below the title.' }
+    subtitle_container:
+      type: string
+      description: Styles the `<div>` that wraps the subtitle and action buttons.
+    actions_wrapper:
+      type: string
+      description: Styles the `<div>` that wraps the group of action buttons.
+    action_item:
+      type: string
+      description: Styles the wrapper for each individual action button.
+    button:
+      type: string
+      description: Applies additional CSS classes to the embedded `Button` components.
+    content_wrapper:
+      type: string
+      description: Styles the `<div>` that wraps any additional HTML content.
+    image_column:
+      type: string
+      description: Styles the `<div>` for the second column, which contains the image.
+    image_container:
+      type: string
+      description: Styles the wrapper `<div>` for the hero image.
+    image:
+      type: string
+      description: Styles the `Image` component itself.
+
+Component+HeroText:
+  type: object
+  description: |
+    Styles the `HeroText` widget, a text-focused hero section.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    container:
+      type: string
+      description: Styles the main `<div>` that holds the hero's content.
+    headline:
+      type: object
+      description: Styles for the headline elements.
+      properties:
+        container: { type: string, description: 'Wrapper for tagline, title, and subtitle.' }
+        tagline: { type: string, description: 'The small `<p>` element above the main title.' }
+        title: { type: string, description: 'The main `<h1>` title.' }
+        subtitle: { type: string, description: 'The descriptive `<p>` element below the title.' }
+    subtitle_container:
+      type: string
+      description: Styles the `<div>` that wraps the subtitle and action buttons.
+    actions_container:
+      type: string
+      description: Styles the `<div>` that wraps the group of action buttons.
+    action_item:
+      type: string
+      description: Styles the wrapper for each individual action button.
+    content_container:
+      type: string
+      description: Styles the `<div>` that wraps any additional HTML content.
+
+Component+Note:
+  type: object
+  description: |
+    Styles the `Note` widget for displaying important information.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    container:
+      type: string
+      description: Styles the main `<div>` that wraps the note's content.
+    icon:
+      type: string
+      description: Styles the `Icon` component.
+    subject:
+      type: string
+      description: Styles the `<span>` containing the subject text.
+    statement:
+      type: string
+      description: Styles the `<span>` containing the statement text.
+
+Component+Pricing:
+  type: object
+  description: |
+    Styles the `Pricing` widget, which displays multiple pricing plans.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    container:
+      type: string
+      description: Styles the main pricing container `<div>`.
+    grid:
+      type: string
+      description: Styles the grid layout for the pricing plans.
+    item_wrapper:
+      type: string
+      description: Styles the wrapper for an individual pricing plan.
+    item:
+      type: string
+      description: Styles the main container for a single pricing plan (the "card").
+    ribbon_wrapper:
+      type: string
+      description: Styles the container for the promotional ribbon.
+    ribbon_title:
+      type: string
+      description: Styles the text and background of the ribbon.
+    item_content:
+      type: string
+      description: Styles the `<div>` that wraps the content inside a plan.
+    title:
+      type: string
+      description: Styles the title of a pricing plan.
+    subtitle:
+      type: string
+      description: Styles the subtitle of a pricing plan.
+    details:
+      type: string
+      description: Styles the container for the price information.
+    amount_wrapper:
+      type: string
+      description: Styles the wrapper for the currency and price amount.
+    currency:
+      type: string
+      description: Styles the currency symbol.
+    amount:
+      type: string
+      description: Styles the price amount.
+    period:
+      type: string
+      description: Styles the billing period text (e.g., "per month").
+    features_list:
+      type: string
+      description: Styles the `<ul>` for the list of features.
+    feature_item:
+      type: string
+      description: Styles each `<li>` feature item.
+    feature_icon_wrapper:
+      type: string
+      description: Styles the wrapper for a feature's icon.
+    feature_icon:
+      type: string
+      description: Styles the `Icon` component for a feature.
+    actions_wrapper:
+      type: string
+      description: Styles the container for the call-to-action buttons.
+    action_button:
+      type: string
+      description: Applies additional CSS classes to the embedded `Button` components.
+
+Component+SectionHeader:
+  type: object
+  description: |
+    Styles the `SectionHeader` widget, which renders a section header.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    separator:
+      type: string
+      description: Styles the optional horizontal rule (`<hr>`) element.
+
+Component+Stats:
+  type: object
+  description: |
+    Styles the `Stats` widget, which displays key metrics and data points.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    container:
+      type: string
+      description: Styles the main `<div>` that wraps all the stat items.
+    stat:
+      type: string
+      description: Styles the container for a single stat item.
+    icon_container:
+      type: string
+      description: Styles the wrapper for the icon.
+    icon:
+      type: string
+      description: Styles the `Icon` component itself.
+    amount:
+      type: string
+      description: Styles the large numerical value.
+    source_container:
+      type: string
+      description: Styles the container for the source link.
+
+Component+Steps:
+  type: object
+  description: |
+    Styles the `Steps` widget, which displays a step-by-step process.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    container:
+      type: string
+      description: Styles the main `<div>` that holds the text and image columns.
+    content:
+      type: string
+      description: Styles the `<div>` for the column containing the headline and timeline.
+    items:
+      type: object
+      description: Overrides for the embedded `Timeline` component styles.
+      properties:
+        container: { type: string, description: 'Overrides `Timeline.container`.' }
+        panel: { type: string, description: 'Overrides `Timeline.panel`.' }
+        icon_wrapper_outer: { type: string, description: 'Overrides `Timeline.icon_wrapper_outer`.' }
+        icon_wrapper_inner: { type: string, description: 'Overrides `Timeline.icon_wrapper_inner`.' }
+        icon_separator: { type: string, description: 'Overrides `Timeline.icon_separator`.' }
+        icon: { type: string, description: 'Overrides `Timeline.icon`.' }
+        content_wrapper: { type: string, description: 'Overrides `Timeline.content_wrapper`.' }
+        content_wrapper_item: { type: string, description: 'Overrides `Timeline.content_wrapper_item`.' }
+        content_wrapper_last: { type: string, description: 'Overrides `Timeline.content_wrapper_last`.' }
+        title: { type: string, description: 'Overrides `Timeline.title`.' }
+        description: { type: string, description: 'Overrides `Timeline.description`.' }
+    image_container:
+      type: string
+      description: Styles the wrapper `<div>` for the image.
+    image:
+      type: string
+      description: Styles the `Image` component itself.
+    action_container:
+      type: string
+      description: Styles the `<div>` that wraps the call-to-action button.
+    action_button:
+      type: string
+      description: Applies additional CSS classes to the embedded `Button` component.
+
+Component+Steps2:
+  type: object
+  description: |
+    Styles the `Steps2` widget, an enhanced step-by-step process display.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    grid:
+      type: string
+      description: Styles the main flexbox container for the two columns.
+    grid_reversed:
+      type: string
+      description: Styles for the reversed layout.
+    column_1:
+      type: string
+      description: Styles the first column (headline and CTA).
+    column_1_reversed:
+      type: string
+      description: Additional styles for the first column in reversed layout.
+    column_1_normal:
+      type: string
+      description: Additional styles for the first column in normal layout.
+    column_2:
+      type: string
+      description: Styles the second column (list of steps).
+    action_container:
+      type: string
+      description: Styles the wrapper for the call-to-action button.
+    action_button:
+      type: string
+      description: Applies additional CSS classes to the embedded `Button` component.
+    items_list:
+      type: string
+      description: Styles the `<ul>` that contains the step items.
+    item:
+      type: string
+      description: Styles each `<li>` step item.
+    item_icon_container:
+      type: string
+      description: Styles the wrapper for the step number or icon.
+    item_icon:
+      type: string
+      description: Styles the circular element containing the number or icon.
+    icon:
+      type: string
+      description: Styles the `Icon` component itself when an icon is used.
+    item_content:
+      type: string
+      description: Styles the wrapper for the step's title and description.
+    item_title:
+      type: string
+      description: Styles the `<h3>` title of a step.
+    item_description:
+      type: string
+      description: Styles the `<p>` description of a step.
+
+Component+Testimonials:
+  type: object
+  description: |
+    Styles the `Testimonials` widget, which displays customer reviews or quotes.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    grid:
+      type: string
+      description: Styles the grid container for all testimonial items.
+    container:
+      type: string
+      description: Styles the wrapper for a single testimonial item.
+    container_inner:
+      type: string
+      description: Styles the main panel/card for a single testimonial.
+    title:
+      type: string
+      description: Styles the optional title within a testimonial item.
+    blockquote:
+      type: string
+      description: Styles the `<blockquote>` element wrapping the testimonial text.
+    testimonial:
+      type: string
+      description: Styles the `<p>` tag containing the testimonial quote.
+    divider:
+      type: string
+      description: Styles the `<hr>` separator line.
+    footer:
+      type: string
+      description: Styles the `<div>` containing the author's information.
+    image_container:
+      type: string
+      description: Styles the wrapper for the author's image.
+    image:
+      type: string
+      description: Styles the `Image` component for the author's avatar.
+    author_container:
+      type: string
+      description: Styles the wrapper for the author's name and job.
+    author_name:
+      type: string
+      description: Styles the author's name text.
+    author_job:
+      type: string
+      description: Styles the author's job title.
+    action_container:
+      type: string
+      description: Styles the wrapper for the optional call-to-action button.
+
+Component+VideoPlayer:
+  type: object
+  description: |
+    Styles the `VideoPlayer` widget, which displays an embedded YouTube video.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    video_player:
+      type: string
+      description: Styles the container for the embedded YouTube player.

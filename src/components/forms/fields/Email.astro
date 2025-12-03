@@ -1,0 +1,140 @@
+---
+/**
+ * Email.astro
+ *
+ * This component renders an email input form field with label and error messaging.
+ * It supports placeholder text, autocomplete configuration, pre-filled values, and validation.
+ * The component integrates with the form validation system and theme-based styling.
+ * The input type is set to "email" which provides built-in browser validation for email format.
+ *
+ * Features:
+ * - Email-specific input with built-in format validation
+ * - Support for pre-filled values from cache
+ * - Required field validation with visual indicators
+ * - Dynamic error messaging through FormError component
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ * - Data attributes for test automation
+ *
+ * Props (extends BaseField interface):
+ * - name: Unique identifier for the field (used in form data)
+ * - label (optional): Field label text (passed to FormLabel)
+ * - placeholder (optional): Placeholder text for the input field
+ * - autocomplete (optional): Autocomplete attribute value (defaults to "on")
+ * - required (optional): Whether field is required (defaults to false)
+ * - value (optional): Pre-filled text value (from cache)
+ *
+ * Styling Inputs:
+ * - getClasses('Form+Email'): Retrieves CSS classes for email elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main wrapper div
+ *   - input: Classes for the email input element
+ *
+ * Component Integration:
+ * - FormLabel: Renders field label with required indicator
+ * - FormError: Renders error message container for validation errors
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives field configuration through Astro.props
+ * 2. Applies pre-filled value from cache to input field
+ * 3. Integrates with form validation through FormError component
+ * 4. Associates with FormLabel for proper accessibility
+ *
+ * Accessibility:
+ * - Proper "for" attribute linking between label and input
+ * - Unique ID matching name attribute
+ * - Semantic HTML structure with div container
+ * - Required attribute for validation
+ * - Data attributes for test automation
+ *
+ * Browser Validation:
+ * - Input type "email" provides built-in format validation
+ * - Browser will show native validation messages for invalid emails
+ * - Works in conjunction with custom form validation
+ *
+ * Usage Context:
+ * - Used by Form component for email input fields
+ * - Integrated with form validation and submission system
+ * - Values are submitted as email strings
+ */
+
+import type { BaseField } from '~/types';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending BaseField
+ *
+ * @property placeholder - Placeholder text for the input field
+ * @property autocomplete - Autocomplete attribute value (defaults to "on")
+ */
+export interface Props extends BaseField {
+  placeholder?: string;
+  autocomplete?: string;
+}
+
+// Destructure props with defaults
+const { name, label = '', placeholder = '', autocomplete = 'on', required = false, value = undefined } = Astro.props;
+
+// Retrieve CSS classes for email elements from theme configuration
+const classes = getClasses('Form+Email');
+---
+
+{
+  /*
+    Main container div for the email field.
+    - Provides wrapper for label, input, and error message
+    - Uses theme-based styling through classes.container
+    - Includes data-name attribute for test automation
+  */
+}
+<div class={classes.container} data-name="form-email-container">
+  {
+    /*
+      Form label associated with the email input.
+      - Uses FormLabel component for consistent labeling
+      - Shows required indicator when required=true
+      - Associated with input via matching name/id
+    */
+  }
+  <FormLabel name={name} label={label} required={required} />
+
+  {
+    /*
+      Email input element for email address entry.
+      - Type is "email" for built-in format validation
+      - Name and ID match for proper form association
+      - data-field-name for JavaScript targeting
+      - Autocomplete configuration for browser assistance
+      - Placeholder text for user guidance
+      - Pre-filled value from cache when available
+      - Uses theme-based styling through classes.input
+      - Required attribute when field is required
+      - Includes data-name attribute for test automation
+    */
+  }
+  <input
+    type="email"
+    name={name}
+    id={name}
+    data-field-name={name}
+    autocomplete={autocomplete}
+    placeholder={placeholder}
+    value={value}
+    class={classes.input}
+    {...required ? { required: 'true' } : {}}
+    data-name="form-email-input"
+  />
+
+  {
+    /*
+      Error message container for validation errors.
+      - Uses FormError component for consistent error display
+      - ID matches aria-describedby reference in parent form
+      - Content populated dynamically via JavaScript
+    */
+  }
+  <FormError id={`${name}-error`} />
+</div>

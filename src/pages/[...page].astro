@@ -1,0 +1,132 @@
+---
+/**
+ * [...page].astro
+ *
+ * This is a dynamic route component that serves as the main entry point for all
+ * content pages on the website. It uses Astro's spread parameter syntax ([...page])
+ * to capture all URL paths and render the appropriate page content based on
+ * the site's data configuration. This enables a flexible, data-driven approach
+ * to page generation where content is defined in YAML files rather than individual
+ * Astro components.
+ *
+ * Features:
+ * - Dynamic route handling for all content pages
+ * - Data-driven page generation from YAML configuration
+ * - Section-based content architecture
+ * - Themeable styling through CSS classes
+ * - Static site generation with prerendering
+ * - Automatic static path generation
+ *
+ * Route Parameters:
+ * - [...page]: Spread parameter capturing the full URL path
+ *   - Enables handling of nested page structures (e.g., /about/team/john)
+ *   - Maps directly to page slugs in the data configuration
+ *
+ * Data Flow:
+ * 1. getStaticPaths() generates static paths for all available pages
+ * 2. Astro.params extracts the page parameter from the URL
+ * 3. getSpecs('pages') loads all page configurations from YAML data files
+ * 4. Page-specific data is retrieved using the page slug
+ * 5. getLayout() retrieves layout configuration for consistent structure
+ * 6. Sections are dynamically rendered through SectionComponent
+ *
+ * Component Integration:
+ * - PageLayout: Provides consistent page structure with header/footer
+ * - SectionComponent: Renders individual content sections dynamically
+ * - getLayout: Retrieves layout configuration for the page
+ * - getSpecs: Loads page data from YAML configuration
+ * - generateLinks: Generates list of all available page paths
+ *
+ * Props and Configuration:
+ * - page: URL parameter representing the page slug
+ * - allPages: Complete collection of page configurations from YAML
+ * - pageData: Specific data for the requested page
+ * - layoutProps: Layout configuration for consistent page structure
+ *
+ * Static Path Generation:
+ * - getStaticPaths(): Generates static paths at build time
+ * - generateLinks(): Creates list of all available page slugs
+ * - Maps each path to params object for Astro's static generation
+ *
+ * Prerendering:
+ * - prerender = true: Enables static site generation for better performance
+ * - Content is generated at build time for fast loading
+ *
+ * Section Architecture:
+ * - Sections are defined in YAML configuration files
+ * - Each section specifies a layout type and component configuration
+ * - SectionComponent dynamically renders appropriate layout components
+ * - Supports various section types (Header, Footer, SingleColumn, etc.)
+ *
+ * Type Safety:
+ * - PageType: Interface for page data structure
+ * - SectionType: Interface for section data structure
+ * - Type casting ensures proper data handling
+ *
+ * Usage Context:
+ * - Dynamic route handler for all content pages
+ * - Renders page content based on data configuration
+ * - Provides fallback for any URL path not handled by specific routes
+ * - Works in conjunction with index.astro for home page
+ */
+
+import type { Page as PageType, Section as SectionType } from '~/types';
+import Layout from '~/layouts/PageLayout.astro';
+import { getSpecs } from '~/utils/loader';
+import { getLayout } from '~/utils/router';
+import { generateLinks } from '~/utils/generator';
+import SectionComponent from '~/components/page/Section.astro';
+
+/**
+ * Generates static paths for all available pages at build time.
+ *
+ * This function is called by Astro during the build process to determine
+ * which pages should be pre-rendered as static HTML files. It uses the
+ * generateLinks utility to create a list of all available page paths
+ * from the site's data configuration.
+ *
+ * @returns Array of path objects with params for static generation
+ */
+export function getStaticPaths() {
+  return generateLinks().map((path) => ({
+    params: { page: path },
+  }));
+}
+
+// Extract the page parameter from the URL
+const { page } = Astro.params;
+
+// Enable static site generation for better performance
+export const prerender = true;
+
+// Load all page configurations from YAML data files
+const allPages = getSpecs('pages');
+
+// Extract requested page specific data and cast to proper type
+const pageData: PageType | undefined = allPages[page] as PageType | undefined;
+
+// Retrieve layout configuration for consistent page structure
+const layoutProps = getLayout(page);
+---
+
+{
+  /*
+    PageLayout component provides consistent site structure.
+    - Wraps content with header, footer, and base layout
+    - Spreads layoutProps for page-specific configuration
+    - Contains dynamically rendered sections
+  */
+}
+<Layout {...layoutProps}>
+  {
+    /*
+      Conditional rendering of sections when pageData exists.
+      - Checks for pageData and sections array
+      - Maps through sections to render SectionComponent for each
+      - Casts sections to SectionType array for type safety
+    */
+    pageData &&
+      pageData.sections &&
+      (pageData.sections as SectionType[]).map((section) => <SectionComponent section={section} />)
+  }
+</Layout>

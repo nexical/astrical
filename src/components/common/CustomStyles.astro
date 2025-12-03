@@ -1,0 +1,72 @@
+---
+/**
+ * CustomStyles.astro
+ *
+ * This component imports and manages custom font assets for the site.
+ * It serves as a centralized location for font loading and CSS variable definitions.
+ * Currently configured to use the Inter variable font, with commented alternatives available.
+ *
+ * Features:
+ * - Font loading via @fontsource-variable for optimized performance
+ * - Support for variable fonts with multiple weight ranges
+ * - Centralized font management for consistent typography
+ * - Commented alternative font options for easy switching
+ *
+ * Font Integration:
+ * - @fontsource-variable/inter: Primary font loading for Inter variable font
+ * - Alternative fonts listed as comments for quick substitution
+ *
+ * Data Flow:
+ * 1. Imports specified font packages
+ * 2. Makes fonts available through CSS custom properties
+ * 3. Provides fallback options through commented imports
+ *
+ * Usage Context:
+ * - Included in BaseLayout for site-wide font availability
+ * - Renders in document head for early font loading
+ * - Supports both variable and static font implementations
+ *
+ * Available Font Options (commented):
+ * - DM Sans
+ * - Nunito
+ * - Dosis
+ * - Outfit
+ * - Roboto
+ * - Literata
+ * - IBM Plex Sans
+ * - Karla
+ * - Poppins
+ * - Fira Sans
+ * - Libre Franklin
+ * - Inconsolata
+ * - Raleway
+ * - Oswald
+ * - Space Grotesk
+ * - Urbanist
+ *
+ * Implementation Notes:
+ * - Variable fonts provide better performance through single file loading
+ * - Font weights and styles are interpolated rather than discrete files
+ * - Alternative fonts can be activated by uncommenting import statements
+ * - CSS custom properties should be defined in theme files for font usage
+ */
+
+import '@fontsource-variable/inter';
+
+// 'DM Sans'
+// Nunito
+// Dosis
+// Outfit
+// Roboto
+// Literata
+// 'IBM Plex Sans'
+// Karla
+// Poppins
+// 'Fira Sans'
+// 'Libre Franklin'
+// Inconsolata
+// Raleway
+// Oswald
+// 'Space Grotesk'
+// Urbanist
+---

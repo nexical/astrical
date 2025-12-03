@@ -1,0 +1,3029 @@
+# -----------------------------------------------------------------------------
+# Layout+Base Style Group
+# -----------------------------------------------------------------------------
+#
+# Defines the foundational styles for the entire website by targeting the
+# `<html>` and `<body>` elements. These styles are critical for establishing
+# the global look and feel, including typography and color schemes.
+#
+# Properties:
+#   - html: Applies CSS classes directly to the `<html>` tag. This is useful
+#           for setting up responsive base font sizes or other global
+#           properties. For example, `2xl:text-[20px]` increases the root
+#           font size on extra-large screens, allowing for scalable typography
+#           across the site using `rem` units.
+#
+#   - body: Applies CSS classes to the `<body>` tag. This is where the primary
+#           typographic and background styles are set.
+#           - Font styling: Use Tailwind CSS utilities like `antialiased`,
+#             `font-sans`, `font-serif`, etc., to set the default font family.
+#           - Text color: `text-default` is a placeholder for a custom color
+#             defined in the theme's palette (e.g., in tailwind.config.js).
+#             This ensures consistent text color across the site.
+#           - Background color: `bg-page` is a placeholder for the main page
+#             background color, also from the theme's palette.
+#           - Text spacing: `tracking-tight` or similar utilities can be used
+#             to adjust letter spacing for readability.
+#
+# AI Theming Guidelines:
+# To create a cohesive theme, follow these principles:
+# 1. Define a core color palette in your Tailwind configuration, including
+#    semantic names like `page`, `default`, `primary`, `secondary`, `surface`,
+#    and `muted`.
+# 2. Use these custom color classes here. For example, if you define a dark
+#    theme, `bg-page` might be `bg-gray-900` and `text-default` might be
+#    `text-gray-200`.
+# 3. The styles set in `Layout+Base` are inherited by all other components.
+#    Ensure that other style groups (e.g., `Component+Headline`, `Page+Header`)
+#    use colors and fonts that are harmonious with this base. For instance,
+#    a component's background might be `bg-surface` to stand out from the
+#    `bg-page` background.
+# 4. The base font size and family established here serve as the default for
+#    all text. Other components should use relative sizing or modifiers that
+#    build upon this foundation to maintain a consistent typographic hierarchy.
+#
+Layout+Base:
+  html: '2xl:text-[20px]'
+  body: 'antialiased text-default bg-page tracking-tight'
+
+# -----------------------------------------------------------------------------
+# Layout+Page Style Group
+# -----------------------------------------------------------------------------
+#
+# Provides styling for the main content area of the standard page layout.
+# This group targets the `<main>` HTML element that wraps the primary content
+# of a page, as defined in `src/layouts/PageLayout.astro`.
+#
+# Properties:
+#   - main: Applies CSS classes directly to the `<main>` element. This can be
+#           used to set global padding, margins, or other structural styles
+#           for the main content container.
+#
+# AI Theming Guidelines:
+# 1. Purpose: The `main` property is intended for high-level layout adjustments.
+#    For example, you could add `py-8` to ensure all pages have consistent
+#    vertical padding around the main content.
+#
+# 2. Overriding: Styles applied here will affect all pages using the default
+#    `PageLayout`. More specific layouts, like `Layout+Markdown`, or individual
+#    sections within a page can override or supplement these styles.
+#
+# 3. Default Behavior: In many themes, this property is intentionally left
+#    empty (`main: ''`). This approach provides maximum flexibility, allowing
+#    each section or component on the page to control its own padding,
+#    background, and width. This is often preferable to a one-size-fits-all
+#    main container style.
+#
+# 4. When to Use: Consider adding styles here if you want a consistent,
+#    non-full-width content area on every page. For example:
+#    `main: 'max-w-7xl mx-auto px-4 sm:px-6'` would center all page content
+#    in a constrained container. However, be aware this might conflict with
+#    full-bleed section designs.
+#
+Layout+Page:
+  main: ''
+
+# -----------------------------------------------------------------------------
+# Layout+Markdown Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the layout for pages generated from Markdown files, such as blog posts,
+# documentation, or legal pages. This group controls the main container, the
+# page title, and the content area where the Markdown is rendered.
+#
+# Properties:
+#   - container: Applies CSS classes to the main `<section>` wrapper. It is
+#                used to define the page's padding, margins, and maximum width,
+#                creating a centered content column.
+#
+#   - title: Styles the `<h1>` page title. This should use the theme's primary
+#            heading font (`font-heading`) and be sized appropriately for a
+#            main page title.
+#
+#   - content: Styles the `<div>` that contains the HTML rendered from
+#              Markdown. This property heavily relies on the `@tailwindcss/typography`
+#              plugin (`prose` classes) to provide sensible defaults for all
+#              typographic elements (paragraphs, headings, lists, links, etc.).
+#
+# AI Theming Guidelines:
+# 1. Container Sizing: Adjust the `max-w-*` utility in the `container` property
+#    to control the width of the text-heavy content. This should be readable
+#    (e.g., `max-w-4xl`).
+#
+# 2. Title Typography: Ensure the `title` styles are consistent with other
+#    major headings on the site, such as those in `Component+Headline`. Use
+#    the `font-heading` utility if a specific heading font is part of the theme.
+#
+# 3. Prose/Content Styling: The `content` property is the most critical for
+#    theming.
+#    - Use `prose` and its modifiers to style the entire block of Markdown
+#      content.
+#    - For dark mode, `dark:prose-invert` is essential to automatically switch
+#      text colors to be light on a dark background.
+#    - Customize specific elements by chaining `prose-*` modifiers. For example,
+#      to match your theme's primary color for links, use
+#      `prose-a:text-primary dark:prose-a:text-primary`. To style headings,
+#      use `prose-headings:text-some-color`.
+#    - The base `prose` styles are inherited from the theme's `tailwind.config.js`.
+#      For deep customization, you can extend the `typography` key in the
+#      Tailwind config. However, for most theming, overriding with utilities
+#      here is sufficient.
+#
+Layout+Markdown:
+  container: 'px-4 py-16 sm:px-6 mx-auto lg:px-8 lg:py-20 max-w-4xl'
+  title: 'font-bold font-heading text-4xl md:text-5xl leading-tighter tracking-tighter'
+  content: 'mx-auto prose prose-lg max-w-4xl dark:prose-invert dark:prose-headings:text-slate-300 prose-md prose-headings:font-heading prose-headings:leading-tighter prose-headings:tracking-tighter prose-headings:font-bold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-img:rounded-md prose-img:shadow-lg mt-8'
+
+# -----------------------------------------------------------------------------
+# Page+Announcement Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the site-wide announcement banner that appears at the very top of
+# the page, above the main header. This component is rendered only if an
+# announcement is configured in the site settings.
+#
+# Component: src/components/page/Announcement.astro
+#
+# Properties:
+#   - container: Applies CSS classes to the main `<div>` that wraps the
+#                announcement content. This is the primary property for styling
+#                the banner's appearance.
+#
+# AI Theming Guidelines:
+# 1. Visibility and Contrast: The announcement banner should stand out. Use a
+#    background color that grabs attention but aligns with the theme's palette,
+#    such as a primary, secondary, or accent color. The default `bg-blue-950`
+#    is a dark, high-contrast color.
+#
+# 2. Text Styling: Ensure the text color (e.g., `text-white`) has high
+#    contrast against the chosen background for accessibility. Adjust font
+#    size (`text-sm`) and weight (`font-bold`) to be legible without being
+#    overpowering.
+#
+# 3. Structure and Separation:
+#    - Padding (`py-2`) provides vertical spacing around the text.
+#    - A bottom border (`border-b border-surface`) helps separate the banner
+#      from the header below it. The `border-surface` color should be
+#      consistent with other borders in the theme.
+#    - `flex justify-center` centers the announcement text horizontally.
+#
+# 4. Theming Example: For a light theme, you might use a soft primary color
+#    for the background and a dark text color:
+#    `container: 'font-bold text-sm text-primary-dark bg-primary-light border-b border-surface py-2 flex justify-center'`
+#
+Page+Announcement:
+  container: 'font-bold text-sm text-white bg-blue-950 border-b border-surface py-2 flex justify-center'
+
+# -----------------------------------------------------------------------------
+# Page+Header Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the main site header, which includes the logo, navigation menu,
+# dropdowns, and action buttons. This is one of the most complex and visible
+# components, and its styling is crucial for the site's identity.
+#
+# Component: src/components/page/Header.astro
+#
+# Properties:
+#   - header: The main `<header>` element. Controls positioning (e.g., `sticky`),
+#             z-index, background, and bottom border.
+#   - header_container: The inner wrapper that constrains content width and
+#                       sets padding.
+#   - nav, nav_list, nav_link: Styles for the main navigation menu, list, and
+#                              individual links, including typography and hover effects.
+#   - dropdown_*: A set of properties for styling dropdown menus, including the
+#                 toggle button, icon, menu background, and links.
+#   - link_active: The class name applied to the currently active navigation link.
+#                  The styles for this class must be defined elsewhere, typically
+#                  to apply a primary or accent color.
+#   - actions_*: Styles for the container holding the theme toggle and any
+#                call-to-action buttons.
+#   - action_button: Styles for individual call-to-action buttons in the header.
+#
+# AI Theming Guidelines:
+# 1. Background & Transparency: The `header` background can be solid or
+#    transparent. The default `border-gray-50/0` implies a transparent-by-default
+#    look. When using a sticky header, a background color is often applied on
+#    scroll via JavaScript. The `dropdown_menu` uses `xl:backdrop-blur-md` and
+#    `bg-surface` for a modern, semi-transparent effect on desktop.
+#
+# 2. Typography: Navigation link styles (`nav_link`, `dropdown_menu_link`)
+#    should be clear and legible. Use consistent font sizes and weights. The
+#    default uses a slightly smaller font on desktop (`xl:text-[0.9375rem]`).
+#
+# 3. Color Palette:
+#    - Use `text-default` for standard link text.
+#    - Use `text-link` (or a primary color) for hover states (`hover:text-link`).
+#    - Use `bg-surface` for dropdown backgrounds to make them stand out from
+#      the main page background (`bg-page`).
+#    - `dark:hover:text-white` provides a specific override for dark mode.
+#
+# 4. Active Link: The `link_active` class (`aw-link-active`) should be styled
+#    to clearly indicate the current page. A common pattern is to give it the
+#    theme's primary color. This is often configured in `tailwind.config.js`
+#    or a global stylesheet.
+#
+# 5. Action Buttons: The `action_button` styles should align with the global
+#    button styles (e.g., `Component+Button`), but may be slightly modified for
+#    the header context (e.g., different padding or shadow).
+#
+# 6. Responsiveness: The header has significant responsive changes. Many
+#    classes use `xl:` prefixes to apply styles only on large screens. On mobile,
+#    the navigation is hidden and replaced by a `ToggleMenu` component.
+#
+Page+Header:
+  header: 'top-0 z-40 flex-none mx-auto border-b border-gray-200 dark:border-gray-800 w-full ease-in-out bg-page'
+  header_container: 'z-40 relative text-default py-3 px-3 xl:px-6 mx-auto w-full'
+  logo_container: 'flex justify-between'
+  logo_link: 'flex items-center'
+  toggle_menu_container: 'flex items-center xl:hidden'
+  nav: 'items-center w-full xl:w-auto hidden xl:flex xl:mx-5 text-default overflow-y-auto overflow-x-hidden xl:overflow-y-visible xl:overflow-x-auto xl:justify-self-center'
+  nav_list: 'flex flex-col xl:flex-row xl:self-center w-full xl:w-auto text-xl xl:text-[0.9375rem] tracking-[0.01rem] font-medium xl:justify-center'
+  nav_list_item_dropdown: 'dropdown'
+  dropdown_button: 'hover:text-link dark:hover:text-white px-4 py-3 flex items-center'
+  dropdown_icon: 'w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden xl:inline'
+  dropdown_menu: 'dropdown-menu xl:backdrop-blur-md dark:xl:bg-dark rounded xl:absolute pl-4 xl:pl-0 xl:hidden font-medium xl:bg-surface xl:min-w-[200px] drop-shadow-xl border border-surface'
+  dropdown_menu_link: 'first:rounded-t last:rounded-b hover:bg-surface-muted hover:text-link py-2 px-5 block whitespace-no-wrap'
+  nav_link: 'hover:text-link dark:hover:text-white px-4 py-3 flex items-center'
+  link_active: 'aw-link-active'
+  actions_container: 'hidden xl:self-center xl:flex items-center xl:mb-0 fixed w-full xl:w-auto xl:static justify-end left-0 rtl:left-auto rtl:right-0 bottom-0 p-3 xl:p-0 xl:justify-self-end'
+  actions_inner_container: 'items-center flex justify-between w-full xl:w-auto'
+  toggle_theme_container: 'flex'
+  toggle_theme_icon: 'w-6 h-6 xl:w-5 xl:h-5 xl:inline-block'
+  actions_buttons_container: 'ml-4 rtl:ml-0 rtl:mr-4'
+  action_button: 'ml-2 py-2.5 px-5.5 xl:px-6 font-semibold shadow-none text-sm w-auto'
+
+# -----------------------------------------------------------------------------
+# Page+Footer Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the site footer, which typically contains navigation links, social
+# media icons, and copyright information.
+#
+# Component: src/components/page/Footer.astro
+#
+# Properties:
+#   - container: The main `<footer>` element. `border-t border-surface` creates
+#                a separator from the content above. `not-prose` is important
+#                to prevent prose styles from affecting the footer layout.
+#   - content_container: An inner wrapper that sets the max-width and padding
+#                        for the footer content.
+#   - links_*: A set of properties for styling the multi-column navigation
+#              link grid, including the grid itself, individual columns, group
+#              titles, and the links.
+#   - bottom_section: The container for the social links and footnote at the
+#                     bottom of the footer.
+#   - social_links_*: Styles for the list of social media icons, including
+#                      hover effects.
+#   - footnote_container: Styles the copyright and footnote text.
+#   - secondary_links_container: Styles the container for secondary links,
+#                                often displayed next to the footnote.
+#
+# AI Theming Guidelines:
+# 1. Color Palette: The footer heavily uses `text-muted` for less prominent
+#    text and links, with a `hover:text-default` effect to bring them to full
+#    prominence on interaction. The `border-surface` should match other
+#    dividers in the theme.
+#
+# 2. Typography: The `links_group_title` is styled with `font-medium` and
+#    `text-muted` to act as a subtle heading. Link text is typically `text-sm`.
+#    Ensure these are consistent with the site's overall typographic scale.
+#
+# 3. Link Interaction: The standard footer `link` uses a `transition` and
+#    `hover:underline` for a classic, clear interaction. Social links
+#    (`social_link`) use a background color on hover (`hover:bg-surface-muted`)
+#    which should be a subtle color from the theme's surface palette.
+#
+# 4. Structure: The layout is a responsive grid (`grid`, `grid-cols-12`) for
+#    the main links, and a flexbox (`md:flex`) for the bottom section. The
+#    styles are designed to be mobile-first, stacking vertically on small
+#    screens and expanding to multiple columns on larger screens.
+#
+# 5. Theming Example: For a darker theme, `border-surface` might be a dark
+#    gray, `text-muted` a lighter gray, and `text-default` near white. The
+#    `hover:bg-surface-muted` for social links would be a slightly lighter
+#    shade of the footer's background.
+#
+Page+Footer:
+  container: 'relative border-t border-surface not-prose'
+  content_container: 'relative max-w-7xl mx-auto px-4 sm:px-6 text-default'
+  links_grid: 'grid grid-cols-12 gap-4 gap-y-8 sm:gap-8 py-8 md:py-12'
+  links_grid_item: 'col-span-12 md:col-span-6 lg:col-span-4'
+  links_group_title: 'font-medium w-1/2 mx-auto mb-2 text-muted'
+  links_list: 'text-sm w-1/2 mx-auto'
+  link_item: 'mb-2'
+  link: 'text-muted transition duration-150 ease-in-out hover:text-default hover:underline'
+  bottom_section: 'md:flex md:items-center md:justify-between py-6 md:py-8'
+  social_links_list: 'flex mb-4 md:order-1 -ml-2 md:ml-4 md:mb-0 rtl:ml-0 rtl:-mr-2 rtl:md:ml-0 rtl:md:mr-4'
+  social_link: 'text-muted hover:bg-surface-muted focus:outline-none focus:ring-4 focus:ring-blue-200 rounded-lg text-sm p-2.5 inline-flex items-center'
+  social_link_icon: 'w-5 h-5'
+  footnote_container: 'text-sm mr-4 text-muted'
+  secondary_links_container: 'pl-10'
+
+# -----------------------------------------------------------------------------
+# Component+SectionWrapper Style Group
+# -----------------------------------------------------------------------------
+#
+# Provides the base styling for the generic section wrapper, which is the
+# foundational container for all content sections on a page. It handles
+# vertical spacing, background images, and overlays.
+#
+# Component: src/components/ui/SectionWrapper.astro
+#
+# Properties:
+#   - container: Styles the outermost `<section>` element. It's primarily used
+#                to define the default vertical padding (`py-*`) between sections.
+#   - background: Applies classes to the `<div>` that holds the background
+#                 image. Utilities like `bg-cover` and `bg-center` are standard.
+#   - overlay: Styles the overlay `<div>` that sits on top of the background
+#              image. This is used to improve text contrast.
+#   - wrapper: Styles the inner `<div>` that contains the section's slot/content.
+#              This is where content width is typically constrained.
+#
+# AI Theming Guidelines:
+# 1. Spacing: The `container`'s `py-12 md:py-20` sets a generous default
+#    vertical spacing. Adjust this to control the rhythm and white space of
+#    the page.
+#
+# 2. Content Constraint: The `wrapper` property is critical for layout. While
+#    empty by default in this base group, most sections will override this to
+#    set a `max-w-*`, `mx-auto`, and horizontal padding (`px-*`). For example,
+#    `Component+WidgetWrapper` sets this to `max-w-7xl mx-auto px-4 ...`.
+#    For full-width "bleed" sections, the wrapper would remain empty.
+#
+# 3. Backgrounds and Overlays: When a section has a background image (`bg` prop),
+#    the `overlay` is essential for readability. A common theme pattern is to
+#    use a semi-transparent color from the palette, e.g., `bg-black/50` for
+#    light text or `bg-white/70` for dark text.
+#
+# 4. Relationship to Other Components: This style group provides the defaults.
+#    More specific components like `Component+WidgetWrapper` or section layouts
+#    (e.g., `Section+Header`) often provide their own overrides for these
+#    properties to tailor the presentation. When theming, be aware that you
+#    might need to adjust styles in those more specific groups.
+#
+Component+SectionWrapper:
+  container: 'mx-auto py-10'
+  background: 'bg-cover bg-center'
+  overlay: ''
+  wrapper: ''
+
+section_columns: 'gap-12 md:gap-20'
+section_column: 'gap-12 md:gap-20'
+
+# -----------------------------------------------------------------------------
+# Section+Header Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles for the "Header" section layout. This is a specialized version of a
+# section that is typically used at the top of a page to contain introductory
+# content like a `Component+Headline`. It is distinct from `Page+Header`, which
+# is the global site navigation header.
+#
+# Component: src/components/sections/Header.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `SectionWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+SectionWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element. The default
+#                  `py-0 md:py-0` removes vertical padding, which is useful
+#                  for full-bleed hero sections.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - main: Styles the main content `<div>` inside the section, which holds
+#           dynamically generated components (like `Component+Headline`). It is
+#           empty by default, allowing the components within it to define their
+#           own layout and spacing.
+#
+# AI Theming Guidelines:
+# 1. Spacing Control: The primary purpose of this style group is to reset the
+#    vertical padding of a standard section via `wrapper.container`. This is
+#    crucial for creating hero sections that are flush with the top of the
+#    page or have custom padding requirements.
+#
+# 2. Content Layout: While `main` is empty by default, you can use it to
+#    enforce a consistent layout for all header sections. For example, setting
+#    `main: 'max-w-5xl mx-auto text-center'` would center all content within
+#    a constrained width, affecting any components placed inside.
+#
+# 3. Overriding Defaults: This group demonstrates how to override a base
+#    component's styles. The `wrapper` property directly targets the styles
+#    of `Component+SectionWrapper`. When creating a theme, if you modify the
+#    base section styles in `Component+SectionWrapper`, review this group to
+#    ensure your header sections still render as intended.
+#
+Section+Header:
+  wrapper:
+    container: 'py-0 md:py-0'
+  main: ''
+
+# -----------------------------------------------------------------------------
+# Section+Footer Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles for the "Footer" section layout. This is a specialized version of a
+# section that is typically used at the bottom of a page to contain footer-
+# specific content. It is distinct from `Page+Footer`, which is the global
+# site footer.
+#
+# Component: src/components/sections/Footer.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `SectionWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+SectionWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element. The default
+#                  `py-0 md:py-0` removes vertical padding, allowing the footer
+#                  section to be flush with the bottom of the page or have its
+#                  own custom padding.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - main: Styles the main content `<div>` inside the section, which holds
+#           dynamically generated components (like `Component+Content` or `Page+Footer`).
+#           It is empty by default, allowing the components within it to define
+#           their own layout and spacing.
+#
+# AI Theming Guidelines:
+# 1. Spacing Control: The primary purpose of this style group is to reset the
+#    vertical padding of a standard section via `wrapper.container`. This is
+#    useful for creating a footer that has a different background color and
+#    needs to manage its own internal padding.
+#
+# 2. Content Layout: Typically, a `Page+Footer` component is placed inside
+#    this section. The `main` property is usually left empty so that the
+#    `Page+Footer` component can control its own width and padding via its
+#    `content_container` style.
+#
+# 3. Overriding Defaults: This group demonstrates how to override a base
+#    component's styles. The `wrapper` property directly targets the styles
+#    of `Component+SectionWrapper`. When creating a theme, if you modify the
+#    base section styles in `Component+SectionWrapper`, review this group to
+#    ensure your footer sections still render as intended.
+#
+Section+Footer:
+  wrapper:
+    container: 'py-0 md:py-0'
+  main: ''
+
+# -----------------------------------------------------------------------------
+# Section+SingleColumn Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles for the "SingleColumn" section layout, which provides a simple,
+# centered, single-column content area. This is one of the most common layouts,
+# ideal for hero sections, focused content blocks, or any component that
+# should be centered on the page.
+#
+# Component: src/components/sections/SingleColumn.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `SectionWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+SectionWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - column_wrapper: Styles the middle container `<div>` that provides layout
+#                     constraints, typically for setting `max-w-*` and `mx-auto`
+#                     to center the content. In this theme, it defaults to the
+#                     `@section_columns` variable.
+#
+#   - main: Styles the inner `<div>` that holds the dynamically generated
+#           components. This can be used to set the layout for the components
+#           themselves (e.g., making it a flex column with gaps). It defaults
+#           to the `@section_column` variable.
+#
+# AI Theming Guidelines:
+# 1. Content Width: The `column_wrapper` is the primary way to control the
+#    width of the content. For a standard centered text section, you might use
+#    `column_wrapper: 'max-w-3xl mx-auto'`. For a wider, more visual section,
+#    you might use `max-w-7xl`. The `@section_columns` variable it defaults to
+#    is likely intended for multi-column layouts and may need to be overridden
+#    for a single column.
+#
+# 2. Inner Component Layout: The `main` property can be used to add spacing
+#    between components rendered inside the section. For example,
+#    `main: 'flex flex-col gap-8'` would stack the components vertically with
+#    a consistent gap.
+#
+# 3. Background and Spacing: Use the `wrapper` property to override the
+#    `Component+SectionWrapper` styles. For example, to give a section a
+#    different background color and padding, you could set:
+#    `wrapper:`
+#      `container: 'py-10 md:py-16 bg-surface'`
+#      `overlay: 'bg-black/30'` (if a background image is used)
+#
+Section+SingleColumn:
+  column_wrapper: '@section_columns'
+  main: '@section_column'
+
+# -----------------------------------------------------------------------------
+# Section+TwoColumn Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles for the "TwoColumn" section layout, which provides a responsive,
+# side-by-side, two-column content area. This is a versatile layout for
+# presenting complementary content, such as an image next to text, or two
+# feature lists.
+#
+# Component: src/components/sections/TwoColumn.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `SectionWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+SectionWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - column_wrapper: Styles the middle `div` that acts as a grid container for
+#                     the two columns. It is used to control the spacing (gap)
+#                     between the columns.
+#
+#   - left: Styles the `div` for the left column. It is a flex container, so
+#           this property can be used to control alignment and spacing of
+#           components within the column (e.g., `gap-8`).
+#
+#   - right: Styles the `div` for the right column, with the same capabilities
+#            as the `left` property.
+#
+# AI Theming Guidelines:
+# 1. Column Spacing: The `column_wrapper` property is the primary way to
+#    control the horizontal gap between the two columns. The default uses the
+#    `@section_columns` variable (`gap-12 md:gap-20`) for consistency with
+#    other multi-column layouts. Adjust this value to increase or decrease
+#    the space.
+#
+# 2. Inner Component Layout: The `left` and `right` properties control the
+#    layout of components *inside* each column. Since they are flex columns,
+#    you can use `gap-*` utilities to add vertical spacing between components.
+#    The default uses the `@section_column` variable for this. You could also
+#    add padding (`p-8`) or a background color (`bg-surface`) to make one
+#    column stand out.
+#
+# 3. Background and Section Spacing: Use the `wrapper` property to override
+#    the `Component+SectionWrapper` styles. This is how you can give the
+#    entire two-column section a unique background color, adjust its vertical
+#    padding, or make it full-width. For example:
+#    `wrapper:`
+#      `container: 'py-10 md:py-16 bg-surface'`
+#
+# 4. Responsiveness: The layout is responsive by default, stacking the columns
+#    vertically on mobile (`grid-cols-1`) and placing them side-by-side on
+#    medium screens and up (`md:grid-cols-2`). Theming should respect this
+#    behavior. For instance, any horizontal padding on the columns should be
+#    considered for both mobile and desktop views.
+#
+Section+TwoColumn:
+  column_wrapper: '@section_columns'
+  left: '@section_column'
+  right: '@section_column'
+
+# -----------------------------------------------------------------------------
+# Section+ThreeColumn Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles for the "ThreeColumn" section layout, which provides a responsive,
+# three-column content area. This layout is ideal for showcasing feature sets,
+# team members, product categories, or any content that can be broken down
+# into three distinct parts.
+#
+# Component: src/components/sections/ThreeColumn.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `SectionWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+SectionWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - column_wrapper: Styles the middle `div` that acts as a grid container for
+#                     the three columns. It is used to control the spacing (gap)
+#                     between the columns.
+#
+#   - left: Styles the `div` for the left column. It is a flex container, so
+#           this property can be used to control alignment and spacing of
+#           components within the column.
+#
+#   - center: Styles the `div` for the center column, with the same
+#             capabilities as the `left` property.
+#
+#   - right: Styles the `div` for the right column, with the same
+#            capabilities as the `left` property.
+#
+# AI Theming Guidelines:
+# 1. Column Spacing: The `column_wrapper` property is the primary way to
+#    control the horizontal gap between the columns. The default uses the
+#    `@section_columns` variable (`gap-12 md:gap-20`) for consistency.
+#
+# 2. Inner Component Layout: The `left`, `center`, and `right` properties
+#    control the layout of components *inside* each column. Since they are
+#    flex columns, you can use `gap-*` utilities to add vertical spacing
+#    between components. The default uses the `@section_column` variable.
+#    You could also add padding (`p-8`) or a background color (`bg-surface`)
+#    to one or more columns to make them stand out.
+#
+# 3. Background and Section Spacing: Use the `wrapper` property to override
+#    the `Component+SectionWrapper` styles. This is how you can give the
+#    entire three-column section a unique background color, adjust its
+#    vertical padding, or make it full-width.
+#
+# 4. Responsiveness: The layout is responsive by default, stacking the columns
+#    vertically on mobile (`grid-cols-1`) and placing them side-by-side on
+#    medium screens and up (`md:grid-cols-3`). Theming should respect this
+#    behavior.
+#
+Section+ThreeColumn:
+  column_wrapper: '@section_columns'
+  left: '@section_column'
+  center: '@section_column'
+  right: '@section_column'
+
+# -----------------------------------------------------------------------------
+# Component+Logo Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the site logo, which is displayed in key branding areas like the
+# site header. The component is designed to automatically switch between a
+# light and dark version of the logo based on the current theme.
+#
+# Component: src/components/Logo.astro
+#
+# Properties:
+#   - image: Applies CSS classes to the Astro `Image` components for both the
+#            light and dark logos. This is the primary way to control the
+#            logo's size.
+#
+# AI Theming Guidelines:
+# 1. Sizing: The `image` property is used to set the height of the logo. The
+#    default `max-h-12` (3rem) is designed to fit well within the default
+#    header padding. When adjusting the header height in `Page+Header`, you
+#    should adjust this value accordingly to maintain proper alignment and
+#    scale. Use `h-*` or `max-h-*` utilities.
+#
+# 2. Aspect Ratio: The component uses `width={350}` in the Astro file, but the
+#    CSS `max-h-12` will constrain the height, and the browser will maintain
+#    the aspect ratio. You typically only need to control the height.
+#
+# 3. Contextual Styling: While this style group sets the global logo style,
+#    you could create more specific styles if a logo is used in a different
+#    context (e.g., a large logo in a hero section). However, for consistency,
+#    it's best to use this single style for the main site logo.
+#
+Component+Logo:
+  image: 'max-h-12'
+
+# -----------------------------------------------------------------------------
+# Component+Timeline Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles a vertical timeline component, used for displaying a sequence of
+# events or steps. It's commonly used in "Steps" widgets to guide users
+# through a process.
+#
+# Component: src/components/ui/Timeline.astro
+#
+# Properties:
+#   - container: The main wrapper for the entire timeline.
+#   - panel: The container for a single timeline item (icon and content).
+#   - icon_wrapper_outer: Wraps the icon and the vertical separator line.
+#   - icon_wrapper_inner: A wrapper around just the icon, useful for centering.
+#   - icon_separator: The vertical line connecting timeline items.
+#   - icon: Styles the icon for each timeline item.
+#   - content_wrapper: The container for the title and description.
+#   - content_wrapper_item: Adds bottom padding to all but the last item to
+#                           create vertical spacing.
+#   - content_wrapper_last: Styles for the last item's content wrapper,
+#                           typically removing bottom padding.
+#   - title: Styles the title of a timeline item.
+#   - description: Styles the description text of a timeline item.
+#
+# AI Theming Guidelines:
+# 1. Color Palette: This component relies heavily on theme colors.
+#    - The `icon` uses `text-primary` and `border-primary`. Change these to
+#      match your theme's accent color. You could also change the style to a
+#      solid background, e.g., `bg-primary text-white border-0`.
+#    - The `icon_separator` uses `bg-border`. Ensure this matches other
+#      dividers in your theme.
+#    - The `description` uses `text-muted` for secondary text.
+#
+# 2. Typography: The `title` (`text-xl font-bold`) and `description` styles
+#    should be consistent with your site's typographic scale. Adjust font
+#    sizes and weights as needed.
+#
+# 3. Sizing and Spacing:
+#    - The size of the icon is controlled by the `icon` property (`w-10 h-10`).
+#    - The vertical space between timeline items is controlled by `content_wrapper_item`
+#      (`pb-8`).
+#    - The horizontal space between the icon column and the content is set by
+#      the margin on `icon_wrapper_outer` (`mr-4`).
+#
+# 4. Structure and Shape: The `icon` is a `rounded-full` circle with a `border-2`.
+#    You can change this to a square (`rounded-md`), remove the border, or
+#    adjust padding to alter the icon's appearance significantly.
+#
+# 5. No Embedded Components: This component styles primitive elements and does
+#    not pass properties to other complex components, so all styling is
+#    self-contained within this style group.
+#
+Component+Timeline:
+  container: ''
+  panel: 'flex'
+  icon_wrapper_outer: 'flex flex-col items-center mr-4 rtl:mr-0 rtl:ml-4'
+  icon_wrapper_inner: 'flex items-center justify-center'
+  icon_separator: 'w-px h-full bg-border'
+  icon: 'w-10 h-10 p-2 rounded-full border-2 text-primary border-primary'
+  content_wrapper: 'pt-1'
+  content_wrapper_item: 'pb-8'
+  content_wrapper_last: ''
+  title: 'text-xl font-bold'
+  description: 'text-muted mt-2'
+
+# -----------------------------------------------------------------------------
+# Component+ItemGrid Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles a responsive grid of items, where each item consists of an icon
+# positioned to the side of its content (title, description, and optional
+# call-to-action). This layout is often used for feature lists where a
+# horizontal alignment is desired.
+#
+# Component: src/components/ui/ItemGrid.astro
+#
+# Properties:
+#   - container: The main grid container. Controls the gap between items.
+#   - container_4, container_3, container_2: Responsive classes that define
+#     the number of columns at different breakpoints.
+#   - panel: Styles a single item's container. The default `flex flex-row`
+#            aligns the icon and content horizontally.
+#   - icon_wrapper: A wrapper for the icon.
+#   - icon: Styles the icon itself, including size, color, and margin.
+#   - content_wrapper: A wrapper for the text content and action button.
+#   - title: Styles the item's title.
+#   - description: Styles the item's description text.
+#   - action: Styles the container for the call-to-action button.
+#
+# AI Theming Guidelines:
+# 1. Layout Structure: The key feature of this component is the horizontal
+#    item layout (`panel: 'flex flex-row'`). The `icon` is placed to the left
+#    of the `content_wrapper`. Contrast this with `Component+ItemGrid2`, which
+#    typically places the icon above the content.
+#
+# 2. Color Palette:
+#    - The `icon` color is controlled by `text-primary`. Change this to match
+#      your theme's main accent color.
+#    - The `description` uses `text-muted` for secondary text.
+#
+# 3. Typography: Adjust the `title` (`text-xl font-bold`) and `description`
+#    styles to align with your site's typographic hierarchy.
+#
+# 4. Spacing:
+#    - The gap between grid items is set in `container` (`gap-8 md:gap-y-12`).
+#    - The space between the icon and the content is controlled by the margin
+#      on the `icon` (`mr-2`).
+#
+# 5. Embedded Components: The `action` property styles the container for a
+#    `Button` component. The button itself is rendered with `variant="link"`
+#    and will inherit its styles from the `link` property of the
+#    `Component+Button` style group.
+#
+Component+ItemGrid:
+  container: 'grid mx-auto gap-8 md:gap-y-12'
+  container_4: 'grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'
+  container_3: 'grid lg:grid-cols-3 sm:grid-cols-2'
+  container_2: 'grid sm:grid-cols-2'
+  panel: 'flex flex-row max-w-md m-5'
+  icon_wrapper: 'flex justify-center'
+  icon: 'w-7 h-7 mr-2 rtl:mr-0 rtl:ml-2 text-primary'
+  content_wrapper: 'm-0.5'
+  title: 'text-xl font-bold'
+  description: 'mt-3 text-muted'
+  action: 'mt-3'
+
+# -----------------------------------------------------------------------------
+# Component+ItemGrid2 Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles an enhanced, responsive grid of items. Each item typically consists
+# of an icon, title, description, and an optional call-to-action button.
+# This layout places the icon above the content, making it suitable for more
+# detailed feature showcases.
+#
+# Component: src/components/ui/ItemGrid2.astro
+#
+# Properties:
+#   - container: The main grid container. Controls the gap between items.
+#   - container_4, container_3, container_2: Responsive classes that define
+#     the number of columns at different breakpoints.
+#   - panel: Styles a single item's container. The default `flex flex-col`
+#            arranges the icon, title, and description vertically.
+#   - title: Styles the item's title.
+#   - description: Styles the item's description text.
+#   - icon: Styles the icon, including size, color, and bottom margin.
+#   - action: Styles the container for the call-to-action button.
+#   - button: Applies additional CSS classes to the embedded `Button` component,
+#             allowing for overrides of the button's default variant styles.
+#
+# AI Theming Guidelines:
+# 1. Layout Structure: The key feature of this component is the vertical
+#    item layout (`panel: 'flex flex-col'`), which places the icon above the
+#    title. This contrasts with `Component+ItemGrid`, which has a horizontal
+#    layout.
+#
+# 2. Color Palette:
+#    - The `icon` color is controlled by `text-primary`. Change this to match
+#      your theme's main accent color.
+#    - The `description` uses `text-muted` for secondary text.
+#
+# 3. Typography: Adjust the `title` (`text-xl font-bold`) and `description`
+#    styles to align with your site's typographic hierarchy.
+#
+# 4. Spacing:
+#    - The gap between grid items is set in `container` (`gap-8 gap-x-12`).
+#    - The space between the icon and the title is controlled by the bottom
+#      margin on the `icon` (`mb-2`).
+#
+# 5. Embedded Components: The `button` property provides a powerful way to
+#    customize the call-to-action button. The button's base style is determined
+#    by its `variant` prop (e.g., 'primary', 'secondary'), which maps to styles
+#    in `Component+Button`. You can use the `button` property here to add or
+#    override those styles for this specific context. For example, `button: 'w-full'`
+#    would make the button full-width within its container.
+#
+Component+ItemGrid2:
+  container: 'grid gap-8 gap-x-12 sm:gap-y-8'
+  container_4: 'grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'
+  container_3: 'grid lg:grid-cols-3 sm:grid-cols-2'
+  container_2: 'grid sm:grid-cols-2'
+  panel: 'relative flex flex-col m-5'
+  title: 'text-xl font-bold'
+  description: 'text-muted mt-2'
+  icon: 'mb-2 w-10 h-10 text-primary'
+  action: 'mt-2'
+  button: ''
+
+# -----------------------------------------------------------------------------
+# Component+DListItem Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles a definition list item, which consists of a term (`<dt>`) and its
+# corresponding description (`<dd>`). This component is used for key-value
+# pairs, glossaries, or any content that follows a term-definition structure.
+#
+# Component: src/components/ui/DListItem.astro
+#
+# Properties:
+#   - item: Applies CSS classes to the `<div>` that wraps the description
+#           content (the `<dd>` part).
+#
+# AI Theming Guidelines:
+# 1. Description Styling: The `item` property is the primary way to style the
+#    description. The default `dd ml-8` uses a custom class `dd` (likely for
+#    semantic styling) and adds a left margin to indent the description under
+#    its term. You can adjust the margin (`ml-*`) to change the indentation.
+#
+# 2. Term Styling: The term is rendered as an `<h6>` element and does *not*
+#    receive any classes from this style group. It will inherit its typography
+#    (font size, weight, color) from its parent container or from global
+#    styles for `<h6>` elements. When theming, ensure that the default `<h6>`
+#    style is appropriate for this context, or override it in the parent
+#    component's styles if needed.
+#
+# 3. Typography: The description text inside the `item` `<div>` will inherit
+#    the base body font. You can add text color or size utilities to the `item`
+#    property if you need to style the description text differently (e.g.,
+#    `item: 'dd ml-8 text-muted'`).
+#
+# 4. No Embedded Components: This component styles primitive HTML elements and
+#    does not contain other complex components, so all styling is self-contained.
+#
+Component+DListItem:
+  item: 'dd ml-8'
+
+# -----------------------------------------------------------------------------
+# Component+Button Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the versatile `Button` component, which can render as either a `<button>`
+# or an `<a>` tag. It supports multiple visual variants, making it a cornerstone
+# of the site's interactive elements.
+#
+# Component: src/components/ui/Button.astro
+#
+# Properties:
+#   - icon: Styles the optional `Icon` component embedded within the button.
+#           Controls size and spacing relative to the button text.
+#   - primary: Classes for the primary call-to-action button variant.
+#   - secondary: Classes for the secondary button variant.
+#   - tertiary: Classes for the tertiary, often less prominent, button variant.
+#   - link: Classes for a button that looks like a plain text link but may be
+#           used in button contexts.
+#
+# AI Theming Guidelines:
+# 1. Core Button Styles (`primary`, `secondary`, `tertiary`):
+#    - These properties use custom class names like `btn-primary`. These are
+#      *not* standard Tailwind classes. They are likely defined as Tailwind
+#      components (e.g., in `tailwind.config.js` via a plugin) or in a
+#      global CSS file.
+#    - To theme the buttons, you must find and modify the definitions for
+#      `.btn-primary`, `.btn-secondary`, and `.btn`. These definitions control
+#      the button's background color, text color, border, padding, font-weight,
+#      and hover/focus states.
+#    - For example, `.btn-primary` might be defined to have `bg-primary`,
+#      `text-white`, and `hover:bg-primary-dark`.
+#
+# 2. Link Variant (`link`):
+#    - This variant is styled directly with Tailwind utilities. The default
+#      `hover:text-primary` ensures it uses the theme's accent color on hover.
+#      You can modify this to change its appearance, for example, by adding
+#      an `underline` on hover.
+#
+# 3. Icon Styling (`icon`):
+#    - The `icon` property controls the size and margin of the icon. Adjust
+#      `w-*`, `h-*`, and `ml-*` utilities to fit the button's overall scale and
+#      padding, which is likely defined in the `.btn` base class.
+#
+# 4. Site-Wide Impact: The `Button` component is used extensively in other
+#    components (`Component+Hero`, `Component+CallToAction`, `Page+Header`, etc.).
+#    Styling it here ensures a consistent look and feel for all interactive
+#    elements across the website. Some components may pass additional classes
+#    to override these defaults for a specific context.
+#
+Component+Button:
+  icon: 'w-5 h-5 ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5 inline-block'
+  primary: 'btn-primary'
+  secondary: 'btn-secondary'
+  tertiary: 'btn btn-tertiary'
+  link: 'cursor-pointer hover:text-primary'
+
+# -----------------------------------------------------------------------------
+# Component+Expander Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Expander` component, which renders a collapsible content section
+# using the native HTML `<details>` and `<summary>` elements. This is ideal for
+# FAQs, accordions, or any content that needs to be progressively disclosed.
+#
+# Component: src/components/ui/Expander.astro
+#
+# Properties:
+#   - title: Styles the `<summary>` element, which serves as the clickable
+#            title of the expander.
+#   - description: Styles the `<div>` that contains the collapsible content.
+#
+# AI Theming Guidelines:
+# 1. Typography:
+#    - The `title` style is for the clickable header. The default is an
+#      uppercased, widely-tracked font, which gives it a distinct, label-like
+#      appearance. Adjust this to match your site's heading or label styles.
+#    - The `description` text style (`text-xl text-muted`) should align with
+#      the body text hierarchy.
+#
+# 2. Structure and Spacing:
+#    - The `description` property controls the appearance of the content box.
+#      The default `m-5 p-5 border-2` creates a clearly delineated box with
+#      significant spacing around and inside it. The border color will default
+#      to the theme's `border-default` color. You can change this to `border-surface`
+#      or another theme color for better integration.
+#
+# 3. Color Palette:
+#    - The `title` and `description` text colors (`text-gray-800`, `text-muted`,
+#      `dark:text-slate-400`) should be updated to use the theme's standard
+#      text colors for consistency.
+#
+# 4. No Embedded Components: This component styles primitive HTML elements and
+#    does not contain other complex components, making its styling self-contained.
+#
+Component+Expander:
+  title: 'text-sm font-medium uppercase tracking-widest text-gray-800 dark:text-slate-400 lg:text-base'
+  description: 'sm:text-center text-xl text-muted dark:text-slate-400 m-5 p-5 border-2'
+
+# -----------------------------------------------------------------------------
+# Component+ToggleMenu Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the mobile menu toggle button, commonly known as a "hamburger" icon.
+# This component is crucial for mobile navigation, providing a visual cue to
+# open and close the main menu. It features a smooth animation from a hamburger
+# to an "X" icon.
+#
+# Component: src/components/ui/ToggleMenu.astro
+#
+# Properties:
+#   - button_default: Styles the main `<button>` element, controlling its size,
+#                     shape, and alignment.
+#   - label: Styles the accessible label for the button. It's `sr-only` by
+#            default, making it available to screen readers but not visually seen.
+#   - span_1, span_2, span_3: Style the three horizontal lines of the hamburger
+#                            icon. These properties also define the CSS transforms
+#                            for the animation into an "X" when the menu is open,
+#                            using the `group-[.expanded]` variant.
+#
+# AI Theming Guidelines:
+# 1. Color: The color of the icon lines is controlled by `bg-default`. This
+#    should be updated to match the theme's primary text or icon color to
+#    ensure it is visible against the header background.
+#
+# 2. Size: The button size (`h-12 w-12`) and the icon line width (`w-6`) can be
+#    adjusted to fit the scale of the mobile header.
+#
+# 3. Animation: The `transition`, `transform`, and `duration-200` classes on
+#    the spans create the animation effect. You can change the duration or
+#    easing to customize the feel of the transition.
+#
+# 4. Context: This component is used within `Page+Header` and is only visible
+#    on mobile viewports (`xl:hidden`). Its styling should be cohesive with
+#    the mobile header's design.
+#
+# 5. No Embedded Components: This component styles primitive HTML elements and
+#    does not contain other complex components, making its styling self-contained.
+#
+Component+ToggleMenu:
+  button_default: 'flex flex-col h-12 w-12 rounded justify-center items-center cursor-pointer group'
+  label: 'sr-only'
+  span_1: 'h-0.5 w-6 my-1 rounded-full bg-default transition ease transform duration-200 opacity-80 group-[.expanded]:rotate-45 group-[.expanded]:translate-y-2.5'
+  span_2: 'h-0.5 w-6 my-1 rounded-full bg-default transition ease transform duration-200 opacity-80 group-[.expanded]:opacity-0'
+  span_3: 'h-0.5 w-6 my-1 rounded-full bg-default transition ease transform duration-200 opacity-80 group-[.expanded]:-rotate-45 group-[.expanded]:-translate-y-2.5'
+
+# -----------------------------------------------------------------------------
+# Component+ToggleTheme Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the theme toggle button, which allows users to switch between light
+# and dark modes. It's typically placed in the site header.
+#
+# Component: src/components/ui/ToggleTheme.astro
+#
+# Properties:
+#   - button_default: Styles the main `<button>` element.
+#   - icon_default: Applies CSS classes to the `Icon` component, primarily for
+#                   controlling its size.
+#   - icon_name_default: The default icon to display (typically a sun icon).
+#                        The client-side script will automatically swap this with
+#                        a moon icon when dark mode is active.
+#
+# AI Theming Guidelines:
+# 1. Color and Interaction: The `button_default` styles determine the button's
+#    look and feel.
+#    - It uses `text-muted` for the icon color and `hover:bg-surface-muted` for
+#      the hover state. These should align with your theme's subtle color
+#      palette for secondary actions.
+#    - The focus ring (`focus:ring-blue-200`) should be updated to use your
+#      theme's primary or accent color for consistency, e.g., `focus:ring-primary/50`.
+#
+# 2. Sizing: The `icon_default` size (`w-6 h-6`) and button padding (`p-2.5`)
+#    should be consistent with other icon buttons in the header or footer.
+#
+# 3. Icon Selection: You can change `icon_name_default` to any other sun-like
+#    icon from your icon library (e.g., from Tabler Icons). The JavaScript
+#    is responsible for toggling to a moon icon.
+#
+# 4. Context: This component is usually part of the `Page+Header`. Its styling
+#    should be harmonious with the navigation links and other header actions.
+#
+Component+ToggleTheme:
+  button_default: 'text-muted hover:bg-surface-muted focus:outline-none focus:ring-4 focus:ring-blue-200 rounded-lg text-sm p-2.5 inline-flex items-center'
+  icon_default: 'w-6 h-6'
+  icon_name_default: 'tabler:sun'
+
+# -----------------------------------------------------------------------------
+# Component+WidgetWrapper Style Group
+# -----------------------------------------------------------------------------
+#
+# Provides styling for the `WidgetWrapper` component, which serves as a
+# standardized container for most content widgets (e.g., `Headline`, `Content`,
+# `Features`). It extends the functionality of `Component+SectionWrapper` by
+# providing a default content constraint.
+#
+# Component: src/components/ui/WidgetWrapper.astro
+#
+# Properties:
+#   - container: Styles the outermost `<section>` element. Usually left empty
+#                so that background colors can be applied on a per-widget basis.
+#   - background: Applies classes to the `<div>` that holds a background image.
+#   - overlay: Styles the overlay `<div>` that sits on top of a background
+#              image to improve text contrast.
+#   - wrapper: Styles the inner `<div>` that contains the widget's content.
+#              This is the most important property for controlling the layout.
+#
+# AI Theming Guidelines:
+# 1. Content Layout (`wrapper`): This property is key.
+#    - `max-w-7xl mx-auto`: Centers the content in a wide container. Adjust
+#      `max-w-*` to make content narrower or wider.
+#    - `px-4 md:px-6`: Sets horizontal padding.
+#    - `py-12 md:py-16 lg:py-20`: Sets vertical padding, defining the space
+#      above and below the widget content. This is the primary way to control
+#      vertical rhythm on the page.
+#    - `text-default`: Ensures the text color is inherited from the base theme.
+#
+# 2. Backgrounds:
+#    - To give a widget a different background color from the page, apply it
+#      to the `container` property. For example: `container: 'bg-surface'`.
+#    - When a background image is used, the `overlay` property is crucial for
+#      readability. A common pattern is `overlay: 'bg-black/50'` for light text
+#      or `overlay: 'bg-white/70'` for dark text.
+#
+# 3. Relationship to Other Components: This is a specialized version of
+#    `Component+SectionWrapper`. Most widgets are wrapped by this component,
+#    so changes here have a broad impact. Section layouts like `Section+TwoColumn`
+#    will pass their own `wrapper` overrides to this component, so be aware
+#    of that cascading relationship.
+#
+Component+WidgetWrapper:
+  container: ''
+  background: 'bg-cover bg-center'
+  overlay: ''
+  wrapper: 'mx-auto max-w-7xl px-4 md:px-6 py-5 md:py-10 text-default'
+
+# -----------------------------------------------------------------------------
+# Component+Headline Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Headline` component, which provides a consistent hierarchical
+# structure for titles, subtitles, and taglines. It is a fundamental component
+# used in almost every section that requires a title.
+#
+# Component: src/components/ui/Headline.astro
+#
+# Properties:
+#   - container: Styles the main `<div>` that wraps all headline elements. It
+#                controls the alignment, max-width, and spacing of the block.
+#   - tagline: Styles the small text that appears above the main title.
+#   - title: Styles the main `<h2>` heading element.
+#   - subtitle: Styles the descriptive text that appears below the main title.
+#
+# AI Theming Guidelines:
+# 1. Typography: This component is central to the site's typographic hierarchy.
+#    - The `title` uses `font-heading` and `text-heading`, which should be the
+#      primary font and color for major headings. The font sizes (`text-3xl`,
+#      `md:text-4xl`) should be part of a consistent typographic scale.
+#    - The `tagline` is styled to be a distinct, uppercase label.
+#    - The `subtitle` is typically larger than body text but smaller than the
+#      title, using a muted color.
+#
+# 2. Color Palette: The headline relies on semantic colors from the theme.
+#    - `tagline`: `text-secondary` (often an accent color).
+#    - `title`: `text-heading` (the primary heading color).
+#    - `subtitle`: `text-muted` (for secondary or less important text).
+#    - Ensure these colors are defined in your Tailwind config and have good
+#      contrast with their backgrounds. The `dark:text-blue-200` on the tagline
+#      is a specific dark mode override that could be generalized to `dark:text-secondary-dark`.
+#
+# 3. Layout and Alignment: The `container` defaults to `text-center` and a
+#    `max-w-3xl`. This is suitable for centered hero sections. For left-aligned
+#    content, these classes would need to be overridden in the component's props.
+#    For example: `classes={{ container: 'text-left max-w-none' }}`.
+#
+# 4. Contextual Usage: Since `Headline` is used everywhere, these styles provide
+#    the default look. Specific widgets (like `Component+Hero`) may override
+#    these styles by passing a `classes` prop to the `Headline` component to
+#    adjust font sizes, colors, or alignment for that specific context.
+#
+Component+Headline:
+  container: 'mt-8 mb-8 md:mx-auto md:mb-12 text-center max-w-3xl'
+  tagline: 'text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase'
+  title: 'font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl md:text-4xl'
+  subtitle: 'mt-4 text-muted text-xl'
+
+# -----------------------------------------------------------------------------
+# Component+Form Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the main `Form` component, which is a complex component used for
+# collecting user input. This style group handles the form's container, error
+# messages, and other structural elements, but not the individual form fields.
+#
+# Component: src/components/forms/Form.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - `container`: Styles for the main headline container `<div>`.
+#     - `tagline`: Styles for the tagline `<p>` element.
+#     - `title`: Styles for the main title `<h2>` element.
+#     - `subtitle`: Styles for the subtitle `<p>` element.
+#
+#   - form_container: Styles the main wrapper for the form content.
+#   - error_container/error_message: Styles for server-side submission errors.
+#   - honeypot_container: For the hidden spam-protection field.
+#   - unsupported_field_error: For developer-facing errors.
+#   - disclaimer_*: Styles for the optional disclaimer checkbox and label.
+#   - submit_button_container: A wrapper for the submit button.
+#   - note_*: Styles for the optional note text below the submit button.
+#   - success_message: Styles the message shown after a successful submission.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: The `form_container` is the primary visual element.
+#    - It uses `bg-surface` and `border-surface`, so it should look like other
+#      interactive panels or cards in the theme.
+#    - `backdrop-blur` and `shadow` add depth. These can be adjusted or removed
+#      to create a flatter design.
+#
+# 2. Color Palette:
+#    - Use `text-muted` for less important text like `disclaimer_label` and `note_text`.
+#    - `error_message` (`text-red-500`) and `success_message` (`text-green-600`)
+#      should use the theme's standard colors for error and success states.
+#
+# 3. Embedded Components & Other Style Groups:
+#    - The form's title and subtitle are rendered by `TitledWidgetWrapper`. You
+#      can override the styles for the wrapper and headline using the `wrapper`
+#      and `headline` properties in this group. The default styles are defined
+#      in `Component+WidgetWrapper` and `Component+Headline` respectively.
+#    - The individual form fields (text inputs, checkboxes, etc.) are styled
+#      in their own dedicated style groups (e.g., `Form+ShortText`, `Form+Checkbox`).
+#      To style the inputs themselves, modify those groups.
+#    - The submit button is a `Button` component with `variant="primary"`. Its
+#      appearance is controlled by the `primary` property in `Component+Button`.
+#
+# 4. Typography: The `disclaimer_label` and `note_text` use `text-sm`. Ensure
+#    this fits within your theme's typographic scale for small or secondary text.
+#
+Component+Form:
+  form_container: 'flex flex-col max-w-xl mx-auto rounded-lg backdrop-blur border border-surface bg-surface shadow p-4 sm:p-6 lg:p-8 w-full'
+  error_container: 'mb-6 p-10 w-full text-center border-2 border-rose-500'
+  error_message: 'text-red-500 text-l'
+  honeypot_container: 'hidden'
+  unsupported_field_error: 'text-red-500'
+  disclaimer_container: 'mt-3 flex items-start'
+  disclaimer_checkbox_container: 'flex mt-0.5'
+  disclaimer_checkbox: 'cursor-pointer block w-full mt-1 py-3 px-4 text-md rounded-lg border border-surface bg-surface'
+  disclaimer_label_container: 'ml-3'
+  disclaimer_label: 'cursor-pointer select-none text-sm text-muted'
+  submit_button_container: 'mt-10 grid'
+  note_container: 'mt-3 text-center'
+  note_text: 'text-sm text-muted'
+  success_message: 'text-center p-10 text-green-600'
+
+# -----------------------------------------------------------------------------
+# Form+Error Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `FormError` component, which displays validation error messages
+# for individual form fields. The error text is dynamically inserted via
+# JavaScript.
+#
+# Component: src/components/forms/FormError.astro
+#
+# Properties:
+#   - container: Styles the `<div>` that wraps the error message. It controls
+#                the spacing and alignment of the error text relative to the
+#                form field.
+#   - message: Styles the `<span>` that holds the error text. This is where
+#              the color and font style of the error message are defined.
+#
+# AI Theming Guidelines:
+# 1. Color Palette: The `message` color (`text-red-500`) is critical for
+#    conveying an error state. This should be updated to use the theme's
+#    standard error color (e.g., a custom `text-error` color defined in
+#    Tailwind config).
+#
+# 2. Typography: The `message` style (`text-s italic`) should be consistent
+#    with other helper or validation text in the theme. Adjust the font size
+#    and style as needed.
+#
+# 3. Spacing: The `container`'s `mb-6` adds space below the form field before
+#    the next one, and `px-5` provides horizontal padding. These values should
+#    be consistent with the overall form layout and spacing.
+#
+# 4. No Embedded Components: This component is self-contained and does not
+#    embed other complex components. All styling is controlled directly by
+#    this style group.
+#
+Form+Error:
+  container: 'mb-6 px-5'
+  message: 'text-red-500 text-s italic'
+
+# -----------------------------------------------------------------------------
+# Form+Label Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `FormLabel` component, which renders the <label> for a form field.
+# It includes support for a required field indicator (*).
+#
+# Component: src/components/forms/FormLabel.astro
+#
+# Properties:
+#   - container: Styles the `<label>` element itself.
+#
+# AI Theming Guidelines:
+# 1. Typography: The `container` style (`block text-sm font-medium`) sets the
+#    default typography for all form labels. Adjust the font size, weight, and
+#    color to match your theme's design system for forms. For example, you
+#    could change it to `text-muted`.
+#
+# 2. Spacing: The `block` display causes the label to take up the full width
+#    and appear on its own line above the input. Spacing between the label and
+#    its input is typically handled by the parent form field component (e.g.,
+#    `Form+ShortText`).
+#
+# 3. Required Indicator: The component automatically bolds the label text and
+#    adds an asterisk (`*`) when the `required` prop is true. This behavior is
+#    part of the component's logic and is not styled here.
+#
+# 4. No Embedded Components: This component is self-contained and does not
+#    embed other complex components.
+#
+Form+Label:
+  container: 'block text-sm font-medium'
+
+# -----------------------------------------------------------------------------
+# Form+Checkbox Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Checkbox` form field, which allows for multiple selections from
+# a list of options.
+#
+# Component: src/components/forms/fields/Checkbox.astro
+#
+# Properties:
+#   - container: Styles the main `<div>` that wraps the entire checkbox group,
+#                including the label and error message.
+#   - input_container: Styles the `<div>` that contains all the individual
+#                      checkbox options.
+#   - option_container: Styles the `<div>` that wraps a single checkbox input
+#                       and its corresponding label.
+#   - option_checkbox: Styles the `<input type="checkbox">` element itself.
+#   - option_label: Styles the `<label>` for an individual checkbox option.
+#
+# AI Theming Guidelines:
+# 1. Color and Interaction: The `option_checkbox` is the key interactive element.
+#    - The `text-blue-600` class determines the color of the checkmark when
+#      selected. This should be changed to `text-primary` to match the theme's
+#      accent color.
+#    - The `focus:ring-blue-500` should be changed to `focus:ring-primary` for
+#      a consistent focus state across all form elements.
+#    - The `border-surface` and `bg-surface` should match the styles of other
+#      input fields (like `Form+ShortText`) for a unified look.
+#
+# 2. Typography: The `option_label` style (`text-sm font-medium text-default`)
+#    should be consistent with other text inside forms.
+#
+# 3. Sizing and Spacing: The checkbox size (`w-4 h-4`) and the label's margin
+#    (`ml-2`) can be adjusted, but should generally remain consistent with
+#    the scale of other form elements.
+#
+# 4. Embedded Components: This component uses `FormLabel` and `FormError`,
+#    which are styled by the `Form+Label` and `Form+Error` style groups,
+#    respectively. No style properties are passed down to them from this group.
+#
+Form+Checkbox:
+  container: 'mb-6'
+  input_container: 'py-2'
+  option_container: 'flex items-center p-2'
+  option_checkbox: 'w-4 h-4 text-blue-600 rounded border border-surface bg-surface focus:ring-blue-500 focus:ring-2 focus:ring-offset-0'
+  option_label: 'ml-2 text-sm font-medium text-default'
+
+# -----------------------------------------------------------------------------
+# Form+ShortText Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `ShortText` form field, which is a standard single-line text input.
+# This is one of the most common form elements.
+#
+# Component: src/components/forms/fields/ShortText.astro
+#
+# Properties:
+#   - container: Styles the main `<div>` that wraps the label, input, and error
+#                message for the field.
+#   - input: Styles the `<input type="text">` element itself.
+#
+# AI Theming Guidelines:
+# 1. Input Styling: The `input` property is the most important for theming.
+#    - The `bg-surface` and `border-surface` classes should be used to ensure
+#      the input field's background and border match other interactive elements
+#      in the theme, like cards or other form fields.
+#    - A consistent focus state should be added, e.g., `focus:ring-2 focus:ring-primary`.
+#    - The `rounded-lg` class controls the border radius. This should be
+#      consistent with the theme's overall roundness (e.g., for buttons and cards).
+#
+# 2. Typography: The `text-md` class sets the font size for the text entered
+#    into the input. This should be consistent across all text-based inputs.
+#
+# 3. Spacing: The `container`'s `mb-6` class controls the vertical spacing
+#    between this form field and the next one. Adjust this to control the
+#    form's density.
+#
+# 4. Embedded Components: This component embeds `FormLabel` and `FormError`.
+#    Their styles are controlled by the `Form+Label` and `Form+Error` style
+#    groups, respectively.
+#
+# 5. Consistency: The styles for `input` should be kept consistent with those
+#    in `Form+LongText`, `Form+Email`, and `Form+Select` to ensure a uniform
+#    look and feel for all text-based input fields.
+#
+Form+ShortText:
+  container: 'mb-6'
+  input: 'py-3 px-4 block w-full text-md rounded-lg border border-surface bg-surface'
+
+# -----------------------------------------------------------------------------
+# Form+LongText Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `LongText` form field, which is a multi-line <textarea> input.
+#
+# Component: src/components/forms/fields/LongText.astro
+#
+# Properties:
+#   - container: Styles the main `<div>` that wraps the label, textarea, and
+#                error message for the field.
+#   - input: Styles the `<textarea>` element itself.
+#
+# AI Theming Guidelines:
+# 1. Input Styling: The `input` property is the most important for theming.
+#    - The `bg-surface` and `border-surface` classes should be used to ensure
+#      the input field's background and border match other interactive elements
+#      in the theme, like cards or other form fields.
+#    - A consistent focus state should be added, e.g., `focus:ring-2 focus:ring-primary`.
+#    - The `rounded-lg` class controls the border radius. This should be
+#      consistent with the theme's overall roundness (e.g., for buttons and cards).
+#
+# 2. Typography: The `text-md` class sets the font size for the text entered
+#    into the input. This should be consistent across all text-based inputs.
+#
+# 3. Spacing: The `container`'s `mb-6` class controls the vertical spacing
+#    between this form field and the next one. Adjust this to control the
+#    form's density.
+#
+# 4. Embedded Components: This component embeds `FormLabel` and `FormError`.
+#    Their styles are controlled by the `Form+Label` and `Form+Error` style
+#    groups, respectively.
+#
+# 5. Consistency: The styles for `input` should be kept consistent with those
+#    in `Form+ShortText`, `Form+Email`, and `Form+Select` to ensure a uniform
+#    look and feel for all text-based input fields.
+#
+Form+LongText:
+  container: 'mb-6'
+  input: 'py-3 px-4 block w-full text-md rounded-lg border border-surface bg-surface'
+
+# -----------------------------------------------------------------------------
+# Form+Email Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Email` form field, which is a specialized text input for email
+# addresses that includes browser-level format validation.
+#
+# Component: src/components/forms/fields/Email.astro
+#
+# Properties:
+#   - container: Styles the main `<div>` that wraps the label, input, and error
+#                message for the field.
+#   - input: Styles the `<input type="email">` element itself.
+#
+# AI Theming Guidelines:
+# 1. Input Styling: The `input` property is the most important for theming.
+#    - The `bg-surface` and `border-surface` classes should be used to ensure
+#      the input field's background and border match other interactive elements
+#      in the theme, like cards or other form fields.
+#    - A consistent focus state should be added, e.g., `focus:ring-2 focus:ring-primary`.
+#    - The `rounded-lg` class controls the border radius. This should be
+#      consistent with the theme's overall roundness (e.g., for buttons and cards).
+#
+# 2. Typography: The `text-md` class sets the font size for the text entered
+#    into the input. This should be consistent across all text-based inputs.
+#
+# 3. Spacing: The `container`'s `mb-6` class controls the vertical spacing
+#    between this form field and the next one. Adjust this to control the
+#    form's density.
+#
+# 4. Embedded Components: This component embeds `FormLabel` and `FormError`.
+#    Their styles are controlled by the `Form+Label` and `Form+Error` style
+#    groups, respectively.
+#
+# 5. Consistency: The styles for `input` should be kept consistent with those
+#    in `Form+ShortText`, `Form+LongText`, and `Form+Select` to ensure a uniform
+#    look and feel for all text-based input fields.
+#
+Form+Email:
+  container: 'mb-6'
+  input: 'py-3 px-4 block w-full text-md rounded-lg border border-surface bg-surface'
+
+# -----------------------------------------------------------------------------
+# Form+Select Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Select` form field, which is a dropdown menu for single or
+# multiple selections.
+#
+# Component: src/components/forms/fields/Select.astro
+#
+# Properties:
+#   - container: Styles the main `<div>` that wraps the label, select element,
+#                and error message.
+#   - input: Styles the `<select>` element itself.
+#
+# AI Theming Guidelines:
+# 1. Input Styling: The `input` property is the most important for theming.
+#    - The `bg-surface` and `border-surface` classes should be used to ensure
+#      the input field's background and border match other interactive elements
+#      in the theme, like cards or other form fields.
+#    - A consistent focus state should be added, e.g., `focus:ring-2 focus:ring-primary`.
+#    - The `rounded-lg` class controls the border radius. This should be
+#      consistent with the theme's overall roundness (e.g., for buttons and cards).
+#
+# 2. Typography: The `text-md` class sets the font size for the text inside
+#    the select element. This should be consistent across all text-based inputs.
+#
+# 3. Spacing: The `container`'s `mb-6` class controls the vertical spacing
+#    between this form field and the next one. Adjust this to control the
+#    form's density.
+#
+# 4. Embedded Components: This component embeds `FormLabel` and `FormError`.
+#    Their styles are controlled by the `Form+Label` and `Form+Error` style
+#    groups, respectively.
+#
+# 5. Consistency: The styles for `input` should be kept consistent with those
+#    in `Form+ShortText`, `Form+LongText`, and `Form+Email` to ensure a uniform
+#    look and feel for all text-based input fields.
+#
+Form+Select:
+  container: 'mb-6'
+  input: 'py-3 px-4 block w-full text-md rounded-lg border border-surface bg-surface'
+
+# -----------------------------------------------------------------------------
+# Form+FileUpload Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `FileUpload` form field, which allows users to upload one or more
+# files.
+#
+# Component: src/components/forms/fields/FileUpload.astro
+#
+# Properties:
+#   - container: Styles the main `<div>` that wraps the label, input, and error
+#                message for the field.
+#   - input: Styles the `<input type="file">` element itself. This includes
+#            styles for the text area showing the selected file and the button
+#            used to open the file dialog.
+#
+# AI Theming Guidelines:
+# 1. Input Styling: The `input` property styles both the text display area and
+#    the button.
+#    - The base styles (`py-3 px-4... bg-surface`) should be consistent with
+#      other text-based inputs like `Form+ShortText` for a unified look.
+#    - A consistent focus state should be added, e.g., `focus:ring-2 focus:ring-primary`.
+#
+# 2. File Button Styling: The button part of the input is styled using the
+#    `file:` pseudo-element variant in Tailwind.
+#    - The default `file:bg-blue-50` and `file:text-blue-700` should be updated
+#      to use the theme's accent colors. For example, `file:bg-primary/10` and
+#      `file:text-primary`.
+#    - The hover state (`hover:file:bg-blue-100`) should also be updated to
+#      match the theme, e.g., `hover:file:bg-primary/20`.
+#
+# 3. Spacing: The `container`'s `mb-6` class controls the vertical spacing
+#    between this form field and the next one.
+#
+# 4. Embedded Components: This component embeds `FormLabel` and `FormError`.
+#    Their styles are controlled by the `Form+Label` and `Form+Error` style
+#    groups, respectively.
+#
+Form+FileUpload:
+  container: 'mb-6'
+  input: 'py-3 px-4 block w-full text-md rounded-lg border border-surface bg-surface file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
+
+# -----------------------------------------------------------------------------
+# Component+Brands Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Brands` widget, which is used to showcase a collection of logos
+# or icons, such as partners, clients, or technologies.
+#
+# Component: src/components/widgets/Brands.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - `container`: Styles for the main headline container `<div>`.
+#     - `tagline`: Styles for the tagline `<p>` element.
+#     - `title`: Styles for the main title `<h2>` element.
+#     - `subtitle`: Styles for the subtitle `<p>` element.
+#
+#   - container: Styles the `<div>` that wraps all the brand icons and images.
+#                It controls the alignment and spacing between items.
+#   - icon: Styles the `Icon` components when using icon-based brands.
+#   - image_container: Styles the wrapper `<div>` for each brand image.
+#   - image: Styles the `Image` component for each brand image.
+#
+# AI Theming Guidelines:
+# 1. Layout and Spacing: The `container` uses `flex-wrap` and `justify-center`
+#    to create a responsive, centered row of logos. The `gap-x-*` utilities
+#    control the horizontal spacing between items.
+#
+# 2. Icon Styling: The `icon` property styles the brand icons. The default
+#    `text-muted` should be changed to a color that provides appropriate
+#    contrast against the section background. You can also adjust the size
+#    with `w-*` and `h-*` utilities.
+#
+# 3. Image Styling:
+#    - The `image_container` can be given a background (`bg-surface`) and
+#      padding to frame the logos, which is useful if the logos have varied
+#      or transparent backgrounds.
+#    - The `image` property controls the size of the brand logos. The default
+#      `max-h-12` ensures all logos have a consistent height. Adjust this
+#      value to fit the design.
+#
+# 4. Embedded Components: This widget is wrapped by `TitledWidgetWrapper`.
+#    You can customize its title, subtitle, and background by adding `wrapper`
+#    and `headline` properties to this style group, which will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+Component+Brands:
+  container: 'flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24'
+  icon: 'py-3 lg:py-5 w-12 h-auto mx-auto sm:mx-0 text-muted'
+  image_container: 'flex justify-center col-span-1 my-2 lg:my-4 py-1 px-3 rounded-md bg-surface'
+  image: 'max-h-12'
+
+# -----------------------------------------------------------------------------
+# Component+CallToAction Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `CallToAction` widget, which is a prominent block designed to
+# capture user attention and prompt them to take a specific action, such as
+# signing up or making a purchase.
+#
+# Component: src/components/widgets/CallToAction.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - `container`: Styles for the main headline container `<div>`.
+#     - `tagline`: Styles for the tagline `<p>` element.
+#     - `title`: Styles for the main title `<h2>` element.
+#     - `subtitle`: Styles for the subtitle `<p>` element.
+#
+#   - container: Styles the main `<div>` that wraps the action buttons. This
+#                is the primary visual container for the CTA content itself.
+#   - actions_container: Styles the `<div>` that wraps the group of action buttons,
+#                        controlling their layout (e.g., flexbox, grid) and spacing.
+#   - action_wrapper: Styles the wrapper for each individual action button.
+#   - action_button: Applies additional CSS classes to the embedded `Button`
+#                    components, allowing for overrides of the button's default
+#                    variant styles from `Component+Button`.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: The `container` property defines the appearance of the
+#    CTA box. The default `bg-surface`, `border-surface`, and `shadow-xl` make
+#    it stand out as a distinct panel. Adjust these to match the theme's card
+#    or panel styling.
+#
+# 2. Button Layout: The `actions_container` uses flexbox to manage the button
+#    layout, stacking them on mobile and placing them in a row on larger screens.
+#    The `gap-4` controls the spacing between buttons.
+#
+# 3. Button Styling: The `action_button` property is used to apply context-specific
+#    styles to the buttons. The default `w-full sm:w-auto` makes buttons full-width
+#    on mobile for better usability. The base styles for the buttons (e.g.,
+#    'primary', 'secondary') are inherited from `Component+Button`.
+#
+# 4. Title and Subtitle: This widget is wrapped by `TitledWidgetWrapper`, so it
+#    can have a title and subtitle. You can style them by adding a `headline`
+#    property to this group, which will override the defaults from `Component+Headline`.
+#    For example:
+#    `headline:`
+#      `title: 'text-4xl'`
+#      `subtitle: 'text-lg'`
+#
+Component+CallToAction:
+  headline:
+    container: 'mt-8 mb-8 md:mx-auto text-center max-w-3xl'
+  container: 'max-w-3xl mx-auto text-center p-6 rounded-md border border-surface bg-surface shadow-xl'
+  actions_container: 'max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4'
+  action_wrapper: 'flex w-full sm:w-auto'
+  action_button: 'w-full sm:mb-0'
+
+# -----------------------------------------------------------------------------
+# Component+Content Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Content` widget, a versatile component for displaying a mix of
+# text, images, feature lists, and call-to-action buttons in a responsive,
+# two-column layout.
+#
+# Component: src/components/widgets/Content.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - `container`: Styles for the main headline container `<div>`.
+#     - `tagline`: Styles for the tagline `<p>` element.
+#     - `title`: Styles for the main title `<h2>` element.
+#     - `subtitle`: Styles for the subtitle `<p>` element.
+#
+#   - container: Styles the main content container `<div>`.
+#   - grid, grid_reversed: Styles the flexbox container for the two columns,
+#                          including the reversed layout.
+#   - column_1, column_1_no_image: Styles the first column (text content).
+#   - column_2: Styles the second column (image).
+#   - content: Styles the `<div>` that wraps the main HTML text content.
+#
+#   - items: An object of CSS classes passed to the embedded `ItemGrid`
+#            component. This allows for overriding the default styles defined
+#            in the `Component+ItemGrid` style group. It can contain:
+#     - container: The main grid container. Controls the gap between items.
+#     - container_4, container_3, container_2: Responsive classes that define
+#       the number of columns at different breakpoints.
+#     - panel: Styles a single item's container. The default `flex flex-row`
+#              aligns the icon and content horizontally.
+#     - icon_wrapper: A wrapper for the icon.
+#     - icon: Styles the icon itself, including size, color, and margin.
+#     - content_wrapper: A wrapper for the text content and action button.
+#     - title: Styles the item's title.
+#     - description: Styles the item's description text.
+#     - action: Styles the container for the call-to-action button.
+#
+#   - image_container: Styles the wrapper `<div>` for the image.
+#   - image: Styles the `Image` component itself.
+#
+#   - call_to_action_container: Styles the wrapper for the entire call-to-action block.
+#   - call_to_action: Styles the inner wrapper for the `Button` component.
+#
+# AI Theming Guidelines:
+# 1. Layout: The `grid` property controls the main layout. The default `md:flex`
+#    creates a two-column layout on medium screens and up. The `gap-16` controls
+#    the space between the text and image columns.
+#
+# 2. Typography:
+#    - The main text style is set by `content` (`text-lg text-default`).
+#    - The feature list (`items`) has its own typography for `title` and
+#      `description`. The defaults here override `Component+ItemGrid` to create
+#      a specific look for this context.
+#
+# 3. Color Palette:
+#    - The `items.icon` uses `bg-green-600 text-gray-50`. This should be updated
+#      to use the theme's primary or accent colors, e.g., `bg-primary text-on-primary`.
+#    - The `call_to_action` text color is `text-primary`.
+#
+# 4. Embedded Components:
+#    - This widget is wrapped by `TitledWidgetWrapper`. You can customize its
+#      title, subtitle, and background by adding `wrapper` and `headline`
+#      properties to this style group.
+#    - The feature list is an `ItemGrid` component. The `items` property in this
+#      group provides a complete set of overrides for the `Component+ItemGrid` styles.
+#    - The call-to-action is a `Button` component. Its appearance is controlled
+#      by the `variant` prop passed to it (defaults to `link`) and the styles
+#      in `Component+Button`.
+#
+# 5. Image Styling: The `image` property styles the `Image` component. The
+#    default `bg-surface-muted` and `shadow-lg` give it a framed look.
+#
+Component+Content:
+  headline:
+    container: 'mb-5 md:mx-auto text-center max-w-3xl'
+  container: 'mx-auto max-w-7xl p-4 md:px-8'
+  grid: 'md:flex md:gap-16'
+  grid_reversed: 'md:flex-row-reverse'
+  column_1: 'md:basis-1/2 self-center'
+  column_1_no_image: 'self-center justify-self-center'
+  content: 'mb-5 text-lg text-default text-center border-t-1 border-gray-200 pt-5'
+  items:
+    container: 'grid gap-4 md:gap-8'
+    panel: 'max-w-none flex m-5'
+    icon_wrapper: 'w-20 flex-initial'
+    content_wrapper: 'flex-grow'
+    title: 'text-lg font-medium leading-6 text-default ml-2 rtl:ml-0 rtl:mr-2'
+    description: 'text-muted ml-2 rtl:ml-0 rtl:mr-2'
+    icon: 'flex h-10 w-10 rounded-full bg-green-600 text-gray-50 p-1'
+    action: 'text-lg font-medium leading-6 text-default ml-2 rtl:ml-0 rtl:mr-2'
+  column_2: 'mt-10 md:mt-0 md:basis-1/2'
+  image_container: 'relative m-auto max-w-4xl'
+  image: 'mx-auto w-full rounded-lg bg-surface-muted shadow-lg'
+  call_to_action_container: 'mt-10 pt-10'
+  call_to_action: 'mt-[-40px] mb-8 text-primary flex flex-col items-center'
+
+# -----------------------------------------------------------------------------
+# Component+FAQs Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `FAQs` widget, which displays a list of frequently asked questions
+# and answers in a grid format. It is a titled widget that can have a headline
+# and background.
+#
+# Component: src/components/widgets/FAQs.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - `container`: Styles for the main headline container `<div>`.
+#     - `tagline`: Styles for the tagline `<p>` element.
+#     - `title`: Styles for the main title `<h2>` element.
+#     - `subtitle`: Styles for the subtitle `<p>` element.
+#
+#   - item_container: Styles the grid container when there are multiple columns.
+#                     Controls the gap between items.
+#   - item_container_1: Styles the grid container when there is only one column.
+#                       Can be used to set a different `max-w-*` for single-column layouts.
+#
+#   - items: An object of CSS classes passed to the embedded `ItemGrid`
+#            component. This allows for overriding the default styles defined
+#            in the `Component+ItemGrid` style group. It can contain:
+#     - container: The main grid container. Controls the gap between items.
+#     - container_4, container_3, container_2: Responsive classes that define
+#       the number of columns at different breakpoints.
+#     - panel: Styles a single item's container. The default `flex flex-row`
+#              aligns the icon and content horizontally.
+#     - icon_wrapper: A wrapper for the icon.
+#     - icon: Styles the icon itself, including size, color, and margin.
+#     - content_wrapper: A wrapper for the text content and action button.
+#     - title: Styles the item's title.
+#     - description: Styles the item's description text.
+#     - action: Styles the container for the call-to-action button.
+#
+#   - default_icon: The name of the icon to use for each FAQ item if one is not
+#                   specified in the item's data.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Item Layout: The FAQ items are rendered using the `ItemGrid` component.
+#    The `items` property allows you to override the default styles from the
+#    `Component+ItemGrid` style group for this specific context.
+#    - The `items.icon` property is important for theming. The default uses
+#      `text-primary` for the color. Change this to match your theme's accent
+#      color. You can also adjust the size (`w-*`, `h-*`).
+#    - The `items.panel` can be used to style the container of each individual
+#      FAQ item.
+#
+# 3. Grid Spacing: The `item_container` and `item_container_1` properties
+#    control the layout of the grid. Use `gap-*` utilities to adjust the
+#    spacing between FAQ items. The `item_container_1` is useful for creating
+#    a narrower, more readable layout for single-column FAQ lists.
+#
+# 4. Iconography: The `default_icon` sets the icon for all FAQ items. You can
+#    change this to any icon from the project's icon library (e.g., Tabler Icons)
+#    to better match the theme's visual language.
+#
+Component+FAQs:
+  item_container: 'gap-y-8 md:gap-y-12'
+  item_container_1: 'gap-y-8 md:gap-y-12 max-w-4xl'
+  items:
+    icon: 'flex-shrink-0 mt-1 w-6 h-6 text-primary'
+  default_icon: 'tabler:chevron-right'
+
+# -----------------------------------------------------------------------------
+# Component+Features Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Features` widget, which displays a collection of feature items
+# in a responsive grid. It's a versatile component for showcasing product
+# capabilities, services, or key benefits, often with icons.
+#
+# Component: src/components/widgets/Features.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - `container`: Styles for the outermost `<section>` element.
+#     - `background`: Styles for the background image container.
+#     - `overlay`: Styles for the overlay layer on top of the background.
+#     - `wrapper`: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - `container`: Styles for the main headline container `<div>`.
+#     - `tagline`: Styles for the tagline `<p>` element.
+#     - `title`: Styles for the main title `<h2>` element.
+#     - `subtitle`: Styles for the subtitle `<p>` element.
+#
+#   - items: An object of CSS classes passed to the embedded `ItemGrid`
+#            component. This allows for overriding the default styles defined
+#            in the `Component+ItemGrid` style group. It can contain:
+#     - container: The main grid container. Controls the gap between items.
+#     - container_4, container_3, container_2: Responsive classes that define
+#       the number of columns at different breakpoints.
+#     - panel: Styles a single item's container. The default `flex flex-row`
+#              aligns the icon and content horizontally.
+#     - icon_wrapper: A wrapper for the icon.
+#     - icon: Styles the icon itself, including size, color, and margin.
+#     - content_wrapper: A wrapper for the text content and action button.
+#     - title: Styles the item's title.
+#     - description: Styles the item's description text.
+#     - action: Styles the container for the call-to-action button.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Item Layout: The feature items are rendered using the `ItemGrid` component.
+#    The `items` property allows you to override the default styles from the
+#    `Component+ItemGrid` style group for this specific context. The default
+#    `ItemGrid` has a horizontal layout (`flex-row`).
+#
+# 3. Icon Styling: The `items.icon` property is key for theming. The default
+#    style creates a colored, circular background for the icon (`bg-primary`,
+#    `rounded-full`).
+#    - Change `bg-primary` to match your theme's accent color.
+#    - Change `text-white` to a color that has good contrast with the background.
+#    - Adjust the size and padding (`w-*`, `h-*`, `p-*`) to fit the overall design.
+#
+# 4. Typography: The `items.title` property can be used to adjust the font
+#    size or weight of the feature titles to match the theme's typographic
+#    hierarchy.
+#
+Component+Features:
+  items:
+    container: ''
+    icon: 'text-white bg-primary rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0'
+    title: 'md:text-[1.3rem]'
+
+# -----------------------------------------------------------------------------
+# Component+Features2 Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Features2` widget, an enhanced version of the `Features` widget
+# that displays a collection of feature items in a responsive grid with more
+# advanced styling options, such as styled panels for each item.
+#
+# Component: src/components/widgets/Features2.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - items: An object of CSS classes passed to the embedded `ItemGrid2`
+#            component. This allows for overriding the default styles defined
+#            in the `Component+ItemGrid2` style group. It can contain:
+#     - container: The main grid container. Controls the gap between items.
+#     - container_4, container_3, container_2: Responsive classes that define
+#       the number of columns at different breakpoints.
+#     - panel: Styles a single item's container.
+#     - title: Styles the item's title.
+#     - description: Styles the item's description text.
+#     - icon: Styles the icon, including size, color, and bottom margin.
+#     - action: Styles the container for the call-to-action button.
+#     - button: Applies additional CSS classes to the embedded `Button` component.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Item Layout: The feature items are rendered using the `ItemGrid2` component.
+#    The `items` property allows you to override the default styles from the
+#    `Component+ItemGrid2` style group for this specific context.
+#
+# 3. Panel Styling: The `items.panel` property is key to this component's look.
+#    The default style creates a distinct, styled box for each feature item
+#    using `bg-surface`, `border-surface`, `shadow`, and `backdrop-blur`.
+#    Adjust these to match your theme's card or panel styling. For a flatter
+#    design, you could remove the shadow and border.
+#
+# 4. Icon Styling: The `items.icon` property styles the icon within each panel.
+#    - The `text-primary` class should be updated to use your theme's main
+#      accent color.
+#    - The size (`w-12 h-12`) and bottom margin (`mb-6`) can be adjusted to
+#      control the visual hierarchy within the panel.
+#
+# 5. Spacing: The `items.container` property controls the gap between the
+#    feature panels. Adjust `gap-*` utilities to control the spacing in the grid.
+#
+Component+Features2:
+  items:
+    container: 'gap-4 md:gap-6'
+    panel: 'rounded-lg shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur border border-surface bg-surface p-6'
+    icon: 'w-12 h-12 mb-6 text-primary'
+
+# -----------------------------------------------------------------------------
+# Component+Features3 Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Features3` widget, which displays a collection of feature items
+# alongside a prominent image in a two-column layout. It is designed to
+# showcase product capabilities with strong visual support.
+#
+# Component: src/components/widgets/Features3.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - container: Styles the main `<div>` that contains the image section.
+#
+#   - image_container: Styles the wrapper `<div>` for the image.
+#
+#   - image: Styles the `Image` component itself.
+#
+#   - items: An object of CSS classes passed to the embedded `ItemGrid`
+#            component. This allows for overriding the default styles defined
+#            in the `Component+ItemGrid` style group. It can contain:
+#     - container: The main grid container. Controls the gap between items.
+#     - container_4, container_3, container_2: Responsive classes that define
+#       the number of columns at different breakpoints.
+#     - panel: Styles a single item's container.
+#     - icon_wrapper: A wrapper for the icon.
+#     - icon: Styles the icon itself, including size, color, and margin.
+#     - content_wrapper: A wrapper for the text content and action button.
+#     - title: Styles the item's title.
+#     - description: Styles the item's description text.
+#     - action: Styles the container for the call-to-action button.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Image Styling: The `image` and `image_container` properties are key to
+#    this component's visual presentation.
+#    - The `image_container` can be styled with a background (`bg-surface-muted`),
+#      shadow (`shadow-lg`), and border-radius (`rounded-xl`) to frame the image.
+#    - The `image` property styles the `Image` component itself. The `h-80`
+#      and `object-cover` classes ensure a consistent height and cropping.
+#
+# 3. Item Layout: The feature items are rendered using the `ItemGrid` component.
+#    The `items` property allows you to override the default styles from the
+#    `Component+ItemGrid` style group.
+#    - The default styles in this group (`items.panel: 'text-left'`) override
+#      the centered text of the base `ItemGrid`.
+#    - The `items.icon` uses `text-primary`. Change this to match your theme's
+#      accent color.
+#
+# 4. Spacing:
+#    - The `items.container`'s `mt-12` class adds space between the top image
+#      and the feature items grid.
+#    - The gap between items in the grid is controlled by the `container`
+#      property within the `Component+ItemGrid` style group, which can be
+#      overridden here (e.g., `items: { container: 'gap-8' }`).
+#
+Component+Features3:
+  container: 'aspect-w-16 aspect-h-7'
+  items:
+    container: 'mt-12 justify-items-center'
+    panel: 'max-w-full sm:max-w-md text-left'
+    title: 'text-lg font-semibold text-left'
+    description: 'mt-0.5 text-left'
+    icon: 'flex-shrink-0 mt-1 text-primary w-6 h-6'
+  image_container: 'w-full h-80 object-cover rounded-xl mx-auto bg-surface-muted shadow-lg'
+  image: 'w-full h-80 object-cover rounded-xl mx-auto bg-surface-muted shadow-lg'
+
+# -----------------------------------------------------------------------------
+# Component+Hero Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Hero` widget, a prominent section typically placed at the top of
+# a page to capture user attention. It features a large headline, supporting
+# text, call-to-action buttons, and an optional image.
+#
+# Component: src/components/widgets/Hero.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `WidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - container: Styles the main `<div>` that holds the hero's content,
+#                including the headline and image sections.
+#
+#   - headline: An object of CSS classes for styling the headline elements.
+#     - container: Styles the `<div>` that wraps the tagline, title, and subtitle.
+#     - tagline: Styles the small `<p>` element above the main title.
+#     - title: Styles the main `<h1>` title.
+#     - subtitle: Styles the descriptive `<p>` element below the title.
+#
+#   - subtitle_container: Styles the `<div>` that wraps the subtitle and the
+#                         action buttons, controlling their layout.
+#
+#   - actions_container: Styles the `<div>` that wraps the group of action buttons.
+#
+#   - action_item: Styles the wrapper for each individual action button.
+#
+#   - action_button: Applies additional CSS classes to the embedded `Button`
+#                    components. This allows for overriding the button's default
+#                    variant styles from `Component+Button`.
+#
+#   - content_wrapper: Styles the `<div>` that wraps any additional HTML content.
+#
+#   - image_container: Styles the wrapper `<div>` for the hero image.
+#
+#   - image: Styles the `Image` component itself.
+#
+# AI Theming Guidelines:
+# 1. Background and Spacing: The hero section's background and padding are
+#    controlled via the `wrapper` property, which overrides `Component+WidgetWrapper`.
+#    For a full-bleed hero with a background image, you might set:
+#    `wrapper:`
+#      `wrapper: 'py-20 md:py-32'` (adjust padding)
+#      `overlay: 'bg-black/50'` (add overlay for text contrast)
+#
+# 2. Typography: The `headline` property is central to the hero's visual
+#    impact.
+#    - `headline.title`: This is the main page heading (`<h1>`). Use large font
+#      sizes (`text-5xl`, `md:text-6xl`) and the theme's primary heading font
+#      (`font-heading`) and color (`text-heading`).
+#    - `headline.subtitle`: Should be larger than body text but use a more
+#      subdued color (`text-muted`).
+#    - `headline.tagline`: Often styled as an uppercase label with an accent
+#      color (`text-secondary`).
+#
+# 3. Call-to-Action Buttons:
+#    - The buttons' appearance is primarily defined by their `variant` prop
+#      (e.g., 'primary', 'secondary'), which maps to styles in `Component+Button`.
+#    - Use `action_button` to apply contextual overrides. The default `w-full sm:w-auto`
+#      makes buttons full-width on mobile for better tap targets.
+#    - The `actions_container` controls the layout of the buttons (e.g., `gap-4`).
+#
+# 4. Image Styling: The `image` property styles the `Image` component. You can
+#    add shadows (`shadow-lg`), borders, or other effects. The `image_container`
+#    can be used for positioning.
+#
+# 5. Layout: The default styles create a centered, single-column layout. The
+#    `headline.container` and `subtitle_container` use `max-w-*` and `mx-auto`
+#    to constrain the text width. For different layouts (e.g., a two-column
+#    hero), you would need to use a different component like `Hero2` or
+#    significantly override these layout classes.
+#
+Component+Hero:
+  headline:
+    container: 'text-center max-w-5xl mx-auto'
+    tagline: 'text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase'
+    title: 'text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200'
+    subtitle: 'text-xl text-muted mb-6 dark:text-slate-300'
+  container: 'relative max-w-7xl mx-auto px-4 sm:px-6'
+  subtitle_container: 'max-w-3xl mx-auto'
+  actions_container: 'max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4'
+  action_item: 'flex w-full sm:w-auto'
+  action_button: 'w-full sm:mb-0'
+  content_wrapper: 'my-10'
+  image_container: 'relative m-auto max-w-5xl'
+  image: 'mx-auto rounded-md w-full'
+
+# -----------------------------------------------------------------------------
+# Component+Hero2 Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Hero2` widget, an enhanced hero section with a responsive,
+# two-column layout. It's designed for landing pages to present a primary
+# value proposition with a strong visual (image or illustration) alongside
+# headline text and calls-to-action.
+#
+# Component: src/components/widgets/Hero2.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `WidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - container: Styles the main `<div>` that holds the hero's content grid.
+#
+#   - grid: Styles the grid container for the two columns (text and image).
+#           Controls the layout (flex, grid), alignment, and gap between columns.
+#
+#   - headline: An object of CSS classes for styling the headline elements in
+#               the first column.
+#     - container: Styles the `<div>` that wraps the text content column.
+#     - tagline: Styles the small `<p>` element above the main title.
+#     - title: Styles the main `<h1>` title.
+#     - subtitle: Styles the descriptive `<p>` element below the title.
+#
+#   - subtitle_container: Styles the `<div>` that wraps the subtitle and the
+#                         action buttons, controlling their layout.
+#
+#   - actions_wrapper: Styles the `<div>` that wraps the group of action buttons.
+#
+#   - action_item: Styles the wrapper for each individual action button.
+#
+#   - button: Applies additional CSS classes to the embedded `Button`
+#             components. This allows for overriding the button's default
+#             variant styles from `Component+Button`.
+#
+#   - content_wrapper: Styles the `<div>` that wraps any additional HTML content.
+#
+#   - image_column: Styles the `<div>` for the second column, which contains the image.
+#
+#   - image_container: Styles the wrapper `<div>` for the hero image.
+#
+#   - image: Styles the `Image` component itself.
+#
+# AI Theming Guidelines:
+# 1. Layout: The `grid` property is key to this component's two-column layout.
+#    The default `lg:flex lg:items-center` creates a side-by-side layout on
+#    large screens. The `headline.container` and `image_column` properties
+#    use `basis-1/2` to create equal-width columns.
+#
+# 2. Full-Screen Hero: The default `lg:h-screen` on the `grid` makes the hero
+#    take up the full viewport height on large screens. To disable this,
+#    remove `lg:h-screen` and adjust the vertical padding on the `grid`
+#    (e.g., `py-20`).
+#
+# 3. Typography: The `headline` properties control the text styling.
+#    - `headline.title` is an `<h1>`, so it should have the largest font size.
+#    - The default styles align the text to the center, but switch to
+#      `lg:text-left` on large screens to align with the two-column layout.
+#
+# 4. Call-to-Action Buttons:
+#    - The `actions_wrapper` controls the button layout. The default styles
+#      center the buttons on mobile but switch to `lg:justify-start` for the
+#      two-column view.
+#    - The `button` property can override styles from `Component+Button`. The
+#      default `w-full sm:w-auto` makes buttons full-width on mobile.
+#
+# 5. Image Styling: The `image` property can be used to add shadows, borders,
+#    or other effects to the hero image. The `image_container` can be used for
+#    positioning.
+#
+# 6. Background and Spacing: Use the `wrapper` property to override the
+#    `Component+WidgetWrapper` styles. This is how you can give the entire
+#    hero section a unique background color, adjust its padding, or add an
+#    overlay for a background image.
+#
+Component+Hero2:
+  headline:
+    container: 'basis-1/2 text-center lg:text-left pb-10 md:pb-16 mx-auto'
+    tagline: 'text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase'
+    title: 'text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200'
+    subtitle: 'text-xl text-muted mb-6 dark:text-slate-300'
+  container: 'relative max-w-7xl mx-auto px-4 sm:px-6'
+  grid: 'py-12 md:py-20 lg:py-0 lg:flex lg:items-center lg:h-screen lg:gap-8'
+  subtitle_container: 'max-w-3xl mx-auto lg:max-w-none'
+  actions_wrapper: 'max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 lg:justify-start lg:m-0 lg:max-w-7xl'
+  action_item: 'flex w-full sm:w-auto'
+  button: 'w-full sm:mb-0'
+  content_wrapper: 'my-10'
+  image_column: 'basis-1/2'
+  image_container: 'relative m-auto max-w-5xl'
+  image: 'mx-auto rounded-md w-full'
+
+# -----------------------------------------------------------------------------
+# Component+HeroText Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `HeroText` widget, a text-focused hero section designed to
+# capture user attention with a strong headline, supporting content, and
+# calls-to-action, without a primary image.
+#
+# Component: src/components/widgets/HeroText.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `WidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - container: Styles the main `<div>` that holds the hero's content.
+#
+#   - headline: An object of CSS classes for styling the headline elements.
+#     - container: Styles the `<div>` that wraps the tagline, title, and subtitle.
+#     - tagline: Styles the small `<p>` element above the main title.
+#     - title: Styles the main `<h1>` title.
+#     - subtitle: Styles the descriptive `<p>` element below the title.
+#
+#   - subtitle_container: Styles the `<div>` that wraps the subtitle and the
+#                         action buttons, controlling their layout.
+#
+#   - actions_container: Styles the `<div>` that wraps the group of action buttons.
+#
+#   - action_item: Styles the wrapper for each individual action button.
+#
+#   - content_container: Styles the `<div>` that wraps any additional HTML content.
+#
+# AI Theming Guidelines:
+# 1. Background and Spacing: The hero's background and padding are controlled
+#    via the `wrapper` property, which overrides `Component+WidgetWrapper`.
+#    For a full-bleed hero with a background image, you might set:
+#    `wrapper:`
+#      `wrapper: 'py-20 md:py-32'` (adjust padding)
+#      `overlay: 'bg-black/50'` (add overlay for text contrast)
+#
+# 2. Typography: The `headline` property is central to the hero's visual
+#    impact.
+#    - `headline.title`: This is the main page heading (`<h1>`). Use large font
+#      sizes (`text-5xl`, `md:text-6xl`) and the theme's primary heading font
+#      (`font-heading`) and color (`text-heading`).
+#    - `headline.subtitle`: Should be larger than body text but use a more
+#      subdued color (`text-muted`).
+#    - `headline.tagline`: Often styled as an uppercase label with an accent
+#      color (`text-secondary`).
+#
+# 3. Call-to-Action Buttons:
+#    - The buttons' appearance is primarily defined by their `variant` prop
+#      (e.g., 'primary', 'secondary'), which maps to styles in `Component+Button`.
+#    - The `actions_container` controls the layout of the buttons (e.g., `gap-4`).
+#    - The `action_item` can be used to control the width of the buttons, as
+#      seen in the default `w-full sm:w-auto`.
+#
+# 4. Layout: The default styles create a centered, single-column layout. The
+#    `headline.container` and `subtitle_container` use `max-w-*` and `mx-auto`
+#    to constrain the text width. For a left-aligned hero, you would need to
+#    override these layout classes (e.g., `headline: { container: 'text-left max-w-none' }`).
+#
+Component+HeroText:
+  headline:
+    container: 'text-center max-w-5xl mx-auto'
+    tagline: 'text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase'
+    title: 'text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200'
+    subtitle: 'text-xl text-muted mb-6 dark:text-slate-300'
+  container: 'relative max-w-7xl mx-auto px-4 sm:px-6'
+  subtitle_container: 'max-w-3xl mx-auto'
+  actions_container: 'max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4'
+  action_item: 'flex w-full sm:w-auto'
+  content_container: 'my-10'
+
+# -----------------------------------------------------------------------------
+# Component+Note Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Note` widget, a simple component for displaying important
+# information, announcements, or supplementary content in a visually distinct
+# container. It typically includes an icon, a subject, and a statement.
+#
+# Component: src/components/widgets/Note.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `WidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - container: Styles the main `<div>` that wraps the note's content (icon,
+#                subject, and statement).
+#   - icon: Styles the `Icon` component. Controls size and color.
+#   - subject: Styles the `<span>` containing the subject text.
+#   - statement: Styles the `<span>` containing the statement text.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: The `container` property defines the appearance of the
+#    note box. The default styles center the text and set padding and font size.
+#    You can add a background color, border, or shadow to make it stand out.
+#    For example: `container: '... bg-blue-100 border border-blue-200 rounded-lg'`.
+#
+# 2. Wrapper Styling: This widget is wrapped by `WidgetWrapper`. To give it a
+#    full-width background that is different from the main page, you can use
+#    the `wrapper` property. For example:
+#    `wrapper:`
+#      `container: 'bg-surface'`
+#      `wrapper: 'py-4'` (to reduce default widget padding)
+#
+# 3. Typography:
+#    - The `subject` is `font-bold` by default to give it emphasis.
+#    - The `statement` is for the main content and inherits the font style from
+#      the container. You could make it `text-muted` if it's less important.
+#
+# 4. Iconography: The `icon` property controls the icon's size and alignment.
+#    The icon's color is typically inherited via `currentColor`, so setting a
+#    text color on the `container` or `subject` can color the icon.
+#
+# 5. Embedded Components: This component is relatively simple and does not
+#    embed other complex components besides `WidgetWrapper` and `Icon`.
+#    Styling is self-contained within this group and `Component+WidgetWrapper`.
+#
+Component+Note:
+  wrapper:
+    container: 'bg-blue-100'
+    wrapper: 'py-0'
+  container: 'max-w-6xl mx-auto px-4 sm:px-6 py-4 text-md text-center font-medium'
+  icon: 'w-5 h-4 inline-block align-text-bottom'
+  subject: 'font-bold'
+  statement: ''
+
+# -----------------------------------------------------------------------------
+# Component+Pricing Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Pricing` widget, which displays multiple pricing plans in a
+# responsive grid. It's designed to showcase service tiers or product options
+# with features, prices, and call-to-action buttons.
+#
+# Component: src/components/widgets/Pricing.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - container: Styles the main pricing container `<div>`.
+#   - grid: Styles the grid layout for the pricing plans.
+#   - item_wrapper: Styles the wrapper for an individual pricing plan.
+#   - item: Styles the main container for a single pricing plan (the "card").
+#   - ribbon_wrapper: Styles the container for the promotional ribbon.
+#   - ribbon_title: Styles the text and background of the ribbon.
+#   - item_content: Styles the `<div>` that wraps the content inside a plan.
+#   - title: Styles the title of a pricing plan.
+#   - subtitle: Styles the subtitle of a pricing plan.
+#   - details: Styles the container for the price information.
+#   - amount_wrapper: Styles the wrapper for the currency and price amount.
+#   - currency: Styles the currency symbol.
+#   - amount: Styles the price amount.
+#   - period: Styles the billing period text (e.g., "per month").
+#   - features_list: Styles the `<ul>` for the list of features.
+#   - feature_item: Styles each `<li>` feature item.
+#   - feature_icon_wrapper: Styles the wrapper for a feature's icon.
+#   - feature_icon: Styles the `Icon` component for a feature.
+#   - actions_wrapper: Styles the container for the call-to-action buttons.
+#   - action_button: Applies additional CSS classes to the embedded `Button`
+#                    components.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Pricing Plan Panel (`item`): This is the core visual element. The default
+#    style creates a card with `bg-surface`, `border-surface`, `shadow`, and
+#    `backdrop-blur`. Adjust these to match your theme's card or panel styling.
+#
+# 3. Typography and Price Display: The price is the focal point.
+#    - The `amount` is styled to be very large and bold (`text-6xl font-extrabold`).
+#    - The `currency` is also large (`text-5xl`).
+#    - The `period` and `subtitle` use `text-muted` for secondary information.
+#
+# 4. Feature List:
+#    - The `feature_icon_wrapper` creates a colored circle (`rounded-full bg-primary`).
+#      Change `bg-primary` to your theme's accent color.
+#    - The `feature_icon` color (`text-white`) should have good contrast with
+#      the background.
+#
+# 5. Call-to-Action Buttons:
+#    - The buttons' base styles are inherited from `Component+Button`.
+#    - The `action_button` property can be used for contextual overrides, like
+#      `w-full` to make them full-width.
+#    - The component logic automatically applies the `primary` variant to the
+#      button on a plan that has a ribbon, making it stand out.
+#
+# 6. Ribbon: The `ribbon_title` is styled with a green background by default.
+#    Change `bg-green-700` to a color that draws attention, like a secondary
+#    accent color, to highlight a specific plan.
+#
+Component+Pricing:
+  container: 'flex items-stretch justify-center'
+  grid: 'gap-4 text-default sm:grid-cols-2'
+  item_wrapper: 'col-span-3 mx-auto flex w-full sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1'
+  item: 'rounded-lg backdrop-blur border border-surface bg-surface shadow px-6 py-8 flex w-full max-w-sm flex-col justify-between text-center'
+  ribbon_wrapper: 'absolute right-[-5px] 2xl:right-[-8px] rtl:right-auto rtl:left-[-8px] rtl:2xl:left-[-10px] top-[-5px] 2xl:top-[-10px] z-[1] h-[100px] w-[100px] overflow-hidden text-right'
+  ribbon_title: "absolute top-[19px] right-[-21px] rtl:right-auto rtl:left-[-21px] block w-full rotate-45 rtl:-rotate-45 bg-green-700 text-center text-[10px] font-bold uppercase leading-5 text-white shadow-[0_3px_10px_-5px_rgba(0,0,0,0.3)] before:absolute before:left-0 before:top-full before:z-[-1] before:border-[3px] before:border-r-transparent before:border-b-transparent before:border-l-green-800 before:border-t-green-800 before:content-[''] after:absolute after:right-0 after:top-full after:z-[-1] after:border-[3px] after:border-l-transparent after:border-b-transparent after:border-r-green-800 after:border-t-green-800 after:content-['']"
+  item_content: 'px-2 py-0'
+  title: 'text-center text-xl font-semibold uppercase leading-6 tracking-wider mb-2'
+  subtitle: 'font-light sm:text-lg text-muted'
+  details: 'my-8'
+  amount_wrapper: 'flex items-center justify-center text-center mb-1'
+  currency: 'text-5xl'
+  amount: 'text-6xl font-extrabold'
+  period: 'text-base leading-6 lowercase text-muted'
+  features_list: 'my-8 md:my-10 space-y-2 text-left'
+  feature_item: 'mb-1.5 flex items-start space-x-3 leading-7'
+  feature_icon_wrapper: 'rounded-full bg-primary mt-1'
+  feature_icon: 'w-5 h-5 font-bold p-1 text-white'
+  actions_wrapper: 'flex flex-col gap-3'
+  action_button: 'w-full sm:w-auto'
+
+# -----------------------------------------------------------------------------
+# Component+SectionHeader Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `SectionHeader` widget, which renders a section header with a
+# title, subtitle, and tagline. It's designed to provide clear section headings
+# and can include an optional horizontal separator line for visual distinction.
+#
+# Component: src/components/widgets/SectionHeader.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - separator: Styles the optional horizontal rule (`<hr>`) element that
+#                appears below the header content.
+#
+# AI Theming Guidelines:
+# 1. Headline Styling: The main purpose of this component is to display a
+#    headline. You can customize its appearance by adding a `headline` property
+#    to this style group, which will override the defaults from `Component+Headline`.
+#    For example, to make the title larger for section headers, you could set:
+#    `headline: { title: 'text-5xl' }`.
+#
+# 2. Separator Styling: The `separator` property controls the look of the
+#    horizontal line. The default `border-t border-gray-200 dark:border-slate-800 my-6`
+#    creates a simple line with vertical margin. You can change the color
+#    (`border-*`), thickness (`border-t-*`), and spacing (`my-*`).
+#
+# 3. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. By
+#    default, it will have the standard widget padding. If you want section
+#    headers to have a different background or padding, you can add a `wrapper`
+#    property to this style group to override the defaults from `Component+WidgetWrapper`.
+#
+# 4. Embedded Components: The title, subtitle, and tagline are rendered by the
+#    `Headline` component, and the entire widget is wrapped by `TitledWidgetWrapper`.
+#    The default styles are inherited from `Component+Headline` and
+#    `Component+WidgetWrapper` respectively.
+#
+Component+SectionHeader:
+  separator: 'border-t border-gray-200 dark:border-slate-800 my-6'
+
+# -----------------------------------------------------------------------------
+# Component+Stats Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Stats` widget, which displays key metrics and data points in a
+# responsive grid layout. It's designed to showcase important numerical
+# information with optional icons and descriptions.
+#
+# Component: src/components/widgets/Stats.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - container: Styles the main `<div>` that wraps all the stat items.
+#   - stat: Styles the container for a single stat item.
+#   - icon_container: Styles the wrapper for the icon.
+#   - icon: Styles the `Icon` component itself.
+#   - amount: Styles the large numerical value.
+#   - source_container: Styles the container for the source link.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Amount Styling: The `amount` is the most prominent part of each stat. The
+#    default styles use `font-heading`, `text-primary`, and a very large font
+#    size. This is a key place to apply the theme's primary color and heading font.
+#
+# 3. Icon Styling: The `icon_container` also uses `text-primary` by default.
+#    This should be consistent with the `amount` color or another accent color
+#    from the theme. The `icon` property controls the size.
+#
+# 4. Layout and Dividers: The `stat` property includes `md:border-r` and
+#    `border-surface` to create vertical dividers between stats on larger
+#    screens. The `border-surface` color should match other dividers in the theme.
+#
+# 5. Typography: The `source_container` uses `text-muted` for less important
+#    text. Ensure this aligns with the theme's secondary text color.
+#
+# 6. Embedded Components: The widget uses the `Expander` component for stats
+#    with descriptions. The `Expander` is styled by the `Component+Expander`
+#    style group and does not receive any class overrides from this component,
+#    so its appearance will be consistent with other expanders on the site.
+#
+Component+Stats:
+  container: 'flex flex-wrap justify-center -m-4 text-center'
+  stat: 'p-4 md:w-1/4 sm:w-1/2 w-full min-w-[220px] text-center md:border-r md:last:border-none border-surface'
+  icon_container: 'flex items-center justify-center mx-auto mb-4 text-primary'
+  icon: 'w-10 h-10'
+  amount: 'font-heading text-primary text-[2.6rem] font-bold lg:text-5xl xl:text-6xl'
+  source_container: 'text-sm font-small text-muted tracking-widest lg:text-base'
+
+# -----------------------------------------------------------------------------
+# Component+Steps Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Steps` widget, which displays a step-by-step process in a
+# vertical timeline format, often accompanied by an image and a call-to-action.
+#
+# Component: src/components/widgets/Steps.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `WidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `Headline`
+#               component. This allows for overriding the default styles defined
+#               in the `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - container: Styles the main `<div>` that holds the text and image columns.
+#
+#   - content: Styles the `<div>` for the column containing the headline and timeline.
+#
+#   - items: An object of CSS classes passed to the embedded `Timeline`
+#            component. This allows for overriding the default styles defined
+#            in the `Component+Timeline` style group. It can contain:
+#     - container: The main wrapper for the entire timeline.
+#     - panel: The container for a single timeline item.
+#     - icon_wrapper_outer: Wraps the icon and the vertical separator line.
+#     - icon_wrapper_inner: A wrapper around just the icon.
+#     - icon_separator: The vertical line connecting timeline items.
+#     - icon: Styles the icon for each timeline item.
+#     - content_wrapper: The container for the title and description.
+#     - content_wrapper_item: Adds bottom padding to all but the last item.
+#     - content_wrapper_last: Styles for the last item's content wrapper.
+#     - title: Styles the title of a timeline item.
+#     - description: Styles the description text of a timeline item.
+#
+#   - image_container: Styles the wrapper `<div>` for the image.
+#
+#   - image: Styles the `Image` component itself.
+#
+#   - action_container: Styles the `<div>` that wraps the call-to-action button.
+#
+#   - action_button: Applies additional CSS classes to the embedded `Button`
+#                    component, allowing for overrides of the button's default
+#                    variant styles from `Component+Button`.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `WidgetWrapper`. To give it
+#    a unique background or padding, add a `wrapper` property to this style
+#    group. This will override the defaults from `Component+WidgetWrapper`.
+#
+# 2. Layout: The `container` property uses flexbox to create a two-column
+#    layout (text and image). The `content` and `image_container` properties
+#    style these columns. The layout can be reversed with the `isReversed` prop.
+#
+# 3. Timeline Styling: The core of this widget is the `Timeline` component.
+#    - To style it, add an `items` property to this group, which will override
+#      the defaults from `Component+Timeline`.
+#    - A key property to theme is `items.icon`. The default style in
+#      `Component+Timeline` uses `text-primary` and `border-primary`. You can
+#      override this to match your theme, e.g., `items: { icon: 'bg-secondary text-white' }`.
+#
+# 4. Image Styling: The `image` property styles the `Image` component. The
+#    default `bg-surface-muted` and `shadow-lg` give it a framed look. Adjust
+#    these to match your theme's image treatment.
+#
+# 5. Call-to-Action: The `action_button` styles the `Button` component. The
+#    button's base style is determined by its `variant` prop (defaults to
+#    'primary'), which maps to styles in `Component+Button`. You can use
+#    `action_button` for contextual overrides.
+#
+Component+Steps:
+  container: 'flex flex-col gap-8 md:gap-12'
+  content: 'md:py-4 md:self-center'
+  image_container: 'relative md:basis-1/2'
+  image: 'inset-0 object-cover object-top w-full rounded-md shadow-lg md:absolute md:h-full bg-surface-muted'
+  action_container: 'w-full text-center md:text-left rtl:md:text-right flex flex-col items-center'
+  action_button: 'mb-12 w-auto'
+
+# -----------------------------------------------------------------------------
+# Component+Steps2 Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Steps2` widget, an enhanced step-by-step process display that
+# presents a sequence of actions in a two-column layout. It's designed to
+# guide users through workflows with numbered steps and optional icons.
+#
+# Component: src/components/widgets/Steps2.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - grid, grid_reversed: Styles the main flexbox container for the two columns.
+#   - column_1, column_1_reversed, column_1_normal: Styles the first column,
+#     which contains the headline and call-to-action.
+#   - column_2: Styles the second column, which contains the list of steps.
+#   - action_container: Styles the wrapper for the call-to-action button.
+#   - action_button: Applies additional CSS classes to the embedded `Button`
+#                    component, allowing for overrides of the button's default
+#                    variant styles from `Component+Button`.
+#   - items_list: Styles the `<ul>` that contains the step items.
+#   - item: Styles each `<li>` step item.
+#   - item_icon_container: Styles the wrapper for the step number or icon.
+#   - item_icon: Styles the circular element containing the number or icon.
+#   - icon: Styles the `Icon` component itself when an icon is used.
+#   - item_content: Styles the wrapper for the step's title and description.
+#   - item_title: Styles the `<h3>` title of a step.
+#   - item_description: Styles the `<p>` description of a step.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Layout: The `grid` property controls the two-column layout. The `column_1`
+#    and `column_2` properties define the content of each column. The layout
+#    can be reversed with the `isReversed` prop, which applies the `grid_reversed`
+#    class.
+#
+# 3. Step Icon Styling: The `item_icon` is a key visual element.
+#    - The default style uses `bg-blue-100` and `text-primary`. This should be
+#      updated to use a light accent color for the background and the theme's
+#      primary color for the text/number.
+#    - The `rounded-full` class makes it a circle. This can be changed to
+#      `rounded-md` for a square look.
+#
+# 4. Typography:
+#    - The `item_title` uses `font-heading` and should be styled consistently
+#      with other subheadings in the theme.
+#    - The `item_description` uses `text-muted`. Ensure this aligns with the
+#      theme's secondary text color.
+#
+# 5. Call-to-Action: The `action_button` styles the `Button` component. The
+#    button's base style is determined by its `variant` prop (defaults to
+#    'primary'), which maps to styles in `Component+Button`. You can use
+#    `action_button` for contextual overrides.
+#
+Component+Steps2:
+  grid: 'flex flex-col gap-8 md:gap-12 md:flex-row'
+  grid_reversed: 'md:flex-row-reverse'
+  column_1: 'w-full lg:w-1/2 gap-8 md:gap-12'
+  column_1_reversed: 'lg:ml-16 md:ml-8 ml-0'
+  column_1_normal: 'lg:mr-16 md:mr-8 mr-0'
+  action_container: 'w-full text-center md:text-left rtl:md:text-right flex flex-col items-center'
+  action_button: 'mb-12 w-auto'
+  column_2: 'w-full lg:w-1/2 px-0'
+  items_list: 'space-y-10'
+  item: 'flex md:-mx-4'
+  item_icon_container: 'pr-4 sm:pl-4 rtl:pr-0 rtl:pl-4 rtl:sm:pl-0 rtl:sm:pr-4'
+  item_icon: 'flex w-16 h-16 mx-auto items-center justify-center text-2xl font-bold rounded-full bg-blue-100 text-primary'
+  icon: 'w-6 h-6 icon-bold'
+  item_content: 'pl-4 rtl:pl-0 rtl:pr-4'
+  item_title: 'mb-4 text-xl font-semibold font-heading'
+  item_description: 'text-muted dark:text-gray-400'
+
+# -----------------------------------------------------------------------------
+# Component+Testimonials Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `Testimonials` widget, which displays customer reviews or quotes
+# in a responsive grid. It's designed to build trust by showcasing feedback
+# with author details and optional avatars.
+#
+# Component: src/components/widgets/Testimonials.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - grid: Styles the grid container for all testimonial items.
+#   - container: Styles the wrapper for a single testimonial item.
+#   - container_inner: Styles the main panel/card for a single testimonial.
+#   - title: Styles the optional title within a testimonial item.
+#   - blockquote: Styles the `<blockquote>` element wrapping the testimonial text.
+#   - testimonial: Styles the `<p>` tag containing the testimonial quote.
+#   - divider: Styles the `<hr>` separator line.
+#   - footer: Styles the `<div>` containing the author's information.
+#   - image_container: Styles the wrapper for the author's image.
+#   - image: Styles the `Image` component for the author's avatar.
+#   - author_container: Styles the wrapper for the author's name and job.
+#   - author_name: Styles the author's name text.
+#   - author_job: Styles the author's job title.
+#   - action_container: Styles the wrapper for the optional call-to-action button.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Testimonial Panel (`container_inner`): This is the core visual element.
+#    The default style creates a card with `bg-surface`, `border-surface`, and
+#    `shadow-xl`. Adjust these to match your theme's card or panel styling.
+#
+# 3. Typography:
+#    - The main quote text (`testimonial`) uses `text-muted`. This should be
+#      the theme's standard color for secondary text.
+#    - The `author_name` is `font-semibold` to give it prominence, while the
+#      `author_job` is smaller and also uses `text-muted`.
+#
+# 4. Author Image: The `image` and `image_container` properties create a
+#    circular avatar with a border. The `border-surface` should match other
+#    borders in the theme.
+#
+# 5. Separators: The `divider` uses `border-surface`. Ensure this is consistent
+#    with other dividers in the theme.
+#
+# 6. Embedded Components: The optional call-to-action is a `Button` component.
+#    Its appearance is controlled by the `variant` prop passed to it and the
+#    styles in `Component+Button`. The `action_container` styles its wrapper.
+#
+Component+Testimonials:
+  grid: 'grid sm:grid-cols-2 lg:grid-cols-3 gap-6'
+  container: 'flex h-auto'
+  container_inner: 'flex flex-col p-4 md:p-6 rounded-md border border-surface bg-surface shadow-xl'
+  title: 'text-lg font-medium leading-6 pb-4'
+  blockquote: 'flex-auto'
+  testimonial: 'text-muted'
+  divider: 'border-surface my-4'
+  footer: 'flex items-center'
+  image_container: 'h-10 w-10 rounded-full border border-surface'
+  image: 'h-10 w-10 rounded-full border border-surface min-w-full min-h-full'
+  author_container: 'grow ml-3 rtl:ml-0 rtl:mr-3'
+  author_name: 'text-base font-semibold'
+  author_job: 'text-xs text-muted'
+  action_container: 'flex justify-center mx-auto w-fit mt-8 md:mt-12 font-medium'
+
+# -----------------------------------------------------------------------------
+# Component+VideoPlayer Style Group
+# -----------------------------------------------------------------------------
+#
+# Styles the `VideoPlayer` widget, which displays an embedded YouTube video
+# within a titled widget structure.
+#
+# Component: src/components/widgets/VideoPlayer.astro
+#
+# Properties:
+#   - wrapper: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#              component. This allows for overriding the default styles defined
+#              in the `Component+WidgetWrapper` style group. It can contain:
+#     - container: Styles for the outermost `<section>` element.
+#     - background: Styles for the background image container.
+#     - overlay: Styles for the overlay layer on top of the background.
+#     - wrapper: Styles for the inner content wrapper `<div>`.
+#
+#   - headline: An object of CSS classes passed to the embedded `TitledWidgetWrapper`
+#               component, which then passes them to the `Headline` component.
+#               This allows for overriding the default styles defined in the
+#               `Component+Headline` style group. It can contain:
+#     - container: Styles for the main headline container `<div>`.
+#     - tagline: Styles for the tagline `<p>` element.
+#     - title: Styles for the main title `<h2>` element.
+#     - subtitle: Styles for the subtitle `<p>` element.
+#
+#   - video_player: Styles the container for the embedded YouTube player.
+#
+# AI Theming Guidelines:
+# 1. Container Styling: This widget is wrapped by `TitledWidgetWrapper`. To
+#    give it a unique background, padding, or title style, add `wrapper` and
+#    `headline` properties to this style group. These will override the
+#    defaults from `Component+WidgetWrapper` and `Component+Headline`.
+#
+# 2. Video Player Styling: The `video_player` property styles the container
+#    around the YouTube iframe. The default `mx-auto max-w-full` ensures it is
+#    centered and responsive. You can add styles like `rounded-lg` or `shadow-xl`
+#    to give the video player a framed look.
+#
+# 3. Embedded Components: The video itself is rendered by the `astro-embed`
+#    `YouTube` component, which handles the responsive aspect ratio. The title
+#    and subtitle are rendered by the `Headline` component.
+#
+Component+VideoPlayer:
+  video_player: 'mx-auto max-w-full'

@@ -1,0 +1,129 @@
+---
+/**
+ * WidgetWrapper.astro
+ *
+ * This component provides a consistent wrapper structure for widget components with
+ * background image support, overlay effects, and themeable styling. It serves as
+ * a foundational container that ensures visual consistency across different widget types.
+ *
+ * Features:
+ * - Semantic section element for proper document structure
+ * - Optional background image with overlay support
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper ARIA attributes
+ * - Data attributes for test automation
+ *
+ * Props (extends Widget interface):
+ * - type: Widget type identifier for semantic naming and styling
+ * - id (optional): HTML id attribute for the section element
+ * - bg (optional): Background image URL string
+ * - classes (optional): CSS class configuration object
+ *
+ * Styling Inputs:
+ * - getClasses('Component+WidgetWrapper'): Retrieves CSS classes for wrapper elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main section element
+ *   - background: Classes for the background image container
+ *   - overlay: Classes for the overlay layer container
+ *   - wrapper: Classes for the inner content wrapper div
+ *
+ * Component Integration:
+ * - twMerge: Utility for combining Tailwind classes with theme classes
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives widget configuration through Astro.props
+ * 2. Conditionally renders background image and overlay when bg prop exists
+ * 3. Applies theme-based styling through getClasses utility
+ * 4. Wraps content through slot mechanism
+ *
+ * Layout Structure:
+ * - Section element provides semantic container
+ * - Background image positioned absolutely behind content
+ * - Overlay layer for visual effects
+ * - Inner wrapper div contains widget content
+ *
+ * Accessibility:
+ * - Semantic section element for proper document structure
+ * - aria-hidden attributes on decorative background elements
+ * - Data attributes for test automation with type-specific naming
+ *
+ * Usage Context:
+ * - Base wrapper for all widget components
+ * - Provides consistent background and overlay styling
+ * - Ensures proper semantic structure for widget content
+ */
+
+import type { Widget as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
+import { getClasses } from '~/utils/theme';
+
+// Destructure props with defaults
+const { type, id, bg = '', classes: rawClasses = {} } = Astro.props;
+
+// Retrieve CSS classes for wrapper elements from theme configuration
+const classes = getClasses('Component+WidgetWrapper', rawClasses);
+---
+
+{
+  /*
+    Main section element that serves as the widget container.
+    - Uses twMerge to combine base classes with theme classes
+    - Applies relative positioning and overflow handling
+    - Conditionally applies id attribute when provided
+    - Includes type-specific data attribute for test automation
+  */
+}
+<section
+  class={twMerge('relative overflow-hidden', classes.container)}
+  {...id ? { id } : {}}
+  data-name={`${type}-widget-wrapper-container`}
+>
+  {
+    /*
+      Background image and overlay rendering when bg prop exists.
+      - Provides visual context behind widget content
+      - Uses fragment to group related elements
+    */
+    bg && (
+      <>
+        {/*
+            Background image container positioned absolutely behind content.
+            - Uses inline style for background image URL
+            - Applies theme classes through twMerge
+            - Marked as aria-hidden since it's decorative
+            - Includes type-specific data attribute for test automation
+          */}
+        <div
+          style={{ 'background-image': `url('${bg}')` }}
+          class={twMerge(`absolute inset-0 z-[-100]`, classes.background)}
+          aria-hidden="true"
+          data-name={`${type}-widget-wrapper-background`}
+        />
+        {/*
+            Overlay layer container positioned absolutely behind content.
+            - Provides visual effects over background image
+            - Applies theme classes through twMerge
+            - Marked as aria-hidden since it's decorative
+            - Includes type-specific data attribute for test automation
+          */}
+        <div
+          class={twMerge('absolute inset-0 z-[-50]', classes.overlay)}
+          aria-hidden="true"
+          data-name={`${type}-widget-wrapper-overlay`}
+        />
+      </>
+    )
+  }
+  {
+    /*
+      Inner content wrapper div that contains widget content.
+      - Applies theme classes for consistent padding/spacing
+      - Uses slot to render child content
+      - Includes type-specific data attribute for test automation
+    */
+  }
+  <div class={classes.wrapper} data-name={`${type}-widget-wrapper`}>
+    <slot />
+  </div>
+</section>

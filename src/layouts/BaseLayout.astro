@@ -1,0 +1,131 @@
+---
+/**
+ * BaseLayout.astro
+ *
+ * This is the main layout component that serves as the foundation for all pages.
+ * It provides the basic HTML structure, metadata, styling, and analytics integration.
+ *
+ * Features:
+ * - HTML document structure with language and direction attributes
+ * - Metadata management (SEO, OpenGraph, Twitter cards)
+ * - Favicons and custom styles/scripts integration
+ * - Analytics integration (Google Tag Manager, Facebook Pixel)
+ * - Theme support with dynamic CSS loading
+ * - Client-side routing for SPA-like transitions
+ *
+ * Props:
+ * - metadata (optional): Page-specific metadata including title, description,
+ *   OpenGraph data, and other SEO-related properties
+ *
+ * Styling Inputs:
+ * - UI.theme: The theme name used to load theme-specific global CSS
+ * - getClasses('Layout+Base'): Retrieves CSS classes for html and body elements
+ *   from the theme's style configuration
+ *
+ * Configuration Dependencies:
+ * - SITE: Site-wide settings like organization name
+ * - I18N: Internationalization settings (language, text direction)
+ * - UI: User interface settings (theme name)
+ * - ANALYTICS: Analytics vendor configurations (Google Tag Manager, Facebook Pixel)
+ */
+
+import type { MetaData as MetaDataType } from '~/types';
+import { UI, I18N, ANALYTICS } from 'site:config';
+import CommonMeta from '~/components/common/CommonMeta.astro';
+import Metadata from '~/components/common/Metadata.astro';
+import SiteVerification from '~/components/common/SiteVerification.astro';
+import Analytics from '~/components/common/Analytics.astro';
+import Favicons from '~/components/Favicons.astro';
+import CustomStyles from '~/components/common/CustomStyles.astro';
+import CustomScripts from '~/components/common/CustomScripts.astro';
+import { ClientRouter } from 'astro:transitions';
+import { getClasses } from '~/utils/theme';
+
+// Dynamically import the global CSS for the current theme
+import(`~/themes/${UI.theme}/global.css`);
+
+/**
+ * Component Props Interface
+ *
+ * @property metadata - Optional metadata for the page including:
+ *   - title: Page title
+ *   - description: Page description for SEO
+ *   - canonical: Canonical URL for the page
+ *   - robots: Robots meta tag configuration
+ *   - openGraph: OpenGraph metadata for social sharing
+ *   - twitter: Twitter card metadata
+ */
+export interface Props {
+  metadata?: MetaDataType;
+}
+
+// Destructure props with default empty object for metadata
+const { metadata = {} } = Astro.props;
+
+// Extract internationalization settings
+const { language, textDirection } = I18N;
+
+// Retrieve CSS classes for html and body elements from theme configuration
+// These classes enable theme-specific styling of the base layout elements
+const classes = getClasses('Layout+Base');
+---
+
+<!doctype html>
+<html lang={language} dir={textDirection} class={classes.html}>
+  <head>
+    {/* Common meta tags that should appear on all pages */}
+    <CommonMeta />
+
+    {/* Favicons for different devices and sizes */}
+    <Favicons />
+
+    {/* Custom CSS styles defined in content configuration */}
+    <CustomStyles />
+
+    {/* Page-specific metadata (title, description, OpenGraph, etc.) */}
+    <Metadata {...metadata} />
+
+    {/* Site verification tags for search engines and web tools */}
+    <SiteVerification />
+
+    {/* Analytics configuration scripts */}
+    <Analytics />
+
+    {/* Client-side router for SPA-like page transitions */}
+    <ClientRouter fallback="swap" />
+  </head>
+  <body class={classes.body} data-name="layout-body">
+    {
+      /* Google Tag Manager noscript fallback for users without JavaScript */
+      ANALYTICS?.vendors?.googleTagManager?.id ? (
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${String(ANALYTICS.vendors.googleTagManager.id)}`}
+            height="0"
+            width="0"
+            style="display:none;visibility:hidden"
+          />
+        </noscript>
+      ) : null
+    }
+    {
+      /* Facebook Pixel noscript fallback for users without JavaScript */
+      ANALYTICS?.vendors?.facebook?.id ? (
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style="display:none"
+            src={`https://www.facebook.com/tr?id=${String(ANALYTICS.vendors.facebook.id)}&ev=PageView&noscript=1`}
+          />
+        </noscript>
+      ) : null
+    }
+
+    {/* Page content is rendered here */}
+    <slot />
+
+    {/* Custom JavaScript scripts defined in content configuration */}
+    <CustomScripts />
+  </body>
+</html>

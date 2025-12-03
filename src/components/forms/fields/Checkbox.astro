@@ -1,0 +1,180 @@
+---
+/**
+ * Checkbox.astro
+ *
+ * This component renders a checkbox group form field with multiple selectable options.
+ * It supports both required and optional states, pre-filled values, and dynamic error messaging.
+ * The component integrates with the form validation system and theme-based styling.
+ *
+ * Features:
+ * - Multiple checkbox options in a single field group
+ * - Support for pre-filled values from cache
+ * - Required field validation with visual indicators
+ * - Dynamic error messaging through FormError component
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper labeling
+ * - Data attributes for test automation
+ *
+ * Props (extends BaseField interface):
+ * - name: Unique identifier for the field (used in form data)
+ * - label (optional): Field label text (passed to FormLabel)
+ * - options: Array of Option objects defining checkbox choices
+ *   - Option.name: Unique identifier for the checkbox option
+ *   - Option.label: Display text for the checkbox option
+ * - required (optional): Whether field is required (defaults to false)
+ * - value (optional): Array of pre-selected option names (from cache)
+ *
+ * Option Structure (Option interface):
+ * - name: Unique identifier for the checkbox option
+ * - label: Display text for the checkbox option
+ *
+ * Styling Inputs:
+ * - getClasses('Form+Checkbox'): Retrieves CSS classes for checkbox elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main wrapper div
+ *   - input_container: Classes for the checkbox options container
+ *   - option_container: Classes for individual checkbox option wrapper
+ *   - option_checkbox: Classes for the checkbox input element
+ *   - option_label: Classes for the checkbox label element
+ *
+ * Component Integration:
+ * - FormLabel: Renders field label with required indicator
+ * - FormError: Renders error message container for validation errors
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives field configuration through Astro.props
+ * 2. Maps through options to create individual checkboxes
+ * 3. Applies pre-filled values from cache to checkbox states
+ * 4. Integrates with form validation through FormError component
+ * 5. Associates with FormLabel for proper accessibility
+ *
+ * Accessibility:
+ * - Proper "for" attribute linking between labels and inputs
+ * - Unique IDs for each checkbox option
+ * - Semantic HTML structure with div containers
+ * - Required attribute for validation
+ * - Data attributes for test automation
+ *
+ * Usage Context:
+ * - Used by Form component for checkbox group fields
+ * - Integrated with form validation and submission system
+ * - Values are submitted as array of selected option names
+ */
+
+import type { BaseField, Option } from '~/types';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface extending BaseField
+ *
+ * @property options - Array of Option objects defining checkbox choices
+ */
+export interface Props extends BaseField {
+  options: Array<Option>;
+}
+
+// Destructure props with defaults
+const { name, label = undefined, options = [], required = false, value = [] } = Astro.props;
+
+// Retrieve CSS classes for checkbox elements from theme configuration
+const classes = getClasses('Form+Checkbox');
+---
+
+{
+  /*
+    Main container div for the checkbox field group.
+    - Provides wrapper for label, options, and error message
+    - Uses theme-based styling through classes.container
+    - Includes data-name attribute for test automation
+  */
+}
+<div class={classes.container} data-name="form-checkbox-container">
+  {
+    /*
+      Form label associated with the checkbox group.
+      - Uses FormLabel component for consistent labeling
+      - Shows required indicator when required=true
+      - Associated with first checkbox option by name
+    */
+  }
+  <FormLabel name={name} label={label} required={required} />
+
+  {
+    /*
+      Container for all checkbox options in the group.
+      - Uses theme-based styling through classes.input_container
+      - Includes data-name attribute for test automation
+    */
+  }
+  <div class={classes.input_container} data-name="form-checkbox-input-container">
+    {
+      /*
+        Map through options to create individual checkbox elements.
+        - Each option becomes a separate checkbox input
+        - Only renders options that have a name property
+      */
+      options.map(
+        ({ name: optionName, label: optionLabel }) =>
+          optionName && (
+            /*
+              Container for individual checkbox option.
+              - Wraps input and label for proper styling
+              - Uses theme-based styling through classes.option_container
+              - Includes data-name attribute for test automation
+            */
+            <div class={classes.option_container} data-name="form-checkbox-option-container">
+              {/*
+                  Individual checkbox input element.
+                  - Type is "checkbox" for multiple selection
+                  - ID combines field name and option name for uniqueness
+                  - Name attribute matches field name for grouping
+                  - Value is the option name for form submission
+                  - data-field-name for JavaScript targeting
+                  - Uses theme-based styling through classes.option_checkbox
+                  - Checked state based on pre-filled values
+                  - Required attribute when field is required
+                  - Includes data-name attribute for test automation
+                */}
+              <input
+                type="checkbox"
+                id={`${name}-${optionName}`}
+                name={name}
+                value={optionName}
+                data-field-name={name}
+                class={classes.option_checkbox}
+                {...(value.includes(optionName) ? { checked: 'true' } : {})}
+                {...(required ? { required: 'true' } : {})}
+                data-name="form-checkbox-option-input"
+              />
+              {/*
+                  Label for individual checkbox option.
+                  - Associated with input via "for" attribute
+                  - Uses set:html to render label HTML content
+                  - Uses theme-based styling through classes.option_label
+                  - Includes data-name attribute for test automation
+                */}
+              <label
+                for={`${name}-${optionName}`}
+                set:html={optionLabel || optionName}
+                class={classes.option_label}
+                data-name="form-checkbox-option-label"
+              />
+            </div>
+          )
+      )
+    }
+  </div>
+
+  {
+    /*
+      Error message container for validation errors.
+      - Uses FormError component for consistent error display
+      - ID matches aria-describedby reference in parent form
+      - Content populated dynamically via JavaScript
+    */
+  }
+  <FormError id={`${name}-error`} />
+</div>

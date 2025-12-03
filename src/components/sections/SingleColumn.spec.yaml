@@ -1,0 +1,53 @@
+# SingleColumn Section Specification
+
+sections:
+  SingleColumn:
+    type: object
+    description: Renders a single-column layout section with a centered content area. It is ideal for hero sections, simple content blocks, or focused messaging.
+    properties:
+      layout:
+        type: string
+        required: true
+        enum: [SingleColumn]
+        description: Specifies the layout type for the section. Must be 'SingleColumn'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the section, used for anchoring.
+      bg:
+        type: string
+        description: An optional URL for a background image for the section container.
+      components:
+        type: object
+        description: An object that defines the components to be rendered within the section. The 'main' key holds the array of components for the main content area.
+        properties:
+          main:
+            type: array
+            description: An array of component configurations for the main content area.
+            items:
+              $ref: '#/definitions/EmbeddableComponent'
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: CSS classes for the outer SectionWrapper container. This object is passed to the underlying SectionWrapper component to style its elements.
+            properties:
+              container:
+                type: string
+                description: Classes for the main <section> element of the wrapper.
+              background:
+                type: string
+                description: Classes for the background image container of the wrapper.
+              overlay:
+                type: string
+                description: Classes for the overlay layer of the wrapper.
+              wrapper:
+                type: string
+                description: Classes for the inner content <div> of the wrapper.
+          column_wrapper:
+            type: string
+            description: CSS classes for the middle container that provides layout constraints (e.g., max-width and centering).
+          main:
+            type: string
+            description: CSS classes for the main content area div that holds the dynamically generated components.

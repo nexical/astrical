@@ -1,0 +1,85 @@
+# Brands Component Specification
+
+components:
+  Brands:
+    type: object
+    description: Renders a brand showcase widget that displays a collection of brand icons and images. It can be used to showcase partner companies, sponsors, or technology stacks.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [Brands]
+        description: Specifies the component type. Must be 'Brands'.
+      id:
+        type: string
+        description: An optional HTML id attribute for the widget container.
+      tagline:
+        type: string
+        description: A smaller line of text displayed above the title.
+      title:
+        type: string
+        description: The main title of the widget. Can also be provided via a 'title' slot.
+      subtitle:
+        type: string
+        description: A subtitle displayed below the main title. Can also be provided via a 'subtitle' slot.
+      icons:
+        type: array
+        description: An array of icon names to be displayed. These are typically SVG icons from an icon library.
+        items:
+          type: string
+      images:
+        type: array
+        description: An array of image objects to be displayed. Each object defines an image with its source, alt text, and optional link.
+        items:
+          $ref: '#/definitions/Image'
+      bg:
+        type: string
+        description: An optional URL for a background image for the widget container.
+      classes:
+        type: object
+        description: An object to override the default CSS classes for various parts of the component.
+        properties:
+          wrapper:
+            type: object
+            description: Classes for the TitledWidgetWrapper, which provides the outer container and background support.
+            properties:
+              container:
+                type: string
+                description: Classes for the main section element of the widget wrapper.
+              background:
+                type: string
+                description: Classes for the background image container.
+              overlay:
+                type: string
+                description: Classes for the overlay layer on top of the background.
+              wrapper:
+                type: string
+                description: Classes for the inner content wrapper div.
+          headline:
+            type: object
+            description: Classes for the Headline component, which renders the title, subtitle, and tagline.
+            properties:
+              container:
+                type: string
+                description: Classes for the main headline container div.
+              tagline:
+                type: string
+                description: Classes for the tagline paragraph element.
+              title:
+                type: string
+                description: Classes for the main title (h2) element.
+              subtitle:
+                type: string
+                description: Classes for the subtitle paragraph element.
+          container:
+            type: string
+            description: Classes for the main container that holds the brand items (icons and images).
+          icon:
+            type: string
+            description: Classes for individual icon elements.
+          image_container:
+            type: string
+            description: Classes for the wrapper container of each brand image.
+          image:
+            type: string
+            description: Classes for the image element itself.

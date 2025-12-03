@@ -1,0 +1,55 @@
+---
+/**
+ * Announcement.astro
+ *
+ * This component displays a site-wide announcement banner at the top of pages.
+ * It renders HTML content from the site configuration and is typically shown
+ * above the header navigation.
+ *
+ * Features:
+ * - Conditional rendering based on site configuration
+ * - HTML content rendering from configuration
+ * - Themeable styling through CSS classes
+ * - Accessible data attributes for testing/automation
+ *
+ * Data Sources:
+ * - SITE.announcement: HTML string content for the announcement banner
+ *   If this value is falsy, the component will not render
+ *
+ * Styling Inputs:
+ * - getClasses('Page+Announcement'): Retrieves CSS classes for the container
+ *   from the theme's style configuration
+ *   - container: Classes for the main announcement wrapper div
+ *
+ * Component Integration:
+ * - Used in PageLayout to show site-wide announcements
+ * - Renders raw HTML content using Fragment with set:html
+ *
+ * Accessibility:
+ * - Uses data-name attribute for test automation identification
+ * - Renders semantic HTML when possible through configuration
+ */
+
+import { SITE } from 'site:config';
+import { getClasses } from '~/utils/theme';
+
+// Retrieve CSS classes for the announcement container from theme configuration
+// This enables theme-specific styling of the announcement banner
+const classes = getClasses('Page+Announcement');
+---
+
+{
+  /*
+    Only render the announcement if SITE.announcement has content
+    This allows sites to easily enable/disable announcements through configuration
+  */
+  SITE.announcement && (
+    /*
+      Container div with themeable classes and data attribute for identification
+      The Fragment with set:html safely renders the configured HTML content
+    */
+    <div class={classes.container} data-name="announcement-container">
+      <Fragment set:html={SITE.announcement} />
+    </div>
+  )
+}

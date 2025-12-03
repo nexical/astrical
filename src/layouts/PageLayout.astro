@@ -1,0 +1,100 @@
+---
+/**
+ * PageLayout.astro
+ *
+ * This layout component provides a complete page structure with header, main content, and footer.
+ * It serves as an intermediate layout between BaseLayout and page-specific layouts, adding
+ * common site components like navigation, announcement banners, and footers.
+ *
+ * Features:
+ * - Conditional rendering of announcement banner, header, and footer
+ * - Integration with site navigation and menu systems
+ * - Themeable main content area styling
+ * - Consistent page structure across the site
+ *
+ * Props:
+ * - metadata (optional): Page-specific metadata passed to BaseLayout
+ * - announcement (default: true): Whether to show the announcement banner
+ * - header (default: true): Whether to show the site header/navigation
+ * - footer (default: true): Whether to show the site footer
+ *
+ * Styling Inputs:
+ * - getClasses('Layout+Page'): Retrieves CSS classes for the main content area
+ *   from the theme's style configuration
+ *
+ * Component Integration:
+ * - BaseLayout: Wraps the entire page structure
+ * - Announcement: Site-wide announcement banner (conditionally rendered)
+ * - Header: Site header with navigation menu and actions
+ * - Footer: Site footer with menus and copyright information
+ *
+ * Data Sources:
+ * - getHeaderMenu(): Retrieves header navigation links
+ * - getActions(): Retrieves header action items (e.g., contact buttons)
+ * - getFooterMenu(): Retrieves primary footer links
+ * - getAuxMenu(): Retrieves secondary/auxiliary footer links
+ * - getSocialMenu(): Retrieves social media links
+ * - getFootNote(): Generates copyright/footer note text
+ */
+
+import type { MetaData } from '~/types';
+import Layout from '~/layouts/BaseLayout.astro';
+import Header from '~/components/page/Header.astro';
+import Footer from '~/components/page/Footer.astro';
+import Announcement from '~/components/page/Announcement.astro';
+import { getHeaderMenu, getActions, getFooterMenu, getAuxMenu, getSocialMenu, getFootNote } from '~/utils/generator';
+import { getClasses } from '~/utils/theme';
+
+/**
+ * Component Props Interface
+ *
+ * @property metadata - Optional metadata for the page (passed to BaseLayout)
+ * @property announcement - Whether to show the announcement banner (default: true)
+ * @property header - Whether to show the site header (default: true)
+ * @property footer - Whether to show the site footer (default: true)
+ */
+export interface Props {
+  metadata?: MetaData;
+  announcement?: boolean;
+  header?: boolean;
+  footer?: boolean;
+}
+
+// Destructure props with default values for conditional rendering flags
+const { metadata, announcement = true, header = true, footer = true } = Astro.props;
+
+// Retrieve CSS classes for the main content area from theme configuration
+// This enables theme-specific styling of the primary content container
+const classes = getClasses('Layout+Page');
+---
+
+{/* Wrap everything in the base layout for consistent HTML structure and metadata */}
+<Layout metadata={metadata}>
+  {
+    /* Conditionally render site announcement banner */
+    announcement && <Announcement />
+  }
+
+  {
+    /* Conditionally render site header with navigation */
+    header && <Header links={getHeaderMenu()} actions={getActions()} isSticky showToggleTheme />
+  }
+
+  {/* Main content area with themeable styling */}
+  <main class={classes.main} data-name="layout-main">
+    {/* Page-specific content is rendered here */}
+    <slot />
+  </main>
+
+  {
+    /* Conditionally render site footer with menus and copyright */
+    footer && (
+      <Footer
+        links={getFooterMenu()}
+        secondaryLinks={getAuxMenu()}
+        socialLinks={getSocialMenu()}
+        footNote={getFootNote()}
+      />
+    )
+  }
+</Layout>

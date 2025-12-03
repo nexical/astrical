@@ -1,0 +1,131 @@
+---
+/**
+ * SectionWrapper.astro
+ *
+ * This component provides a consistent wrapper structure for section components with
+ * background image support, overlay effects, and themeable styling. It serves as
+ * a foundational container that ensures visual consistency across different section types
+ * while providing semantic HTML structure.
+ *
+ * Features:
+ * - Semantic section element for proper document structure
+ * - Optional background image with overlay support
+ * - Themeable styling through CSS classes
+ * - Accessible structure with proper ARIA attributes
+ * - Data attributes for test automation with type-specific naming
+ *
+ * Props (extends Widget interface):
+ * - type: Section type identifier for semantic naming and styling context
+ * - id (optional): HTML id attribute for the section element
+ * - bg (optional): Background image URL string
+ * - classes (optional): CSS class configuration object
+ *
+ * Styling Inputs:
+ * - getClasses('Component+SectionWrapper'): Retrieves CSS classes for wrapper elements
+ *   from the theme's style configuration:
+ *   - container: Classes for the main section element
+ *   - background: Classes for the background image container
+ *   - overlay: Classes for the overlay layer container
+ *   - wrapper: Classes for the inner content wrapper div
+ *
+ * Component Integration:
+ * - twMerge: Utility for combining Tailwind classes with theme classes
+ * - getClasses: Manages theme-based styling
+ *
+ * Data Flow:
+ * 1. Receives section configuration through Astro.props
+ * 2. Conditionally renders background image and overlay when bg prop exists
+ * 3. Applies theme-based styling through getClasses utility
+ * 4. Wraps section content through slot mechanism
+ *
+ * Layout Structure:
+ * - Section element provides semantic container for page sections
+ * - Background image positioned absolutely behind content (z-index -200)
+ * - Overlay layer for visual effects (z-index -150)
+ * - Inner wrapper div contains section content
+ *
+ * Accessibility:
+ * - Semantic section element for proper document structure
+ * - aria-hidden attributes on decorative background elements
+ * - Data attributes for test automation with type-specific naming
+ *
+ * Usage Context:
+ * - Base wrapper for all section components (Header, Footer, SingleColumn, etc.)
+ * - Provides consistent background and overlay styling for sections
+ * - Ensures proper semantic structure for section content
+ * - Used by dynamic section renderer in page layouts
+ */
+
+import type { Widget as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
+import { getClasses } from '~/utils/theme';
+
+// Destructure props with defaults
+const { type, id, bg = '', classes: rawClasses = {} } = Astro.props;
+
+// Retrieve CSS classes for wrapper elements from theme configuration
+const classes = getClasses('Component+SectionWrapper', rawClasses);
+---
+
+{
+  /*
+    Main section element that serves as the section container.
+    - Uses twMerge to combine base classes with theme classes
+    - Applies relative positioning and overflow handling
+    - Conditionally applies id attribute when provided
+    - Includes type-specific data attribute for test automation
+  */
+}
+<section
+  class={twMerge('relative overflow-hidden', classes.container)}
+  {...id ? { id } : {}}
+  data-name={`${type}-section-wrapper-container`}
+>
+  {
+    /*
+      Background image and overlay rendering when bg prop exists.
+      - Provides visual context behind section content
+      - Uses fragment to group related elements
+    */
+    bg && (
+      <>
+        {/*
+            Background image container positioned absolutely behind content.
+            - Uses inline style for background image URL
+            - Applies theme classes through twMerge
+            - Marked as aria-hidden since it's decorative
+            - Includes type-specific data attribute for test automation
+          */}
+        <div
+          style={{ 'background-image': `url('${bg}')` }}
+          class={twMerge(`absolute inset-0 z-[-200]`, classes.background)}
+          aria-hidden="true"
+          data-name={`${type}-section-wrapper-background`}
+        />
+        {/*
+            Overlay layer container positioned absolutely behind content.
+            - Provides visual effects over background image
+            - Applies theme classes through twMerge
+            - Marked as aria-hidden since it's decorative
+            - Includes type-specific data attribute for test automation
+          */}
+        <div
+          class={twMerge('absolute inset-0 z-[-150]', classes.overlay)}
+          aria-hidden="true"
+          data-name={`${type}-section-wrapper-overlay`}
+        />
+      </>
+    )
+  }
+  {
+    /*
+      Inner content wrapper div that contains section content.
+      - Applies theme classes for consistent padding/spacing
+      - Uses slot to render child content
+      - Includes type-specific data attribute for test automation
+    */
+  }
+  <div class={classes.wrapper} data-name={`${type}-section-wrapper`}>
+    <slot />
+  </div>
+</section>
