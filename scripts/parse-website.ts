@@ -27,7 +27,7 @@ function normalizeUrl(urlStr: string): URL | null {
             url.pathname = url.pathname.slice(0, -1);
         }
         return url;
-    } catch (e) {
+    } catch {
         return null;
     }
 }
@@ -54,14 +54,14 @@ function getFilePath(url: URL, baseDir: string): string {
 function extractLinks(html: string, baseUrl: string): string[] {
     const links: string[] = [];
     const regex = /<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/gi;
-    let match;
+    let match: RegExpExecArray | null;
 
     while ((match = regex.exec(html)) !== null) {
         const href = match[2];
         try {
             const absoluteUrl = new URL(href, baseUrl).href;
             links.push(absoluteUrl);
-        } catch (e) {
+        } catch {
             // Ignore invalid URLs
         }
     }
@@ -80,14 +80,15 @@ function extractMedia(html: string, baseUrl: string): MediaItem[] {
             const absoluteUrl = new URL(urlStr, baseUrl).href;
             const filename = path.basename(new URL(absoluteUrl).pathname) || `file_${Date.now()}`;
             mediaItems.push({ url: absoluteUrl, filename, alt, type });
-        } catch (e) {
+        } catch {
             // Ignore
         }
     };
 
     // Images
     const imgRegex = /<img\s+(?:[^>]*?\s+)?src=(["'])(.*?)\1(?:[^>]*?\s+alt=(["'])(.*?)\3)?/gi;
-    let match;
+    let match: RegExpExecArray | null;
+
     while ((match = imgRegex.exec(html)) !== null) {
         addItem(match[2], 'image', match[4]);
     }
