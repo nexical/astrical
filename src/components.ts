@@ -60,7 +60,7 @@ import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
  * @param glob - Record of module paths to imported modules from import.meta.glob
  * @returns Record mapping component names to Astro component factories
  */
-function createComponentMap(glob: Record<string, unknown>) {
+export function createComponentMap(glob: Record<string, unknown>) {
   const map: Record<string, AstroComponentFactory> = {};
 
   // Iterate through all discovered module paths

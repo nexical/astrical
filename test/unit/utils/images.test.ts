@@ -92,5 +92,22 @@ describe('src/utils/images', () => {
             const result = await adaptOpenGraphImages(og as any, new URL('https://site.com'));
             expect(result.images![0].url).toBe('');
         });
+
+        it('should handle getImage having invalid src', async () => {
+            // Mock getImage returning object without src
+            (getImage as any).mockResolvedValueOnce({ width: 100 });
+            const og = { images: [{ url: 'https://example.com/img.png' }] };
+            const result = await adaptOpenGraphImages(og as any, new URL('https://site.com'));
+            // The code returns 'pepe' in this case
+            expect(result.images![0].url).toBe('pepe');
+        });
+
+        it('should handle getImage having non-string src', async () => {
+            // Mock getImage returning object with non-string src
+            (getImage as any).mockResolvedValueOnce({ src: 123, width: 100 });
+            const og = { images: [{ url: 'https://example.com/img.png' }] };
+            const result = await adaptOpenGraphImages(og as any, new URL('https://site.com'));
+            expect(result.images![0].url).toBe('pepe');
+        });
     });
 });

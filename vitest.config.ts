@@ -10,11 +10,15 @@ export default getViteConfig({
         globals: true,
         coverage: {
             reporter: ['text', 'json', 'html'],
+            include: ['src/**/*.ts', 'plugins/**/*.ts'],
+            exclude: ['src/**/*.d.ts', 'test/**', 'src/types/**'],
         },
         alias: {
+            'lite-youtube-embed/src/lite-yt-embed.css': path.resolve(process.cwd(), 'test/empty.ts'),
             'site:config': path.resolve(process.cwd(), 'test/unit/fixtures/site-config.ts'),
             '~/': path.resolve(process.cwd(), 'src/'),
-            '@modules/': path.resolve(process.cwd(), 'modules/')
+            '@modules/': path.resolve(process.cwd(), 'modules/'),
+            '@plugins/': path.resolve(process.cwd(), 'plugins/')
         }
     },
 });

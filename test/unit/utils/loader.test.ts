@@ -193,5 +193,38 @@ describe('src/utils/loader', () => {
             // Should NOT have loaded menus (verify deletion)
             expect(() => getSpecs('menus')).toThrow();
         });
+
+        it('should merge module content with project content precedence', () => {
+            (fs.existsSync as any).mockReturnValue(true);
+            (fs.readdirSync as any).mockImplementation((dir: string) => {
+                if (dir.endsWith('modules')) return ['blog'];
+                if (dir.endsWith('modules/blog/content')) return ['posts'];
+                if (dir.endsWith('modules/blog/content/posts')) return ['post1.yaml'];
+                if (dir === '/mock/content') return ['posts'];
+                if (dir === '/mock/content/posts') return ['post1.yaml']; // Same filename in project
+                return [];
+            });
+
+            (fs.statSync as any).mockImplementation((path: string) => ({
+                isDirectory: () => !path.endsWith('.yaml')
+            }));
+
+            (fs.readFileSync as any).mockImplementation((path: string) => {
+                if (path.includes('modules/blog')) return 'message: "Module Content"';
+                return 'message: "Project Content"';
+            });
+
+            (yaml.load as any).mockImplementation((content: string) => {
+                if (content.includes('Module Content')) return { message: 'Module Content' };
+                return { message: 'Project Content' };
+            });
+
+            // Force reload
+            (global as any).import = { meta: { env: { DEV: true } } };
+
+            const posts = getSpecs('posts') as any;
+            // Project content should override module content for same key (filename matches)
+            expect((posts as any).post1.message).toBe('Project Content');
+        });
     });
 });

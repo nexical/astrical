@@ -19,6 +19,9 @@
       ],
       "@modules/*": [
         "modules/*"
+      ],
+      "@plugins/*": [
+        "plugins/*"
       ]
     }
   },

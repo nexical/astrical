@@ -138,7 +138,7 @@ export const findImage = async (
  */
 export const adaptOpenGraphImages = async (
   openGraph: OpenGraph = {},
-  astroSite: URL | undefined
+  astroSite?: URL | undefined
 ): Promise<OpenGraph> => {
   // No images to process - return as-is
   if (!openGraph?.images?.length) {
@@ -189,5 +189,5 @@ export const adaptOpenGraphImages = async (
   );
 
   // Return OpenGraph metadata with adapted images
-  return { ...openGraph, ...(adaptedImages ? { images: adaptedImages } : {}) };
+  return { ...openGraph, images: adaptedImages };
 };
