@@ -4,6 +4,9 @@ dist/
 .output/
 .wrangler/
 
+# Test output
+coverage/
+
 # Temporary files
 data/
 
