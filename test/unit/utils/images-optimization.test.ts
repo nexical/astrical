@@ -132,5 +132,19 @@ describe('src/utils/images-optimization', () => {
             expect(res.attributes.width).toBe(200);
             expect(res.attributes.height).toBe(100);
         });
+
+        it('should log error when aspectRatio is provided without dimensions', async () => {
+            const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+            await getImagesOptimized('/img', { aspectRatio: 1.5 }, mockTransformer);
+            expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('When aspectRatio is set'));
+            consoleSpy.mockRestore();
+        });
+
+        it('should log error when dimensions are missing', async () => {
+            const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+            await getImagesOptimized('/img', {}, mockTransformer);
+            expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Either aspectRatio or both width and height must be set'));
+            consoleSpy.mockRestore();
+        });
     });
 });

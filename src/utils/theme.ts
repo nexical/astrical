@@ -61,7 +61,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { UI } from 'site:config';
 import { getVar, setVar, checkVar } from '~/utils/cache';
-import { isObject, mergeDeep } from '~/utils/utils';
+import { isObject, mergeDeep, isProd } from '~/utils/utils';
 
 const MODULES_DIR = path.resolve(process.cwd(), 'modules');
 
@@ -78,7 +78,7 @@ function loadStyles(): Record<string, unknown> {
   const cacheKey = 'styles';
 
   // In production, use cached styles if available
-  if (!import.meta.env.DEV && checkVar(cacheKey)) {
+  if (isProd() && checkVar(cacheKey)) {
     return getVar(cacheKey) as Record<string, unknown>;
   }
 

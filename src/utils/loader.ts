@@ -62,6 +62,7 @@ import fs from 'node:fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import { getVar, setVar, checkVar } from '~/utils/cache';
+import { isProd } from '~/utils/utils';
 
 const MODULES_DIR = path.resolve(process.cwd(), 'modules');
 
@@ -174,7 +175,7 @@ function getContent(): Record<string, unknown> {
   const cacheKey = 'content';
 
   // In production, use cached data if available
-  if (!import.meta.env.DEV && checkVar(cacheKey)) {
+  if (isProd() && checkVar(cacheKey)) {
     return getVar(cacheKey) as Record<string, unknown>;
   }
 

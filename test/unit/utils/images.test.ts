@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getImage } from 'astro:assets';
 import { findImage, adaptOpenGraphImages } from '~/utils/images';
 
 // Mock astro:assets
@@ -39,7 +40,28 @@ describe('src/utils/images', () => {
         });
     });
 
+    describe('findImage()', () => {
+        it('should return non-string inputs as-is', async () => {
+            const meta = { src: 'img.png', width: 100, height: 100 } as any;
+            expect(await findImage(meta)).toBe(meta);
+            expect(await findImage(null)).toBeNull();
+        });
+
+        it('should return relative paths as-is', async () => {
+            expect(await findImage('foo.png')).toBe('foo.png');
+        });
+    });
+
     describe('adaptOpenGraphImages()', () => {
+        it('should handle getImage failure (returning non-object)', async () => {
+            // Mock getImage to return null to hit the fallback branch
+            (getImage as any).mockResolvedValueOnce(null);
+
+            const openGraph = { images: [{ url: 'https://example.com/test.png' }] };
+            const result = await adaptOpenGraphImages(openGraph as any);
+            expect(result.images?.[0].url).toBe('');
+        });
+
         it('should adapt images with URLs', async () => {
             const og = {
                 images: [

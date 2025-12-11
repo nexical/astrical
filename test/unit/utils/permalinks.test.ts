@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi } from 'vitest';
 import { trimSlash, createPath, getCanonical, getPermalink, getAsset } from '~/utils/permalinks';
+import { SITE } from 'site:config';
 
 vi.mock('site:config', () => ({
     SITE: {
@@ -44,6 +46,13 @@ describe('src/utils/permalinks', () => {
     describe('getCanonical()', () => {
         it('should return canonical url', () => {
             expect(getCanonical('/path')).toBe('https://example.com/path');
+        });
+
+        it('should append trailing slash when configured', () => {
+            // Mock trailingSlash = true
+            vi.mocked(SITE).trailingSlash = true as any;
+            expect(getCanonical('/path')).toBe('https://example.com/path/');
+            vi.mocked(SITE).trailingSlash = false as any; // Reset
         });
 
         it('should handle trailing slash config', () => {

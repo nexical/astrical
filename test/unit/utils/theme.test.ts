@@ -28,6 +28,49 @@ describe('src/utils/theme', () => {
         vi.spyOn(yaml, 'load').mockReturnValue({});
     });
 
+    it('should return cached styles in production', async () => {
+        vi.resetModules();
+
+        vi.mock('~/utils/utils', async () => {
+            const actual = await vi.importActual<any>('~/utils/utils');
+            return {
+                ...actual,
+                isProd: () => true
+            };
+        });
+
+        const { getClasses: getClassesFresh } = await import('~/utils/theme');
+        const { checkVar: checkVarFresh, getVar: getVarFresh } = await import('~/utils/cache');
+
+        (checkVarFresh as any).mockReturnValue(true);
+        const cachedMock = { color: 'red' };
+        (getVarFresh as any).mockReturnValue(cachedMock);
+
+        getClassesFresh('color');
+
+        expect(fs.readFileSync).not.toHaveBeenCalled();
+        // Since loadStyles is not exported, we can't check the return value directly easily
+        // unless we mock what getClasses does with it. 
+        // But verifying fs.readFileSync NOT called is enough proof cache was used
+        // (assuming getClasses doesn't short circuit earlier).
+
+        vi.clearAllMocks();
+    });
+
+    it('should load module styles', () => {
+        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+        vi.spyOn(fs, 'readdirSync').mockImplementation(((path: string) => {
+            if (path.endsWith('modules')) return ['mod1'];
+            return [];
+        }) as any);
+        vi.spyOn(fs, 'readFileSync').mockReturnValue('color: blue');
+        (yaml.load as any).mockReturnValue({ color: 'blue' });
+
+        const classes = getClasses('color');
+        // If module styles loaded, they merge.
+        expect(classes).toBeDefined();
+    });
+
     describe('getComponentClasses()', () => {
         it('should resolve classes', () => {
             const mockThemeStyles = {

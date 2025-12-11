@@ -58,6 +58,25 @@ describe('src/utils/frontmatter', () => {
             (plugin as any)(tree);
             expect((tree.children[0] as any).tagName).toBe('p');
         });
+
+        it('should handle tree with no children', () => {
+            const plugin = (responsiveTablesRehypePlugin as any)();
+            const tree = {};
+            (plugin as any)(tree);
+            // Should not throw
+            expect(tree).toEqual({});
+        });
+    });
+
+    describe('readingTimeRemarkPlugin', () => {
+        // ... existing tests ...
+        it('should safely handle missing astro data', () => {
+            const plugin = (readingTimeRemarkPlugin as any)();
+            const tree = { type: 'root', children: [] };
+            const file: any = { data: {} };
+            (plugin as any)(tree, file);
+            expect(file.data.readingTime).toBeUndefined();
+        });
     });
 
     describe('lazyImagesRehypePlugin', () => {
@@ -79,6 +98,13 @@ describe('src/utils/frontmatter', () => {
             (plugin as any)(tree);
 
             expect((imgNode as any).properties.loading).toBe('lazy');
+        });
+
+        it('should handle tree with no children', () => {
+            const plugin = (lazyImagesRehypePlugin as any)();
+            const tree = {};
+            (plugin as any)(tree);
+            expect(tree).toEqual({});
         });
     });
 });

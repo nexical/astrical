@@ -178,3 +178,16 @@ export const toUiAmount = (amount: number) => {
 
   return value;
 };
+
+/**
+ * Checks if the environment is production.
+ *
+ * @returns True if running in production mode (determined by import.meta.env.DEV)
+ */
+export const isProd = (): boolean => {
+  try {
+    return !import.meta.env.DEV;
+  } catch {
+    return false;
+  }
+};

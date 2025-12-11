@@ -5,6 +5,7 @@ import yaml from 'js-yaml';
 // Mocking modules
 vi.mock('node:fs');
 vi.mock('js-yaml');
+import { getSpecs } from '~/utils/loader';
 vi.mock('~/utils/cache', () => ({
     checkVar: vi.fn().mockReturnValue(false),
     getVar: vi.fn(),
@@ -12,13 +13,14 @@ vi.mock('~/utils/cache', () => ({
 }));
 
 // Mock process.cwd and SITE config
+// Mock process.cwd and SITE config
 vi.mock('site:config', () => ({
     SITE: { contentDir: '/mock/content' },
+    I18N: { language: 'en' },
 }));
 
 // Dynamic import to allow re-importing with fresh mocks if needed,
 // but standard import should work if we rely on vi.mock hoisting.
-import { getSpecs } from '~/utils/loader';
 
 describe('src/utils/loader', () => {
     beforeEach(() => {
@@ -116,6 +118,33 @@ describe('src/utils/loader', () => {
         });
     });
 
+    it('should return cached content in production', async () => {
+        vi.resetModules();
+
+        // Using doMock to ensure it applies for this test run after resetModules
+        vi.doMock('~/utils/utils', async () => {
+            const actual = await vi.importActual<any>('~/utils/utils');
+            return {
+                ...actual,
+                isProd: () => true
+            };
+        });
+
+        // Re-import modules to pick up the mock
+        const { getSpecs: getSpecsFresh } = await import('~/utils/loader');
+        const { checkVar: checkVarFresh, getVar: getVarFresh } = await import('~/utils/cache');
+
+        (checkVarFresh as any).mockReturnValue(true);
+        const cachedMock = { pages: { title: 'Cached' } };
+        (getVarFresh as any).mockReturnValue(cachedMock);
+
+        const result = getSpecsFresh('pages');
+        expect(result).toEqual(cachedMock.pages);
+        expect(fs.readFileSync).not.toHaveBeenCalled();
+
+        vi.unstubAllGlobals();
+    });
+
     describe('Module loading', () => {
         it('should load content from modules but exclude menus', () => {
             (fs.existsSync as any).mockReturnValue(true); // Modules exist
@@ -148,8 +177,12 @@ describe('src/utils/loader', () => {
             (fs.statSync as any).mockImplementation((path: string) => ({
                 isDirectory: () => !path.endsWith('.yaml')
             }));
-            (fs.readFileSync as any).mockReturnValue('title: Post');
-            (yaml.load as any).mockImplementation((_content: string) => {
+            (fs.readFileSync as any).mockImplementation((path: string) => {
+                if (path.includes('menus')) return 'items: []';
+                return 'title: Post';
+            });
+            (yaml.load as any).mockImplementation((content: string) => {
+                if (content.includes('items: []')) return ({ items: [] });
                 return { title: 'Post' };
             });
 
@@ -157,7 +190,7 @@ describe('src/utils/loader', () => {
             const posts = getSpecs('posts');
             expect(posts.post1).toBeDefined(); // specPath from posts/post1.yaml -> post1'
 
-            // Should NOT have loaded menus
+            // Should NOT have loaded menus (verify deletion)
             expect(() => getSpecs('menus')).toThrow();
         });
     });
