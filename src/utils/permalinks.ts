@@ -68,7 +68,7 @@ export const trimSlash = (s: string) => trim(trim(s, '/'));
  * @param params - Path segments to join
  * @returns Normalized path string with proper slash handling
  */
-const createPath = (...params: string[]) => {
+export const createPath = (...params: string[]) => {
   const paths = params
     .map((el) => trimSlash(el))
     .filter((el) => !!el)

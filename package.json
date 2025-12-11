@@ -24,7 +24,8 @@
     "validate-themes": "tsx scripts/validate-themes.ts",
     "validate": "npm run generate-spec && npm run validate-content && npm run validate-themes",
     "analyze": "tsx scripts/parse-website.ts",
-    "modules": "tsx scripts/modules.ts"
+    "test": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.10",
@@ -51,11 +52,13 @@
     "@types/js-yaml": "^4.0.9",
     "@types/lodash.merge": "^4.6.9",
     "@types/mdx": "^2.0.13",
+    "@vitest/coverage-v8": "^4.0.15",
     "astro-compress": "2.3.8",
     "astro-eslint-parser": "^1.2.2",
     "eslint": "^9.39.0",
     "eslint-plugin-astro": "^1.4.0",
     "glob": "^11.0.3",
+    "jsdom": "^27.3.0",
     "lodash.merge": "^4.6.2",
     "mdast-util-to-string": "^4.0.0",
     "prettier": "^3.6.2",
@@ -66,6 +69,7 @@
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.3",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "vitest": "^4.0.15"
   }
 }

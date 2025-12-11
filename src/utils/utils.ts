@@ -71,7 +71,7 @@ export const getFormattedDate = (date: Date): string => (date ? formatter.format
  * @param ch - Character to trim (defaults to whitespace)
  * @returns Trimmed string
  */
-export const trim = (str = '', ch?: string) => {
+export const trim = (str = '', ch = ' ') => {
   let start = 0,
     end = str.length || 0;
   while (start < end && str[start] === ch) ++start;
@@ -91,7 +91,7 @@ export const trim = (str = '', ch?: string) => {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isObject = (item: any): item is object => {
-  return item && typeof item === 'object' && !Array.isArray(item);
+  return !!(item && typeof item === 'object' && !Array.isArray(item));
 };
 
 /**
