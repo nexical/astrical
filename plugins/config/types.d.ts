@@ -38,7 +38,7 @@
  */
 
 declare module 'site:config' {
-  import type { SiteConfig, I18NConfig, MetaDataConfig, UIConfig, AnalyticsConfig } from './config';
+  import type { SiteConfig, I18NConfig, MetaDataConfig, UIConfig, AnalyticsConfig, FormHandlersConfig } from './config';
 
   /**
    * SITE configuration object containing site-level settings.
@@ -99,4 +99,9 @@ declare module 'site:config' {
    * @property vendors.facebook.id - Facebook Pixel ID
    */
   export const ANALYTICS: AnalyticsConfig;
+
+  /**
+   * FORM_HANDLERS configuration object.
+   */
+  export const FORM_HANDLERS: FormHandlersConfig;
 }

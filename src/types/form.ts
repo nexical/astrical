@@ -81,3 +81,31 @@ export interface BaseField {
   required?: boolean;
   value?: string | Array<string>;
 }
+
+/**
+ * FormHandler interface defines common properties for form handler implementations.
+ * Provides shared attributes and methods that all form handlers inherit.
+ *
+ * @property name - Unique name of the handler (e.g., 'mailgun', 'smtp', 'zapier')
+ * @property description - Description of what this handler does
+ * @method handle() - Processes the form submission
+ */
+export interface FormHandler {
+  name: string;
+  description: string;
+
+  /**
+   * Processes the form submission.
+   *
+   * @param formName - The name of the form being processed.
+   * @param data - The form data as key-value pairs.
+   * @param attachments - Array of file attachments.
+   * @param config - Handler-specific configuration from the site config.
+   */
+  handle(
+    formName: string,
+    data: Record<string, string | string[]>,
+    attachments: { filename: string; data: Buffer }[],
+    config?: unknown
+  ): Promise<void>;
+}

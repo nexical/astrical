@@ -87,6 +87,31 @@ This repository includes a comprehensive "AI Operations Manual" designed to teac
 *   `dev/`: **The Manuals.** Detailed documentation guides for AI and humans.
 *   `public/`: Static assets.
 
+## 📧 Form Handlers
+
+Astrical includes a modular form submission system that supports multiple backend handlers (e.g., Mailgun, SMTP).
+
+### Configuration
+
+Form handlers are configured in `site:config` (via `content/config.yaml`).
+
+```yaml
+formHandlers:
+  defaults: ['mailgun']
+  handlers:
+    mailgun:
+      enabled: true
+    smtp:
+      enabled: false
+```
+
+### Supported Handlers
+
+*   **Mailgun**: Sends emails using the Mailgun API. Requires `MAILGUN_*` environment variables.
+*   **SMTP**: Sends emails via SMTP. Requires `SMTP_*` environment variables.
+
+To develop new handlers, implement the `FormHandler` interface and register it with the `FormHandlerRegistry`.
+
 ## 🤝 Contributing
 
 We welcome contributions! Whether you're a human or an AI, please feel free to submit a Pull Request.

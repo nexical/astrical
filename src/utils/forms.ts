@@ -2,100 +2,75 @@
  * src/utils/forms.ts
  *
  * This module provides form processing functionality for handling form submissions
- * and sending notifications via email. It integrates with the site's data configuration
- * system to retrieve form-specific settings and uses the Mailgun utility for email delivery.
- *
- * Features:
- * - Dynamic form processing based on form name
- * - Email notification sending via Mailgun integration
- * - Form recipient configuration through YAML data files
- * - File attachment handling with Buffer support
- * - Error handling and user-friendly error messages
- *
- * Component Integration:
- * - sendEmail: Mailgun utility function for email delivery
- * - getSpecs: Data loader utility for retrieving form configurations
- *
- * Data Flow:
- * 1. Receives form name, values, and attachments from form submission
- * 2. Loads form configuration from YAML data files
- * 3. Constructs email message with form data
- * 4. Sends email to configured recipients via Mailgun
- * 5. Handles errors and provides user feedback
- *
- * Form Configuration:
- * - Forms are defined in YAML data files under the 'forms' specification type
- * - Each form can specify recipient email addresses
- * - Form data is retrieved using getSpecs('forms') utility
- *
- * Email Processing:
- * - Recipients are retrieved from form configuration
- * - Subject line includes form name for identification
- * - Text and HTML versions of form data are generated
- * - File attachments are included in email sending
- *
- * Error Handling:
- * - Catches email sending errors
- * - Logs errors to console for debugging
- * - Throws user-friendly error messages
- * - Provides fallback contact information when email fails
- *
- * Usage Context:
- * - Form submission processing endpoint
- * - Email notification system for form submissions
- * - Integration with Mailgun email delivery service
- * - File attachment support for upload fields
+ * and sending notifications via configured handlers. It integrates with the site's data configuration
+ * system to retrieve form-specific settings and uses the FormHandlerRegistry for extensible processing.
  */
 
-import { sendEmail } from '~/utils/mailgun';
+import { FORM_HANDLERS } from 'site:config';
 import { getSpecs } from '~/utils/loader';
+import { formHandlers } from '~/form-registry';
 
 /**
- * Processes form submissions and sends email notifications.
+ * Processes form submissions and sends notifications via configured handlers.
  *
  * This function handles the backend processing of form submissions by retrieving
- * form configuration, constructing email messages from form data, and sending
- * notifications to configured recipients via Mailgun.
+ * form configuration, determining active handlers, and delegating execution.
  *
  * @param name - The name/identifier of the form being processed
  * @param values - Object containing form field names and their submitted values
  * @param attachments - Array of file attachments with filename and data Buffer
- * @throws Error - When email sending fails, provides user-friendly error message
+ * @throws Error - When all configured handlers fail
  */
 export async function formProcessor(
   name: string,
   values: Record<string, string | string[]>,
   attachments: { filename: string; data: Buffer }[]
 ) {
-  // Send email notification for form submission
+  // Get form configuration
   const forms = getSpecs('forms');
   const form = forms[name] as { recipients?: string | string[] };
 
-  // Only process email sending if form configuration exists with recipients
-  if (form && form.recipients) {
-    // Configure email recipients from form configuration
-    const to = form.recipients;
+  // Identify handlers to run
+  // We use the defaults list from site configuration
+  const handlerNames = FORM_HANDLERS.defaults || ['mailgun'];
+  const errors: string[] = [];
+  let successCount = 0;
 
-    // Create descriptive subject line including form name
-    const subject = `New Form Submission: ${name}`;
+  for (const handlerName of handlerNames) {
+    const handler = formHandlers.get(handlerName);
+    if (!handler) {
+      console.warn(`FormProcessor: Handler '${handlerName}' not found in registry.`);
+      continue;
+    }
 
-    // Generate plain text version of form data
-    const text = Object.entries(values)
-      .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-      .join('\n');
+    // Check if handler is explicitly disabled in config
+    const handlerConfig = FORM_HANDLERS.handlers?.[handlerName] || {};
+    if (handlerConfig.enabled === false) {
+      continue;
+    }
 
-    // Generate HTML version of form data with line breaks
-    const html = `<p>${text.replace(/\n/g, '<br>')}</p>`;
+    // Merge form-specific recipients into handler config
+    const executionConfig = {
+      ...handlerConfig,
+      recipients: form?.recipients,
+    };
 
     try {
-      // Attempt to send email with form data and attachments
-      await sendEmail({ to, subject, text, html, attachments });
+      await handler.handle(name, values, attachments, executionConfig);
+      successCount++;
     } catch (error) {
-      // Log detailed error information for debugging
-      console.error('Failed to send email', error);
-
-      // Throw user-friendly error message with fallback contact information
-      throw new Error(`There was an error contacting the server, please reach out to ${form.recipients[0]}`);
+      console.error(`FormProcessor: Handler '${handlerName}' failed:`, error);
+      errors.push(`${handlerName}: ${error instanceof Error ? error.message : String(error)}`);
     }
+  }
+
+  // If we attempted to run handlers but all failed, throw an error
+  if (handlerNames.length > 0 && successCount === 0 && errors.length > 0) {
+    throw new Error(`Form processing failed: ${errors.join('; ')}`);
+  }
+
+  // If no handlers were run (e.g. empty defaults), we might want to log a warning
+  if (successCount === 0 && errors.length === 0) {
+    console.warn(`FormProcessor: No handlers executed for form '${name}'. Check 'site:config' defaults.`);
   }
 }

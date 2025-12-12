@@ -125,7 +125,7 @@ export default ({ config: _themeConfig = 'content/config.yaml' } = {}): AstroInt
         const rawJsonConfig = (await loadConfig(_themeConfig)) as Config;
 
         // Build structured configuration objects with defaults
-        const { SITE, I18N, METADATA, UI, ANALYTICS } = buildConfig(rawJsonConfig);
+        const { SITE, I18N, METADATA, UI, ANALYTICS, FORM_HANDLERS } = buildConfig(rawJsonConfig);
 
         // Set content directory based on configuration file location
         SITE.contentDir = getContentPath(config.root.pathname, _themeConfig);
@@ -179,6 +179,7 @@ export default ({ config: _themeConfig = 'content/config.yaml' } = {}): AstroInt
                     export const METADATA = ${JSON.stringify(METADATA)};
                     export const UI = ${JSON.stringify(UI)};
                     export const ANALYTICS = ${JSON.stringify(ANALYTICS)};
+                    export const FORM_HANDLERS = ${JSON.stringify(FORM_HANDLERS)};
                     `;
                   }
                 },

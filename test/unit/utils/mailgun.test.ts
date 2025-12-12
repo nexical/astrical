@@ -50,8 +50,6 @@ describe('src/utils/mailgun', () => {
         );
     });
 
-
-
     it('should handle multiple recipients', async () => {
         mockFetch.mockResolvedValue({
             ok: true,
@@ -71,7 +69,6 @@ describe('src/utils/mailgun', () => {
                 body: expect.anything()
             })
         );
-        // Deep inspection of FormData if needed, but array branch is triggered
     });
 
     it('should handle attachments', async () => {
@@ -89,9 +86,6 @@ describe('src/utils/mailgun', () => {
             attachments
         });
 
-        // We can check if FormData append was called for attachment, 
-        // but since we mocked FormData class, we need to spy on the instance methodology if we want deep verification.
-        // For now, ensuring it doesn't crash and calls fetch is good coverage.
         expect(mockFetch).toHaveBeenCalled();
     });
 

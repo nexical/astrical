@@ -71,6 +71,7 @@ export type Config = {
   i18n?: I18NConfig;
   ui?: unknown;
   analytics?: unknown;
+  formHandlers?: FormHandlersConfig;
 };
 
 /**
@@ -158,6 +159,14 @@ export interface AnalyticsConfig {
  */
 export interface UIConfig {
   theme: string;
+}
+
+/**
+ * FormHandlersConfig interface defines the structure for form handler configuration.
+ */
+export interface FormHandlersConfig {
+  defaults: string[]; // List of handler names to use by default (e.g., ['mailgun'])
+  handlers: Record<string, { enabled: boolean; [key: string]: unknown }>;
 }
 
 // Default site name used when no site name is configured
@@ -269,6 +278,20 @@ const getAnalytics = (config: Config) => {
 };
 
 /**
+ * Processes and builds the FORM_HANDLERS configuration object.
+ */
+const getFormHandlers = (config: Config) => {
+  const _default: FormHandlersConfig = {
+    defaults: ['mailgun'], // Default to current behavior
+    handlers: {
+      mailgun: { enabled: true },
+      smtp: { enabled: false },
+    },
+  };
+  return merge({}, _default, config?.formHandlers ?? {}) as FormHandlersConfig;
+};
+
+/**
  * Main configuration builder function that processes raw configuration data
  * and returns structured configuration objects for each section.
  *
@@ -295,4 +318,5 @@ export default (config: Config) => ({
   METADATA: getMetadata(config),
   UI: getUI(config),
   ANALYTICS: getAnalytics(config),
+  FORM_HANDLERS: getFormHandlers(config),
 });
