@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { describe, it, expect, vi } from 'vitest';
 import { getImagesOptimized } from '~/utils/images-optimization';
@@ -9,7 +10,7 @@ describe('src/utils/images-optimization (Gaps)', () => {
         // mocking object with string properties to test that branch
         const img = { src: '/img.png', width: '100', height: '50', format: 'png' };
         // Pass NO width/height in props, so it must use image properties
-        // @ts-ignore
+        // @ts-expect-error: mocking object with string properties to test that branch
         const result = await getImagesOptimized(img, { alt: 'test' });
 
         expect(result.attributes.width).toBe(100);
@@ -117,6 +118,8 @@ describe('src/utils/images-optimization (Gaps)', () => {
         // Line 496: else if (width && height) -> False (height undef).
         // Line 498: else if (layout !== 'fullWidth') -> Error log.
 
+        expect(resultZero.attributes.height).toBeUndefined();
+
         // We expect Error log!
         const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
         const resultZero2 = await getImagesOptimized('/img.png', {
@@ -125,6 +128,7 @@ describe('src/utils/images-optimization (Gaps)', () => {
             aspectRatio: '100/0'
         });
         expect(consoleSpy).toHaveBeenCalled();
+        expect(resultZero2).toBeDefined();
         consoleSpy.mockRestore();
 
         // Invalid string (NaN)
