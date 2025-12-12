@@ -24,6 +24,7 @@ vi.mock('site:config', () => ({
 
 describe('src/utils/loader', () => {
     beforeEach(() => {
+        vi.resetModules();
         vi.resetAllMocks();
         // Setup default filesystem mocks
         vi.spyOn(process, 'cwd').mockReturnValue('/mock/cwd');
@@ -168,7 +169,7 @@ describe('src/utils/loader', () => {
             // Setup module content
             (fs.readdirSync as any).mockImplementation((dir: string) => {
                 if (dir.endsWith('modules')) return ['blog'];
-                if (dir.endsWith('modules/blog/content')) return ['posts'];
+                if (dir.endsWith('modules/blog/content')) return ['posts', 'menus.yaml'];
                 if (dir.endsWith('modules/blog/content/posts')) return ['post1.yaml'];
                 if (dir === '/mock/content') return [];
                 return [];
@@ -225,6 +226,101 @@ describe('src/utils/loader', () => {
             const posts = getSpecs('posts') as any;
             // Project content should override module content for same key (filename matches)
             expect((posts as any).post1.message).toBe('Project Content');
+        });
+    });
+
+    describe('Coverage Gaps', () => {
+        it('should load .yml files', () => {
+            (fs.readdirSync as any).mockImplementation((dir: string) => {
+                if (dir === '/mock/content') return ['pages'];
+                if (dir === '/mock/content/pages') return ['old.yml'];
+                return [];
+            });
+            (fs.statSync as any).mockImplementation((path: string) => ({
+                isDirectory: () => !path.endsWith('.yml'),
+            }));
+            (fs.readFileSync as any).mockReturnValue('old: true');
+            (yaml.load as any).mockReturnValue({ old: true });
+
+            const pages = getSpecs('pages');
+            expect(pages.old).toEqual({ old: true });
+        });
+
+        it('should skip module content if it is not a directory', () => {
+            (fs.existsSync as any).mockReturnValue(true);
+            (fs.readdirSync as any).mockImplementation((dir: string) => {
+                if (dir.endsWith('modules')) return ['file-module'];
+                return [];
+            });
+            // Mock statSync to return isDirectory: false for the content dir
+            (fs.statSync as any).mockImplementation((_path: string) => ({
+                isDirectory: () => false // Everything is a file
+            }));
+
+            // getSpecs triggers content load. If module skipped, no error, just empty or from project.
+            // We assume project is empty here.
+            expect(() => getSpecs('pages')).toThrow(); // throws missing type because nothing loaded
+        });
+
+        it('should keep component reference if not found in shared', () => {
+            (fs.readdirSync as any).mockImplementation((dir: string) => {
+                if (dir === '/mock/content') return ['pages'];
+                if (dir === '/mock/content/pages') return ['test.yaml'];
+                return [];
+            });
+
+            (fs.readFileSync as any).mockReturnValue('content');
+            (yaml.load as any).mockReturnValue({
+                sections: [{ component: 'unknown-component', prop: 1 }]
+            });
+
+            const pages = getSpecs('pages') as any;
+            // Should return the component as is, without error, but not resolved
+            expect(pages.test.sections[0]).toEqual({ component: 'unknown-component', prop: 1 });
+        });
+
+        it('should ignore non-yaml files', () => {
+            (fs.readdirSync as any).mockImplementation((dir: string) => {
+                if (dir === '/mock/content') return ['pages'];
+                if (dir === '/mock/content/pages') return ['valid.yaml', 'ignored.txt'];
+                return [];
+            });
+            // ignored.txt is a file
+            (fs.statSync as any).mockImplementation((path: string) => ({
+                isDirectory: () => path.endsWith('pages') // simple check for this test
+            }));
+            (fs.readFileSync as any).mockImplementation((path: string) => {
+                if (path.includes('valid.yaml')) return 'valid: true';
+                return 'ignored: true';
+            });
+            (yaml.load as any).mockImplementation((content: string) => {
+                if (content.includes('valid: true')) return { valid: true };
+                return { ignored: true };
+            });
+
+            const pages = getSpecs('pages');
+            // Should contain valid but NOT ignored (since ignored file shouldn't be loaded)
+            expect(pages).toEqual({ valid: { valid: true } });
+        });
+
+        it('should handle multiple files in same spec type', () => {
+            (fs.readdirSync as any).mockImplementation((dir: string) => {
+                if (dir === '/mock/content') return ['pages'];
+                if (dir === '/mock/content/pages') return ['p1.yaml', 'p2.yaml'];
+                return [];
+            });
+            (fs.readFileSync as any).mockImplementation((path: string) => {
+                if (path.includes('p1')) return 'title: P1';
+                return 'title: P2';
+            });
+            (yaml.load as any).mockImplementation((content: string) => {
+                if (content.includes('P1')) return { title: 'P1' };
+                return { title: 'P2' };
+            });
+
+            const pages = getSpecs('pages');
+            expect(pages.p1).toEqual({ title: 'P1' });
+            expect(pages.p2).toEqual({ title: 'P2' });
         });
     });
 });

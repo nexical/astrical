@@ -334,11 +334,11 @@ const getBreakpoints = ({
   layout,
 }: {
   width?: number;
-  breakpoints?: number[];
+  breakpoints: number[];
   layout: Layout;
 }): number[] => {
   if (layout === 'fullWidth' || layout === 'cover' || layout === 'responsive' || layout === 'contained') {
-    return breakpoints || config.deviceSizes;
+    return breakpoints;
   }
   if (!width) {
     return [];
@@ -353,7 +353,7 @@ const getBreakpoints = ({
       width,
       doubleWidth,
       // Filter out any resolutions that are larger than the double-res image
-      ...(breakpoints || config.deviceSizes).filter((w) => w < doubleWidth),
+      ...breakpoints.filter((w) => w < doubleWidth),
     ];
   }
 

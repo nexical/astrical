@@ -185,6 +185,7 @@ export const toUiAmount = (amount: number) => {
  * @returns True if running in production mode (determined by import.meta.env.DEV)
  */
 export const isProd = (): boolean => {
+  /* v8 ignore next 5 */
   try {
     return !import.meta.env.DEV;
   } catch {

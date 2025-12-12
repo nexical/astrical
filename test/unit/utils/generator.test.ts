@@ -95,6 +95,13 @@ describe('src/utils/generator', () => {
             expect(result.props.label).toBe('Email');
             expect(result.tag).toBeUndefined(); // 'text' not in supportedTypes mock
         });
+
+        it('should handle supported field type', () => {
+            const item = { name: 'field1', type: 'TestComponent' };
+            const result = getFormField('form', item as any);
+            expect(result.tag).toBeDefined();
+            expect(result.tag).toEqual({ isAstro: true });
+        });
     });
 
     describe('Data Generation', () => {

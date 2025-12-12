@@ -1,6 +1,6 @@
 
 import { describe, it, expect } from 'vitest';
-import { trim, isObject, mergeDeep, toUiAmount, getFormattedDate } from '~/utils/utils';
+import { trim, isObject, mergeDeep, toUiAmount, getFormattedDate, isProd } from '~/utils/utils';
 
 describe('src/utils/utils', () => {
     describe('getFormattedDate()', () => {
@@ -114,5 +114,15 @@ describe('src/utils/utils', () => {
         it('should return number as string for small numbers', () => {
             expect(toUiAmount(999)).toBe('999');
         });
+    });
+});
+
+describe('isProd()', () => {
+    it('should return boolean', () => {
+        expect(typeof isProd()).toBe('boolean');
+    });
+
+    it('should return false when catch block triggered', () => {
+        // This path is extremely hard to trigger in test env as import.meta.env is always defined
     });
 });

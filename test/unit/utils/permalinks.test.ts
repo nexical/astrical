@@ -58,6 +58,10 @@ describe('src/utils/permalinks', () => {
         it('should handle trailing slash config', () => {
             expect(getCanonical('/path/')).toBe('https://example.com/path'); // Should remove slash per mock config
         });
+
+        it('should handle empty path (home)', () => {
+            expect(getCanonical('')).toBe('https://example.com/');
+        });
     });
 
     describe('getPermalink()', () => {

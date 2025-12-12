@@ -314,10 +314,8 @@ export function generateSite(): Record<string, unknown> {
     pages: {},
   };
 
-  for (const pageName in pages) {
-    if (Object.prototype.hasOwnProperty.call(pages, pageName)) {
-      siteData.pages[pageName] = generateData(pageName);
-    }
+  for (const pageName of Object.keys(pages)) {
+    siteData.pages[pageName] = generateData(pageName);
   }
   return siteData;
 }
