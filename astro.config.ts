@@ -116,7 +116,19 @@ export default defineConfig({
       },
     },
     ssr: {
-      external: ['node:child_process', 'node:async_hooks', 'node:fs', 'node:path', 'node:url', 'node:crypto', 'path'],
+      external: [
+        'node:child_process',
+        'node:async_hooks',
+        'node:fs',
+        'node:path',
+        'node:url',
+        'node:crypto',
+        'path',
+        'child_process',
+        'zlib',
+        'stream',
+        'tls',
+      ],
     },
   },
 
