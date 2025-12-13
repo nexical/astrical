@@ -62,6 +62,7 @@ import type { AstroConfig, AstroIntegration } from 'astro';
 
 import buildConfig, { type Config } from './utils/builder';
 import { loadConfig } from './utils/loader';
+import { scanContent } from '../../src/utils/content-scanner';
 
 /**
  * Extracts the directory path from a file path.
@@ -130,6 +131,21 @@ export default ({ config: _themeConfig = 'content/config.yaml' } = {}): AstroInt
         // Set content directory based on configuration file location
         SITE.contentDir = getContentPath(config.root.pathname, _themeConfig);
 
+        // Scan ALL content at build time to find forms and their handlers
+        // We use the same content scanning logic that the loader uses runtime
+        // This effectively bundles the form configurations (recipients, etc.)
+        const content = scanContent(SITE.contentDir);
+        const forms = content['forms'] as Record<string, { handlers?: Record<string, unknown> }>;
+
+        // Extract just the handler configurations for each form
+        // Map<FormName, { handlers: { ... } }>
+        const FORMS: Record<string, { handlers: Record<string, unknown> }> = {};
+        for (const [formName, formDef] of Object.entries(forms)) {
+          if (formDef.handlers) {
+            FORMS[formName] = { handlers: formDef.handlers };
+          }
+        }
+
         // Update Astro configuration with site settings
         updateConfig({
           // Set site URL from configuration
@@ -180,6 +196,7 @@ export default ({ config: _themeConfig = 'content/config.yaml' } = {}): AstroInt
                     export const UI = ${JSON.stringify(UI)};
                     export const ANALYTICS = ${JSON.stringify(ANALYTICS)};
                     export const FORM_HANDLERS = ${JSON.stringify(FORM_HANDLERS)};
+                    export const FORMS = ${JSON.stringify(FORMS)};
                     `;
                   }
                 },

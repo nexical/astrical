@@ -29,6 +29,8 @@
  * - METADATA: Site metadata (title templates, descriptions, SEO)
  * - UI: User interface configuration (theme, styling)
  * - ANALYTICS: Analytics configuration (Google Analytics, Tag Manager, etc.)
+ * - FORM_HANDLERS: Form handler configurationd from the content/config.yml file (or defaults)
+ * - FORMS: Form processing configurations gathered from each form defined in content pages
  *
  * Usage Context:
  * - Type-safe configuration access throughout the Astro project
@@ -104,4 +106,11 @@ declare module 'site:config' {
    * FORM_HANDLERS configuration object.
    */
   export const FORM_HANDLERS: FormHandlersConfig;
+
+  /**
+   * Global map of all form definitions found in the content directory.
+   * Maps form name -> generic handler configuration.
+   * This is bundled at build time to avoid runtime filesystem access.
+   */
+  export const FORMS: Record<string, { handlers: Record<string, any> }>;
 }

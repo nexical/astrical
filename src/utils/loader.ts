@@ -57,110 +57,9 @@
  */
 
 import { SITE } from 'site:config';
-import merge from 'lodash.merge';
-import fs from 'node:fs';
-import path from 'path';
-import yaml from 'js-yaml';
 import { getVar, setVar, checkVar } from '~/utils/cache';
 import { isProd } from '~/utils/utils';
-
-const MODULES_DIR = path.resolve(process.cwd(), 'modules');
-
-/**
- * Recursively loads all YAML files from a directory and its subdirectories.
- *
- * Scans the specified root directory for YAML files and organizes them into
- * a hierarchical data structure based on their file paths. Each YAML file's
- * content is parsed and stored according to its directory structure.
- *
- * @param rootDir - Root directory path to scan for YAML files
- * @returns Record mapping specification types to their data objects
- */
-function loadContent(rootDir: string) {
-  // Initialize content structure to hold parsed YAML data
-  const content: Record<string, Record<string, unknown>> = {};
-
-  /**
-   * Internal recursive function to process directory contents.
-   *
-   * @param dir - Current directory path being processed
-   */
-  function _loadContent(dir: string) {
-    // Read all files and directories in current directory
-    const files = fs.readdirSync(dir);
-
-    // Process each file/directory
-    for (const file of files) {
-      const filePath = path.join(dir, file);
-      const stat = fs.statSync(filePath);
-
-      // Recursively process subdirectories
-      if (stat.isDirectory()) {
-        _loadContent(filePath);
-      }
-      // Process YAML files
-      else if (file.endsWith('.yaml') || file.endsWith('.yml')) {
-        // Read and parse YAML file content
-        const rawContent = fs.readFileSync(filePath, 'utf-8');
-        const parsedYaml = yaml.load(rawContent);
-
-        // Determine specification type and path from file location
-        const relativePath = path.relative(rootDir, filePath);
-        const pathComponents = relativePath.split('.')[0].replace(/\\/g, '/').split('/');
-        const specType = pathComponents[0]; // First directory level is spec type
-        const specPath = pathComponents.slice(1).join('/'); // Remaining path is spec identifier
-
-        // Initialize specification type in content structure if needed
-        if (!(specType in content)) {
-          content[specType] = {};
-        }
-
-        // Store parsed YAML content in appropriate location
-        content[specType][specPath] = parsedYaml as object;
-      }
-    }
-  }
-
-  // Start recursive loading from root directory
-  _loadContent(rootDir);
-
-  return content;
-}
-
-/**
- * Loads content from all valid modules in the modules directory.
- *
- * Iterates through all subdirectories in the modules directory, checks for
- * a 'content' folder, and loads its YAML files. Explicitly excludes
- * 'menus' content as navigation should remain site-specific.
- *
- * @returns Record containing merged content data from all modules
- */
-function loadModuleContent() {
-  let moduleContent: Record<string, Record<string, unknown>> = {};
-
-  if (!fs.existsSync(MODULES_DIR)) {
-    return moduleContent;
-  }
-
-  const modules = fs.readdirSync(MODULES_DIR);
-
-  for (const moduleName of modules) {
-    const moduleContentDir = path.join(MODULES_DIR, moduleName, 'content');
-    if (fs.existsSync(moduleContentDir) && fs.statSync(moduleContentDir).isDirectory()) {
-      const content = loadContent(moduleContentDir);
-
-      // Enforce constraint: Modules cannot contribute menus
-      if (content['menus']) {
-        delete content['menus'];
-      }
-
-      moduleContent = merge(moduleContent, content);
-    }
-  }
-
-  return moduleContent;
-}
+import { scanContent } from './content-scanner';
 
 /**
  * Retrieves and processes content data with caching and shared component resolution.
@@ -179,81 +78,9 @@ function getContent(): Record<string, unknown> {
     return getVar(cacheKey) as Record<string, unknown>;
   }
 
-  // Load content from modules first (base layer)
-  const moduleContent = loadModuleContent();
-
-  // Load project content (override layer)
-  const projectContent = loadContent(SITE.contentDir);
-
-  // Merge project content over module content
-  const content = merge(moduleContent, projectContent);
-
-  // Extract pages and shared components for processing
-  const pages = content['pages'] || {};
-  const shared = content['shared'] || {};
-  const forms = {};
-
-  /**
-   * Recursively resolves shared component references in data structures.
-   *
-   * Traverses data objects and arrays to find components that reference
-   * shared configurations. When found, merges shared component data with
-   * page-specific overrides using deep merging.
-   *
-   * @param node - Data node to process (object, array, or primitive)
-   * @returns Processed node with shared components resolved
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const resolveComponents = (node: any): object => {
-    // Process arrays by recursively resolving each element
-    if (Array.isArray(node)) {
-      return node.map((item) => resolveComponents(item));
-    }
-
-    // Process objects by resolving shared components and recursively processing properties
-    if (node !== null && typeof node === 'object') {
-      // Check if current node references a shared component
-      if (node.component) {
-        const componentPath = node.component;
-
-        // If shared component exists, merge it with page-specific overrides
-        if (shared[componentPath]) {
-          // Deep copy shared component to avoid modifying the original
-          const sharedComponent = JSON.parse(JSON.stringify(shared[componentPath]));
-
-          // Extract overrides (everything except the component reference)
-          const overrides = { ...node };
-          delete overrides.component;
-
-          // Merge shared component with overrides
-          return merge(sharedComponent, overrides);
-        }
-      }
-
-      // Recursively process all object properties
-      const newNode = {};
-      for (const key in node) {
-        newNode[key] = resolveComponents(node[key]);
-      }
-
-      // Check if node is a form component
-      if (node.type && node.type == 'Form') {
-        // Add form component to forms index
-        forms[node.name] = node;
-      }
-      return newNode;
-    }
-
-    // Return primitive values unchanged
-    return node;
-  };
-
-  // Resolve shared components in all page configurations
-  for (const pagePath in pages) {
-    content['pages'][pagePath] = resolveComponents(pages[pagePath]);
-  }
-  // Add forms index to content configurations
-  content['forms'] = forms;
+  // Delegate the heavy lifting to the content scanner
+  // SITE.contentDir is resolved by the site:config plugin
+  const content = scanContent(SITE.contentDir);
 
   // Cache processed content for performance in production
   setVar(cacheKey, content);
