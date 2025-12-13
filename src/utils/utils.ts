@@ -192,3 +192,21 @@ export const isProd = (): boolean => {
     return false;
   }
 };
+
+/**
+ * Checks if the environment is an Edge runtime (Cloudflare Workers, etc.).
+ *
+ * @returns True if running in an Edge environment
+ */
+export const isEdge = (): boolean => {
+  /* v8 ignore next 8 */
+  try {
+    // Check for Cloudflare/Edge globals
+    return (
+      typeof (globalThis as any).EdgeRuntime === 'string' ||
+      typeof (globalThis as any).WebSocketPair !== 'undefined'
+    );
+  } catch {
+    return false;
+  }
+};

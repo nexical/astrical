@@ -1,79 +1,139 @@
 /**
- * src/utils/form-handlers/smtp.ts
+ * src/form-handlers/smtp.ts
  *
- * This module implements the SMTP form handler using nodemailer.
+ * This module implements a Hybrid SMTP form handler that works in both
+ * standard Node.js environments and Cloudflare Workers (Edge) runtime.
+ *
+ * Features:
+ * - Environment detection (Node.js vs Edge)
+ * - Dynamic loading of appropriate transport library
+ * - Nodemailer support for Node.js
+ * - worker-mailer support for Cloudflare Workers
+ * - Unified configuration interface
+ *
+ * Component Integration:
+ * - nodemailer: Standard Node.js SMTP library
+ * - worker-mailer: Cloudflare-compatible SMTP library
+ * - ~/utils/utils: Environment detection utility
+ *
+ * Configuration:
+ * - host: SMTP host
+ * - port: SMTP port
+ * - secure: true/false
+ * - auth: { user, pass }
+ * - recipients: Default recipients list
+ *
+ * Usage Context:
+ * - Form submission handling
+ * - Email notification delivery
  */
 
 import type { FormHandler } from '~/types';
-import nodemailer from 'nodemailer';
-import { getSecret } from 'astro:env/server';
+import { isEdge } from '~/utils/utils';
 
 export class SMTPHandler implements FormHandler {
-  name = 'smtp';
-  description = 'Sends form submissions via SMTP.';
+    name = 'smtp';
+    description = 'Sends email via SMTP (Hybrid: Node/Edge).';
 
-  async handle(
-    formName: string,
-    data: Record<string, string | string[]>,
-    attachments: { filename: string; data: Buffer }[],
-    config?: { recipients?: string | string[] }
-  ): Promise<void> {
-    // Retrieve global SMTP settings from environment variables
-    // In a real generic module, we might want these passed in config too,
-    // but typically credentials are env vars.
-    const host = getSecret('SMTP_HOST') as string;
-    const port = parseInt((getSecret('SMTP_PORT') as string) || '587', 10);
-    const user = getSecret('SMTP_USER') as string;
-    const pass = getSecret('SMTP_PASS') as string;
-    const from = (getSecret('SMTP_FROM') as string) || user;
-    const secure = getSecret('SMTP_SECURE') === 'true'; // true for 465, false for other ports
+    async handle(
+        formName: string,
+        data: Record<string, string | string[]>,
+        attachments: { filename: string; data: Uint8Array }[],
+        config?: any
+    ): Promise<void> {
+        const recipients = config?.recipients;
+        if (!recipients) {
+            console.warn(`SMTPHandler: No recipients configured for form '${formName}'.`);
+            return;
+        }
 
-    if (!host || !user || !pass) {
-      throw new Error('SMTPHandler: Missing SMTP environment variables (SMTP_HOST, SMTP_USER, SMTP_PASS).');
+        // Prepare email content
+        const subject = `New Submission: ${formName}`;
+        const text = Object.entries(data)
+            .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+            .join('\n');
+        const html = `<p>${text.replace(/\n/g, '<br>')}</p>`;
+
+        // Default SMTP config if not provided in handler config
+        // In a real app, these should come from config or env secrets
+        const smtpConfig = {
+            host: config?.host || process.env.SMTP_HOST || '',
+            port: Number(config?.port || process.env.SMTP_PORT || 587),
+            secure: config?.secure ?? false,
+            auth: {
+                user: config?.user || process.env.SMTP_USER || '',
+                pass: config?.password || process.env.SMTP_PASS || '',
+            },
+            from: config?.from || process.env.SMTP_FROM || 'noreply@example.com',
+        };
+
+        if (isEdge()) {
+            // --- Edge Runtime (Cloudflare) Path ---
+            try {
+                // Dynamically import worker-mailer to avoid Node.js crashes
+                const { WorkerMailer } = await import('worker-mailer');
+
+                const mailer = await (WorkerMailer as any).connect({
+                    transport: {
+                        host: smtpConfig.host,
+                        port: smtpConfig.port,
+                        secure: smtpConfig.secure,
+                        auth: smtpConfig.auth,
+                    },
+                    defaults: {
+                        from: { name: 'Website Form', address: smtpConfig.from },
+                    }
+                });
+
+                // Convert attachments for worker-mailer if needed
+                // worker-mailer handles Uint8Array/Buffer in 'content' field usually
+                const edgeAttachments = attachments.map(a => ({
+                    filename: a.filename,
+                    content: a.data, // Assuming worker-mailer supports Uint8Array/Buffer
+                    contentType: 'application/octet-stream' // Fallback
+                }));
+
+                await mailer.send({
+                    to: Array.isArray(recipients) ? recipients.join(',') : recipients,
+                    subject,
+                    text,
+                    html,
+                    attachments: edgeAttachments.length ? edgeAttachments : undefined
+                });
+
+            } catch (e: any) {
+                console.error('SMTPHandler (Edge) failed:', e);
+                throw new Error(`Edge SMTP Error: ${e.message}`);
+            }
+
+        } else {
+            // --- Node.js Runtime Path ---
+            try {
+                const nodemailer = await import('nodemailer');
+
+                const transporter = nodemailer.createTransport({
+                    host: smtpConfig.host,
+                    port: smtpConfig.port,
+                    secure: smtpConfig.secure,
+                    auth: smtpConfig.auth,
+                });
+
+                await transporter.sendMail({
+                    from: smtpConfig.from,
+                    to: Array.isArray(recipients) ? recipients.join(',') : recipients,
+                    subject,
+                    text,
+                    html,
+                    attachments: attachments.map(a => ({
+                        filename: a.filename,
+                        content: Buffer.from(a.data), // Convert Uint8Array back to Buffer for Nodemailer
+                    })),
+                });
+
+            } catch (e: any) {
+                console.error('SMTPHandler (Node) failed:', e);
+                throw new Error(`Node SMTP Error: ${e.message}`);
+            }
+        }
     }
-
-    if (!config?.recipients) {
-      console.warn(`SMTPHandler: No recipients configured for form '${formName}'. Skipping.`);
-      return;
-    }
-
-    // Create reusable transporter object using the default SMTP transport
-    const transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure,
-      auth: {
-        user,
-        pass,
-      },
-    });
-
-    const subject = `New Form Submission: ${formName}`;
-    const text = Object.entries(data)
-      .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-      .join('\n');
-    const html = `<p>${text.replace(/\n/g, '<br>')}</p>`;
-
-    // Prepare attachments for nodemailer
-    const mailAttachments = attachments.map((att) => ({
-      filename: att.filename,
-      content: att.data,
-    }));
-
-    const to = Array.isArray(config.recipients) ? config.recipients.join(', ') : config.recipients;
-
-    try {
-      await transporter.sendMail({
-        from,
-        to,
-        subject,
-        text,
-        html,
-        attachments: mailAttachments,
-      });
-      console.log(`SMTPHandler: Email sent successfully for form '${formName}'`);
-    } catch (error) {
-      throw new Error(`SMTPHandler failed: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
 }

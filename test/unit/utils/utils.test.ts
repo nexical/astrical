@@ -1,6 +1,6 @@
 
 import { describe, it, expect } from 'vitest';
-import { trim, isObject, mergeDeep, toUiAmount, getFormattedDate, isProd } from '~/utils/utils';
+import { trim, isObject, mergeDeep, toUiAmount, getFormattedDate, isProd, isEdge } from '~/utils/utils';
 
 describe('src/utils/utils', () => {
     describe('getFormattedDate()', () => {
@@ -124,5 +124,23 @@ describe('isProd()', () => {
 
     it('should return false when catch block triggered', () => {
         // This path is extremely hard to trigger in test env as import.meta.env is always defined
+    });
+});
+
+describe('isEdge()', () => {
+    it('should return false by default in Node test env', () => {
+        expect(isEdge()).toBe(false);
+    });
+
+    it('should return true if EdgeRuntime is defined', () => {
+        (globalThis as any).EdgeRuntime = 'edge';
+        expect(isEdge()).toBe(true);
+        delete (globalThis as any).EdgeRuntime;
+    });
+
+    it('should return true if WebSocketPair is defined', () => {
+        (globalThis as any).WebSocketPair = {};
+        expect(isEdge()).toBe(true);
+        delete (globalThis as any).WebSocketPair;
     });
 });
