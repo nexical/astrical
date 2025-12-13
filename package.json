@@ -6,6 +6,9 @@
   "engines": {
     "node": ">= 22.0.0"
   },
+  "workspaces": [
+    "modules/*"
+  ],
   "scripts": {
     "astro": "astro",
     "check:astro": "astro check",
