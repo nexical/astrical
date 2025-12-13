@@ -186,7 +186,7 @@ export interface AuthConfig {
  */
 export interface FormHandlersConfig {
   defaults: string[]; // List of handler names to use by default (e.g., ['mailgun'])
-  handlers: Record<string, { enabled: boolean;[key: string]: unknown }>;
+  handlers: Record<string, { enabled: boolean; [key: string]: unknown }>;
 }
 
 // Default site name used when no site name is configured
