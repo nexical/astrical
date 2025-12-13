@@ -29,6 +29,7 @@
  */
 
 import type { FormHandler } from '~/types';
+import { getSecret } from 'astro:env/server';
 import { isEdge } from '~/utils/utils';
 
 export class SMTPHandler implements FormHandler {
@@ -57,14 +58,14 @@ export class SMTPHandler implements FormHandler {
         // Default SMTP config if not provided in handler config
         // In a real app, these should come from config or env secrets
         const smtpConfig = {
-            host: config?.host || process.env.SMTP_HOST || '',
-            port: Number(config?.port || process.env.SMTP_PORT || 587),
+            host: config?.host || getSecret('SMTP_HOST') || '',
+            port: Number(config?.port || getSecret('SMTP_PORT') || 587),
             secure: config?.secure ?? false,
             auth: {
-                user: config?.user || process.env.SMTP_USER || '',
-                pass: config?.password || process.env.SMTP_PASS || '',
+                user: config?.user || getSecret('SMTP_USER') || '',
+                pass: config?.password || getSecret('SMTP_PASS') || '',
             },
-            from: config?.from || process.env.SMTP_FROM || 'noreply@example.com',
+            from: config?.from || getSecret('SMTP_FROM') || 'noreply@example.com',
         };
 
         if (isEdge()) {
