@@ -81,6 +81,16 @@ describe('src/utils/generator', () => {
             ]);
             expect(generateLinks()).toEqual(['page1', 'page2']);
         });
+
+        it('should filter pages based on access control', () => {
+            (routes as any).mockReturnValue([
+                { name: 'page1', props: { metadata: { access: ['public'] } } },
+                { name: 'page2', props: { metadata: { access: ['admin'] } } },
+                { name: 'page3', props: { metadata: {} } },
+                { name: 'page4', props: {} }
+            ]);
+            expect(generateLinks()).toEqual(['page1', 'page3', 'page4']);
+        });
     });
 
     describe('getFormField()', () => {

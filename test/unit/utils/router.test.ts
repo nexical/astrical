@@ -70,5 +70,19 @@ describe('src/utils/router', () => {
             (getSpecs as any).mockReturnValue({});
             expect(getLayout('missing-page')).toEqual({});
         });
+
+        it('should extract access configuration', () => {
+            const mockPage = {
+                metadata: {
+                    title: 'Access Title',
+                    access: ['public']
+                }
+            };
+            (getSpecs as any).mockReturnValue({ 'access-page': mockPage });
+
+            const layout = getLayout('access-page');
+            expect(layout.access).toEqual(['public']);
+            expect(layout.metadata).toEqual({ title: 'Access Title' });
+        });
     });
 });

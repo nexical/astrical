@@ -1,8 +1,8 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as PageJson from '../../../src/pages/[...page].json';
-import * as PageYaml from '../../../src/pages/[...page].yaml';
+import * as PageJson from '../../../src/pages/[...build].json';
+import * as PageYaml from '../../../src/pages/[...build].yaml';
 import * as DataJson from '../../../src/pages/data.json';
 import * as DataYaml from '../../../src/pages/data.yaml';
 import * as LinksJson from '../../../src/pages/links.json';
@@ -46,8 +46,8 @@ describe('Page Endpoints', () => {
         });
     };
 
-    testSpreadEndpoint(PageJson, '[...page].json');
-    testSpreadEndpoint(PageYaml, '[...page].yaml');
+    testSpreadEndpoint(PageJson, '[...build].json');
+    testSpreadEndpoint(PageYaml, '[...build].yaml');
 
     // Helper for static endpoints (data, links)
     const testStaticEndpoint = (Module: any, name: string, isLinks = false) => {
