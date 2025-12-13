@@ -1,20 +1,18 @@
 ---
 /**
- * [...page].astro
+ * src/pages/[...build].astro
  *
- * This is a dynamic route component that serves as the main entry point for all
- * content pages on the website. It uses Astro's spread parameter syntax ([...page])
- * to capture all URL paths and render the appropriate page content based on
- * the site's data configuration. This enables a flexible, data-driven approach
- * to page generation where content is defined in YAML files rather than individual
- * Astro components.
+ * This is a static route component that serves as the main entry point for all
+ * statically generated content pages on the website. It uses Astro's spread parameter
+ * syntax ([...page]) to capture all URL paths found during the build process
+ * and render the appropriate page content.
  *
  * Features:
- * - Dynamic route handling for all content pages
+ * - Static route handling for content pages
  * - Data-driven page generation from YAML configuration
  * - Section-based content architecture
  * - Themeable styling through CSS classes
- * - Static site generation with prerendering
+ * - Static site generation with prerendering enabled
  * - Automatic static path generation
  *
  * Route Parameters:
@@ -64,10 +62,8 @@
  * - Type casting ensures proper data handling
  *
  * Usage Context:
- * - Dynamic route handler for all content pages
- * - Renders page content based on data configuration
- * - Provides fallback for any URL path not handled by specific routes
- * - Works in conjunction with index.astro for home page
+ * - Static route handler for known content pages
+ * - Renders page content based on data configuration during build
  */
 
 import type { Page as PageType, Section as SectionType } from '~/types';
