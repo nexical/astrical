@@ -66,5 +66,4 @@ export function getOrderedMiddleware(
 }
 
 // 3. Execution: Create the sequence
-// We spread the array because sequence() takes varargs, not an array.
 export const onRequest = sequence(...getOrderedMiddleware());

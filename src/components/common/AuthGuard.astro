@@ -1,0 +1,126 @@
+---
+/**
+ * AuthGuard.astro
+ *
+ * This component conditionally renders its content based on the current user's authentication state
+ * and assigned roles. It serves as a secure wrapper for sensitive UI elements, ensuring they are
+ * only visible to authorized users.
+ *
+ * Features:
+ * - Role-based access control (RBAC) with flexible checking strategies
+ * - Support for 'any' (OR) and 'all' (AND) role verification modes
+ * - Optional component wrapping for protected content
+ * - "Public" role bypass for universally accessible content
+ * - Integration with global authentication state (Astro.locals)
+ * - Secure fallback to null rendering for unauthorized access
+ *
+ * Props:
+ * - requiredRoles (optional): Array of role text strings required for access. Defaults to empty array (access granted if authenticated).
+ * - checkMode (optional): Strategy for validating roles ('any' | 'all'). Defaults to 'any'.
+ * - component (optional): Specific Astro component to render if access is granted.
+ * - componentProps (optional): Props object to pass to the rendered component.
+ *
+ * Data Flow:
+ * 1. Retrieves user authentication state from global Astro.locals.auth
+ * 2. Determines access eligibility based on user presence and role requirements
+ * 3. Applies role checking logic based on configured checkMode
+ * 4. Renders target component or slot content if authorized
+ * 5. Renders nothing (null) if unauthorized
+ *
+ * Component Integration:
+ * - Astro.locals: Source of truth for user authentication and roles
+ * - AstroComponentFactory: Type definition for dynamic component rendering
+ *
+ * Security Features:
+ * - Server-side validation of user roles before rendering
+ * - Fail-safe default (denies access if logic falls through)
+ * - Encapsulated access logic preventing accidental exposure
+ */
+
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+
+/**
+ * Component Props Interface
+ *
+ * @property requiredRoles - Array of roles allowed to view the content
+ * @property checkMode - 'any' (user needs at least one role) or 'all' (user needs all roles)
+ * @property component - Optional component factory to render on success
+ * @property componentProps - Props to pass to the success component
+ */
+interface Props {
+  requiredRoles?: string[];
+  checkMode?: 'any' | 'all';
+  component?: AstroComponentFactory;
+  componentProps?: Record<string, unknown>;
+}
+
+// Destructure props with default values
+const { requiredRoles = [], checkMode = 'any', component: Component, componentProps = {} } = Astro.props;
+
+// Retrieve authentication state from locals
+const { auth } = Astro.locals;
+const user = auth?.user;
+
+let hasAccess = false;
+
+// Access Control Logic
+if (user) {
+  if (requiredRoles.length === 0) {
+    // authenticated but no specific roles required -> access granted
+    hasAccess = true;
+  } else {
+    // Check roles based on mode
+    if (checkMode === 'any') {
+      hasAccess = auth.hasRole(requiredRoles);
+    } else {
+      // mode: 'all'
+      if (checkMode === 'all') {
+        // Manually check that EVERY required role is present in user's roles
+        // Note: Assumes `auth.roles` is an array of strings
+        hasAccess = requiredRoles.every((role) => auth.roles.includes(role));
+      } else {
+        // Fallback for safety, though typescript limits this to 'any' | 'all'
+        hasAccess = auth.hasRole(requiredRoles);
+      }
+    }
+  }
+} else {
+  // Not authenticated
+  hasAccess = false;
+}
+
+// Global Exception: 'public' role always grants access
+if (requiredRoles.includes('public')) {
+  hasAccess = true;
+}
+---
+
+{
+  /*
+    Render Logic:
+    - Controls visibility based on calculated hasAccess state
+    - Supports two rendering modes if authorized:
+      1. Component Mode: Renders a specific component wrapper around the slot
+      2. Slot Mode: Renders the slot content directly
+    - Renders nothing (null) if unauthorized
+  */
+}
+{
+  hasAccess && Component ? (
+    /*
+      Component Mode: renders the specified component with provided props.
+      - Useful for specialized wrappers or UI elements that depend on auth
+      - Passes children (slot) to the component
+    */
+    <Component {...componentProps}>
+      <slot />
+    </Component>
+  ) : hasAccess ? (
+    /*
+      Slot Mode: renders the slot content directly.
+      - Default behavior for simple protection
+      - Completely transparent to the layout if authorized
+    */
+    <slot />
+  ) : null
+}

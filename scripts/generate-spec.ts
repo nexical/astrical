@@ -138,6 +138,21 @@ async function main() {
       ...componentRefs
     );
 
+    // Inject 'access' property into all component definitions
+    for (const componentName of components) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const componentDef = (mergedContentSpec.components as Record<string, any>)[componentName];
+      if (componentDef && componentDef.properties) {
+        componentDef.properties.access = {
+          type: 'array',
+          items: {
+            type: 'string'
+          },
+          description: 'Roles required to access this component.'
+        };
+      }
+    }
+
     if (isDebug) {
       console.log(`\nAdded ${components.length} components to EmbeddableComponent definition.`);
       components.forEach((component) => console.log(`- ${component}`));

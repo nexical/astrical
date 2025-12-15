@@ -54,6 +54,7 @@ import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import { supportedTypes } from '~/components';
 import { getSpecs } from '~/utils/loader';
 import { routes } from '~/utils/router';
+import AuthGuard from '~/components/common/AuthGuard.astro';
 
 import { SITE } from 'site:config';
 
@@ -158,10 +159,26 @@ export function generate(
     const Comp = supportedTypes[componentType];
 
     if (componentType && Comp) {
-      resolvedComponents.push({
-        component: Comp,
-        props: componentData,
-      });
+      // Check for access control properties
+      const access = componentData.access as Array<string> | undefined;
+
+      if (access && access.length > 0) {
+        // Wrap with AuthGuard
+        resolvedComponents.push({
+          component: AuthGuard,
+          props: {
+            requiredRoles: access,
+            checkMode: 'any', // Default to 'any', could be configurable via YAML later if needed
+            component: Comp,
+            componentProps: componentData,
+          },
+        });
+      } else {
+        resolvedComponents.push({
+          component: Comp,
+          props: componentData,
+        });
+      }
     } else {
       console.error(`Unsupported or unresolved component type: "${componentType}"`, componentData);
     }

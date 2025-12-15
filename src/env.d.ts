@@ -104,3 +104,20 @@ declare namespace App {
     modules: Record<string, any>;
   }
 }
+
+/**
+ * Wildcard module declaration for aliased Astro components.
+ *
+ * TypeScript cannot natively resolve imports ending in `.astro` when using path aliases (e.g., `~/`).
+ * While Astro provides global types for `*.astro`, they sometimes fail to apply to aliased paths
+ * due to TypeScript's resolution priority.
+ *
+ * This declaration explicitly tells TypeScript that any module imported via the `~/` alias
+ * with a `.astro` extension exports a standard Astro component factory. This prevents
+ * "Cannot find module" errors during type checking without affecting runtime behavior.
+ */
+declare module '~/*.astro' {
+  import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+  const Component: AstroComponentFactory;
+  export default Component;
+}
