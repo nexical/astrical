@@ -1,0 +1,25 @@
+---
+/**
+ * RoleRedirect.astro
+ *
+ * This component acts as a static wrapper for the RoleRedirect island.
+ * It ensures that the redirection logic is ALWAYS executed as a Server Island,
+ * regardless of the page's rendering mode (static or SSR).
+ *
+ * By delegating to a server-deferred component here, we guarantee access
+ * to runtime authentication state (Astro.locals.auth) even on statically generated pages.
+ */
+import type { Widget } from '~/types';
+import RoleRedirectIsland from '~/components/islands/RoleRedirect.astro';
+
+export interface Props extends Widget {
+  mappings: {
+    roles: Array<string>;
+    path: string;
+  }[];
+}
+
+const props = Astro.props;
+---
+
+<RoleRedirectIsland server:defer {...props} />

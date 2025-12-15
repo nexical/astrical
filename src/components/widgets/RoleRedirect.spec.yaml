@@ -1,0 +1,32 @@
+# src/components/widgets/RoleRedirect.spec.yaml
+components:
+  RoleRedirect:
+    type: object
+    description: >-
+      A utility widget that redirects users based on their roles. 
+      It does not render any visible content.
+      Note: This component automatically runs as a Server Island. Do NOT manually apply server:defer.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [RoleRedirect]
+        description: "Specifies the component type. Must be 'RoleRedirect'."
+      mappings:
+        type: array
+        description: "A list of role-to-path mappings. The first matching rule will trigger a redirect."
+        required: true
+        items:
+          type: object
+          properties:
+            roles:
+              type: array
+              description: "The list of roles that trigger this redirect (any match)."
+              items:
+                type: string
+            path:
+              type: string
+              description: "The path to redirect to if the user has one of the roles."
+          required:
+            - roles
+            - path

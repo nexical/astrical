@@ -1,0 +1,51 @@
+---
+/**
+ * RoleRedirect.astro
+ *
+ * A specialized widget that performs redirects based on user roles.
+ * It does not render any visible UI.
+ *
+ * CRITICAL: This component MUST be used with `server:defer` (Server Island)
+ * when used on static pages, as it relies on runtime `Astro.locals.auth`.
+ */
+import type { Widget } from '~/types';
+
+export interface Props extends Widget {
+  mappings: {
+    roles: Array<string>;
+    path: string;
+  }[];
+}
+
+const { mappings = [] } = Astro.props;
+const { auth } = Astro.locals;
+const user = auth?.user;
+
+let redirectPath: string | null = null;
+
+// Only process redirects if user is authenticated and mappings exist
+if (user && mappings.length > 0) {
+  // Find the FIRST matching rule (Priority Order)
+  // We iterate through the mappings array in order.
+  const match = mappings.find((rule) => auth.hasRole(rule.roles));
+
+  if (match) {
+    redirectPath = match.path;
+  }
+}
+---
+
+{
+  /* 
+    Render an inline script to force the redirect on the client side.
+    This is necessary because Astro Server Islands (fetched via fetch()) 
+    transparently follow HTTP 302 redirects instead of changing the browser URL.
+  */
+}
+{
+  redirectPath && (
+    <script is:inline define:vars={{ redirectPath }}>
+      window.location.href = redirectPath;
+    </script>
+  )
+}
