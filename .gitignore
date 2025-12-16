@@ -11,6 +11,7 @@ playwright-report/
 
 # Platform modules
 modules/
+src/themes/
 
 # Content directories
 content/
