@@ -52,48 +52,13 @@ import type { ImageMetadata } from 'astro';
 import type { OpenGraph } from '@astrolib/seo';
 
 /**
- * Asynchronously loads all local image assets from the assets/images directory.
- *
- * Uses import.meta.glob to dynamically discover and load image files at build time.
- * Supports common web image formats and handles errors gracefully.
- *
- * @returns Promise resolving to record of image import functions or undefined
- */
-const load = async function () {
-  let images: Record<string, () => Promise<unknown>> | undefined = undefined;
-  try {
-    images = import.meta.glob('~/assets/images/**/*.{jpeg,jpg,png,tiff,webp,gif,svg,JPEG,JPG,PNG,TIFF,WEBP,GIF,SVG}');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    // continue regardless of error
-  }
-  return images;
-};
-
-// Cache for loaded images to avoid repeated loading
-let _images: Record<string, () => Promise<unknown>> | undefined = undefined;
-
-/**
- * Fetches and caches local image assets.
- *
- * Loads local images using the load function and caches the result for
- * performance optimization. Subsequent calls return the cached images.
- *
- * @returns Promise resolving to record of image import functions
- */
-export const fetchLocalImages = async () => {
-  _images = _images || (await load());
-  return _images;
-};
-
-/**
  * Finds and resolves an image reference to actual image metadata.
  *
  * Takes an image path and resolves it to the appropriate image resource:
  * - Non-string values are returned as-is
  * - Absolute URLs are returned unchanged
  * - Relative paths are returned unchanged
- * - ~/assets/images paths are resolved to local image metadata
+ * - Public paths are returned unchanged
  *
  * @param imagePath - Image path string, ImageMetadata, or null/undefined
  * @returns Promise resolving to resolved image resource or null
@@ -101,28 +66,7 @@ export const fetchLocalImages = async () => {
 export const findImage = async (
   imagePath?: string | ImageMetadata | null
 ): Promise<string | ImageMetadata | undefined | null> => {
-  // Not string - return as-is (ImageMetadata or null/undefined)
-  if (typeof imagePath !== 'string') {
-    return imagePath;
-  }
-
-  // Absolute paths - return unchanged
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('/')) {
-    return imagePath;
-  }
-
-  // Relative paths or not "~/assets/" - return unchanged
-  if (!imagePath.startsWith('~/assets/images')) {
-    return imagePath;
-  }
-
-  // Resolve local image path to actual image metadata
-  const images = await fetchLocalImages();
-  const key = imagePath.replace('~/', '/src/');
-
-  return images && typeof images[key] === 'function'
-    ? ((await images[key]()) as { default: ImageMetadata })['default']
-    : null;
+  return imagePath;
 };
 
 /**

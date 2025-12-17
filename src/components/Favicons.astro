@@ -44,46 +44,43 @@
  * - Apple Touch: iOS Safari
  * - Mask Icon: Safari pinned tabs
  */
-import favIcon from '~/assets/favicons/favicon.ico';
-import favIconSvg from '~/assets/favicons/favicon.svg';
-import appleTouchIcon from '~/assets/favicons/apple-touch-icon.png';
 ---
 
 {
   /*
     Traditional favicon.ico for broad browser compatibility.
-    - Uses imported ICO file asset
+    - Uses static file from /favicons/favicon.ico
     - rel="shortcut icon" for legacy browser support
   */
 }
-<link rel="shortcut icon" href={favIcon} />
+<link rel="shortcut icon" href="/favicons/favicon.ico" />
 
 {
   /*
     SVG favicon for modern browsers with scalable graphics support.
-    - Uses imported SVG file asset
+    - Uses static file from /favicons/favicon.svg
     - type="image/svg+xml" for proper MIME type
     - Provides crisp icons at any resolution
   */
 }
-<link rel="icon" type="image/svg+xml" href={favIconSvg.src} />
+<link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
 
 {
   /*
     Maskable SVG icon for Safari pinned tabs.
-    - Uses imported SVG file asset
+    - Uses static file from /favicons/favicon.svg
     - color attribute sets the mask color (#8D46E7 - theme purple)
     - Provides monochrome icon for Safari's pinned tab feature
   */
 }
-<link rel="mask-icon" href={favIconSvg.src} color="#8D46E7" />
+<link rel="mask-icon" href="/favicons/favicon.svg" color="#8D46E7" />
 
 {
   /*
     Apple touch icon for iOS home screen bookmarks.
-    - Uses imported PNG file asset (180x180)
+    - Uses static file from /favicons/apple-touch-icon.png (180x180)
     - sizes attribute specifies icon dimensions
     - Provides high-resolution icon for Apple devices
   */
 }
-<link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon.src} />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />

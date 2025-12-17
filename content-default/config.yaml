@@ -21,7 +21,7 @@ metadata:
   openGraph:
     site_name: Business Name
     images:
-      - url: '~/assets/images/default.png'
+      - url: '/images/default.png'
         width: 1200
         height: 628
     type: website
