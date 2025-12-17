@@ -270,6 +270,81 @@ export function getFormField(formName: string, item: FormItem): Component {
 }
 
 /**
+ * Checks if a component or section has public access.
+ * Returns true if no access control is defined or if 'public' is in the access list.
+ */
+function isPublic(data: Record<string, unknown>): boolean {
+  const access = data.access as Array<string> | undefined;
+  // If no access control defined, it's public
+  if (!access || access.length === 0) {
+    return true;
+  }
+  // If explicit access control, must contain 'public'
+  return access.includes('public');
+}
+
+/**
+ * Processes a widget configuration for data export.
+ * Checks access control and strips rendering/style properties.
+ *
+ * @param widget - Widget configuration object
+ * @returns Cleaned widget object or null if access denied
+ */
+function processWidget(widget: Record<string, unknown>): Record<string, unknown> | null {
+  if (!isPublic(widget)) {
+    return null;
+  }
+
+  const cleanWidget: Record<string, unknown> = {};
+  // Properties to exclude (rendering/style/access related)
+  const excludeProps = ['access', 'bg', 'classes', 'id'];
+
+  for (const key in widget) {
+    if (Object.prototype.hasOwnProperty.call(widget, key)) {
+      if (!excludeProps.includes(key)) {
+        cleanWidget[key] = widget[key];
+      }
+    }
+  }
+
+  return cleanWidget;
+}
+
+/**
+ * Processes a list of sections, flattening them into a single list of public widgets.
+ *
+ * @param sections - Array of section configuration objects
+ * @returns Flattened array of accessible widget configurations
+ */
+function processSections(sections: Array<Record<string, unknown>>): Array<Record<string, unknown>> {
+  if (!sections) return [];
+
+  const widgets: Array<Record<string, unknown>> = [];
+
+  for (const section of sections) {
+    // Check section-level access
+    if (!isPublic(section)) {
+      continue;
+    }
+
+    const componentsData = section.components;
+
+    if (componentsData) {
+      for (const key in componentsData) {
+        for (const component of componentsData[key]) {
+          const cleanWidget = processWidget(component);
+          if (cleanWidget) {
+            widgets.push(cleanWidget);
+          }
+        }
+      }
+    }
+  }
+
+  return widgets;
+}
+
+/**
  * Strips style-related properties from data objects for clean serialization.
  *
  * Recursively removes style-related keys (bg, classes) from data objects
@@ -280,7 +355,7 @@ export function getFormField(formName: string, item: FormItem): Component {
  * @returns Clean data object with style properties removed
  */
 function stripStyle(data: unknown): unknown {
-  const styleKeys = ['bg', 'classes'];
+  const styleKeys = ['bg', 'classes', 'access'];
 
   if (Array.isArray(data)) {
     return data.map(stripStyle);
@@ -312,12 +387,32 @@ function stripStyle(data: unknown): unknown {
  */
 export function generateData(page: string): Record<string, unknown> | null {
   const pages = getSpecs('pages');
-  const pageData = pages[page];
+  const pageData = pages[page] as Record<string, unknown>;
 
   if (!pageData) {
     return null;
   }
-  return stripStyle(pageData) as Record<string, unknown>;
+
+  // Clone to avoid mutating original cache
+  const result: Record<string, unknown> = {};
+
+  // Properties to separately handle or exclude
+  const specialKeys = ['sections', 'bg', 'classes', 'access'];
+
+  // Process metadata and other root properties (stripping styles)
+  for (const key in pageData) {
+    if (specialKeys.includes(key)) continue;
+    result[key] = stripStyle(pageData[key]);
+  }
+
+  // Process sections specially: flatten and check access
+  if (pageData.sections && Array.isArray(pageData.sections)) {
+    result.widgets = processSections(pageData.sections as Array<Record<string, unknown>>);
+  } else {
+    result.widgets = [];
+  }
+
+  return result;
 }
 
 /**
@@ -332,11 +427,17 @@ export function generateSite(): Record<string, unknown> {
   const pages = getSpecs('pages');
   const siteData = {
     menus: stripStyle(getSpecs('menus')),
-    pages: {},
+    pages: {} as Record<string, unknown>,
   };
 
   for (const pageName of Object.keys(pages)) {
-    siteData.pages[pageName] = generateData(pageName);
+    const pageData = pages[pageName] as Record<string, unknown>;
+    const metadata = (pageData.metadata || {}) as Record<string, unknown>;
+
+    // Check page-level access via metadata
+    if (isPublic(metadata)) {
+      siteData.pages[pageName] = generateData(pageName);
+    }
   }
   return siteData;
 }
