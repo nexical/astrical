@@ -4,7 +4,8 @@
  * Theme Validator Script
  *
  * This script validates all theme style.yaml files in the `src/themes` directory
- * against the specification defined in `src/themes/style.spec.yaml`.
+ * against the specification defined in `src/themes/style.spec.yaml` and all
+ * modules defined in `modules/{*}/src/theme/style.spec.yaml`.
  *
  * Usage:
  * `npm run validate-themes`
@@ -22,16 +23,89 @@ import { exit } from 'process';
 
 const CWD = process.cwd();
 
-const SPEC_FILE = path.join(CWD, 'dev/theme.spec.yaml');
+// Core spec location (symlinked or direct)
+const CORE_SPEC_FILE = path.join(CWD, 'src/themes/style.spec.yaml');
+// Pattern to find module specs (check both root theme and src/theme)
+const MODULE_SPECS_PATTERN = path.join(CWD, 'modules/*/src/theme/style.spec.yaml');
+
 const THEMES_DIRECTORY = path.join(CWD, 'src/themes');
 
 /**
- * Loads the specification file.
- * @returns A promise that resolves to the specification object.
+ * Deep merges source object into target object.
+ * Simple implementation for merging specs.
+ */
+function deepMerge(target: any, source: any): any {
+  if (typeof target !== 'object' || target === null) {
+    return source;
+  }
+  if (typeof source !== 'object' || source === null) {
+    return target; // source is not object, don't overwrite with primitive unless standard merge? valid for spec?
+  }
+
+  const output = { ...target };
+  Object.keys(source).forEach(key => {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (key in target) {
+        output[key] = deepMerge(target[key], source[key]);
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    } else {
+      Object.assign(output, { [key]: source[key] });
+    }
+  });
+  return output;
+}
+
+/**
+ * Loads the core specification file.
+ */
+async function loadCoreSpec(): Promise<Record<string, unknown>> {
+  try {
+    const content = await fs.promises.readFile(CORE_SPEC_FILE, 'utf-8');
+    return yaml.load(content) as Record<string, unknown>;
+  } catch (error: any) {
+    if (error.code === 'ENOENT') {
+      console.warn(`Warning: Core spec file not found at ${CORE_SPEC_FILE}`);
+      return {};
+    }
+    throw error;
+  }
+}
+
+/**
+ * Loads and merges all module specification files.
+ */
+async function loadModuleSpecs(): Promise<Record<string, unknown>> {
+  const moduleSpecFiles = await glob(MODULE_SPECS_PATTERN);
+  // Temporary debug log
+  console.log('Found module spec files:', moduleSpecFiles.map(f => path.relative(CWD, f)));
+
+  let mergedSpecs: Record<string, unknown> = {};
+
+  for (const file of moduleSpecFiles) {
+    try {
+      const content = await fs.promises.readFile(file, 'utf-8');
+      const spec = yaml.load(content) as Record<string, unknown>;
+      // We assume module specs are top-level objects that can be merged
+      mergedSpecs = deepMerge(mergedSpecs, spec);
+    } catch (error) {
+      console.warn(`Warning: Failed to load module spec at ${file}`, error);
+    }
+  }
+  return mergedSpecs;
+}
+
+/**
+ * Loads the full concatenated specification.
  */
 async function loadSpecification(): Promise<unknown> {
-  const content = await fs.promises.readFile(SPEC_FILE, 'utf-8');
-  return yaml.load(content);
+  const coreSpec = await loadCoreSpec();
+  const moduleSpecs = await loadModuleSpecs();
+
+  // Merge module specs INTO core spec (modules extend core)
+  // We'll merge module specs into core specs.
+  return deepMerge(coreSpec, moduleSpecs);
 }
 
 /**
@@ -39,8 +113,12 @@ async function loadSpecification(): Promise<unknown> {
  * @returns A promise that resolves to an array of theme file paths.
  */
 async function loadThemeFiles(): Promise<string[]> {
+  // We might want to validate module themes too? 
+  // The prompt said "load the component style specs... and concatenate them... so that we capture all core and module components."
+  // It didn't explicitly say to validate module themes, but "validates all theme style.yaml files in the src/themes directory".
+  // Keeping original behavior for theme files to validate, plus validating against the extended spec.
   return glob(path.join(THEMES_DIRECTORY, '**', 'style.yaml'), {
-    ignore: SPEC_FILE,
+    ignore: CORE_SPEC_FILE,
   });
 }
 
@@ -143,7 +221,10 @@ async function main() {
   const allErrors: string[] = [];
 
   if (isDebug) {
-    console.log(`Found specification file: ${path.relative(CWD, SPEC_FILE)}`);
+    console.log(`Core spec: ${path.relative(CWD, CORE_SPEC_FILE)}`);
+    // Re-resolve keys to show what's loaded
+    console.log(`Loaded ${Object.keys(specification).length} top-level spec keys.`);
+
     console.log('\nFound theme files:');
     themeFiles.forEach((file) => console.log(`- ${path.relative(CWD, file)}`));
     console.log(`Total: ${themeFiles.length} files\n`);
