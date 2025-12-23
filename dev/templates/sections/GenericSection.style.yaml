@@ -1,0 +1,8 @@
+# src/core/dev/templates/sections/GenericSection.style.yaml
+# -----------------------------------------------------------------------------
+# Section+GenericSection Style Group
+# -----------------------------------------------------------------------------
+Section+GenericSection:
+  wrapper:
+    container: 'py-10 md:py-16' 
+  main: ''

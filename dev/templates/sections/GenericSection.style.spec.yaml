@@ -1,0 +1,32 @@
+# src/core/dev/templates/sections/GenericSection.style.spec.yaml
+Section+GenericSection:
+  type: object
+  description: |
+    Styles for the "GenericSection" layout, providing base functionality.
+  properties:
+    wrapper:
+      type: object
+      description: |
+        Overrides for the embedded `SectionWrapper` component styles.
+      properties:
+        container:
+          type: string
+          description: |
+            Overrides the `container` style of `Component+SectionWrapper`.
+        background:
+          type: string
+          description: |
+            Overrides the `background` style of `Component+SectionWrapper`.
+        overlay:
+          type: string
+          description: |
+            Overrides the `overlay` style of `Component+SectionWrapper`.
+        wrapper:
+          type: string
+          description: |
+            Overrides the `wrapper` style of `Component+SectionWrapper`.
+    main:
+      type: string
+      description: |
+        Styles the inner `<div>` that holds the dynamically generated
+        components.

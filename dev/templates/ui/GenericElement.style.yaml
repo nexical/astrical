@@ -1,0 +1,7 @@
+# src/core/dev/templates/ui/GenericElement.style.yaml
+# -----------------------------------------------------------------------------
+# Component+GenericElement Style Group
+# -----------------------------------------------------------------------------
+Component+GenericElement:
+  default: 'rounded p-4 bg-surface text-default'
+  alternative: 'rounded p-4 bg-primary text-white'

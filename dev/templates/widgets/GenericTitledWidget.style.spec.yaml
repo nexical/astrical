@@ -1,0 +1,28 @@
+# src/core/dev/templates/widgets/GenericTitledWidget.style.spec.yaml
+Component+GenericTitledWidget:
+  type: object
+  description: |
+    Styles for the GenericTitledWidget component.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    headline:
+      type: object
+      description: Overrides for the `Component+Headline` styles.
+      properties:
+        container: { type: string, description: 'Overrides `Headline.container`.' }
+        tagline: { type: string, description: 'Overrides `Headline.tagline`.' }
+        title: { type: string, description: 'Overrides `Headline.title`.' }
+        subtitle: { type: string, description: 'Overrides `Headline.subtitle`.' }
+    content_container:
+      type: string
+      description: Styles the main content container.
+    content:
+      type: string
+      description: Styles the description text.

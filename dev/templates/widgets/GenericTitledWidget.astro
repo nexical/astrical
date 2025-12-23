@@ -1,0 +1,44 @@
+---
+/**
+ * GenericTitledWidget.astro
+ *
+ * Generic template for a titled widget using TitledWidgetWrapper.
+ * ideal for widgets that need standard title/subtitle/tagline headers.
+ */
+import type { TitledWidget } from '~/types';
+import TitledWidgetWrapper from '~/components/ui/TitledWidgetWrapper.astro';
+import { getClasses } from '~/utils/theme';
+
+export interface Props extends TitledWidget {
+  // Add custom props here
+  content?: string;
+}
+
+const {
+  id,
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+  content,
+  classes: rawClasses = {},
+  bg = '',
+} = Astro.props;
+
+// Replace 'Component+GenericTitledWidget' with your component identifier
+const classes = getClasses('Component+GenericTitledWidget', rawClasses);
+---
+
+<TitledWidgetWrapper
+  type="generic-titled-widget"
+  id={id}
+  classes={classes}
+  bg={bg}
+  title={title}
+  subtitle={subtitle}
+  tagline={tagline}
+>
+  <div class={classes.content_container}>
+    {content && <p class={classes.content}>{content}</p>}
+    <slot />
+  </div>
+</TitledWidgetWrapper>

@@ -1,0 +1,28 @@
+---
+/**
+ * GenericElement.astro
+ *
+ * Generic template for a UI component (atom).
+ */
+import type { HTMLAttributes } from 'astro/types';
+import { getClasses } from '~/utils/theme';
+import { twMerge } from 'tailwind-merge';
+
+interface Props extends HTMLAttributes<'div'> {
+  variant?: 'default' | 'alternative';
+}
+
+const { variant = 'default', class: className = '', ...rest } = Astro.props;
+
+// Retrieve CSS classes
+const classes = getClasses('Component+GenericElement');
+
+const variants = {
+  default: classes.default,
+  alternative: classes.alternative,
+};
+---
+
+<div class={twMerge(variants[variant], className)} {...rest}>
+  <slot />
+</div>

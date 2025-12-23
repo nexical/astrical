@@ -1,0 +1,26 @@
+---
+/**
+ * GenericSection.astro
+ *
+ * Generic template for a section component.
+ */
+import type { Section as Props } from '~/types';
+import SectionWrapper from '~/components/ui/SectionWrapper.astro';
+import { generateSection } from '~/utils/generator';
+import { getClasses } from '~/utils/theme';
+
+// Destructure section properties
+const { id, components, classes: rawClasses = {}, bg = '' } = Astro.props;
+
+// Retrieve CSS classes for section elements
+// Replace 'Section+GenericSection' with your component identifier
+const classes = getClasses('Section+GenericSection', rawClasses);
+---
+
+<SectionWrapper type="generic-section" id={id} classes={classes.wrapper} bg={bg}>
+  <div class={classes.container} data-name="section-generic-container">
+    <div class={classes.content} data-name="section-generic-content">
+      {generateSection(components?.main).map(({ component: Component, props }) => <Component {...props} />)}
+    </div>
+  </div>
+</SectionWrapper>

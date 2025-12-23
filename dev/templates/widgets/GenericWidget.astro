@@ -1,0 +1,27 @@
+---
+/**
+ * GenericWidget.astro
+ *
+ * Generic template for a standard widget component using WidgetWrapper.
+ */
+import type { Widget as WidgetProps } from '~/types';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { getClasses } from '~/utils/theme';
+
+export interface Props extends WidgetProps {
+  // Add custom props here
+  customProp?: string;
+}
+
+const { id, customProp, classes: rawClasses = {}, bg = '' } = Astro.props;
+
+// Replace 'Component+GenericWidget' with your component identifier
+const classes = getClasses('Component+GenericWidget', rawClasses);
+---
+
+<WidgetWrapper type="generic-widget" id={id} classes={classes.wrapper} bg={bg}>
+  <div class={classes.container}>
+    {customProp && <p class={classes.text}>{customProp}</p>}
+    <slot />
+  </div>
+</WidgetWrapper>

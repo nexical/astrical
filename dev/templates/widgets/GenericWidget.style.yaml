@@ -1,0 +1,9 @@
+# src/core/dev/templates/widgets/GenericWidget.style.yaml
+# -----------------------------------------------------------------------------
+# Component+GenericWidget Style Group
+# -----------------------------------------------------------------------------
+Component+GenericWidget:
+  wrapper:
+    container: ''
+  container: 'flex flex-col gap-4'
+  text: 'text-lg font-medium'

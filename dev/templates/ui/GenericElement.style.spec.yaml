@@ -1,0 +1,14 @@
+# src/core/dev/templates/ui/GenericElement.style.spec.yaml
+Component+GenericElement:
+  type: object
+  description: |
+    Styles for the GenericElement UI component.
+  properties:
+    default:
+      type: string
+      description: |
+        Styles for the default variant.
+    alternative:
+      type: string
+      description: |
+        Styles for the alternative variant.

@@ -1,0 +1,20 @@
+# src/core/dev/templates/widgets/GenericWidget.style.spec.yaml
+Component+GenericWidget:
+  type: object
+  description: |
+    Styles for the GenericWidget component.
+  properties:
+    wrapper:
+      type: object
+      description: Overrides for the `Component+WidgetWrapper` styles.
+      properties:
+        container: { type: string, description: 'Overrides `WidgetWrapper.container`.' }
+        background: { type: string, description: 'Overrides `WidgetWrapper.background`.' }
+        overlay: { type: string, description: 'Overrides `WidgetWrapper.overlay`.' }
+        wrapper: { type: string, description: 'Overrides `WidgetWrapper.wrapper`.' }
+    container:
+      type: string
+      description: Styles the main content container.
+    text:
+      type: string
+      description: Styles the custom prop text.

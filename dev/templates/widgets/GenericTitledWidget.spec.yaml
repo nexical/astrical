@@ -1,0 +1,42 @@
+# src/core/dev/templates/widgets/GenericTitledWidget.spec.yaml
+components:
+  GenericTitledWidget:
+    type: object
+    description: A generic titled widget component template.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [GenericTitledWidget]
+        description: "Specifies the component type. Must be 'GenericTitledWidget'."
+      title:
+        type: string
+        description: The widget title.
+      subtitle:
+        type: string
+        description: The widget subtitle.
+      tagline:
+        type: string
+        description: The widget tagline.
+      content:
+        type: string
+        description: Main content text.
+      # Standard widget properties
+      id:
+        type: string
+        description: An optional HTML id attribute.
+      bg:
+        type: string
+        description: An optional background image URL.
+      classes:
+        type: object
+        description: Override default CSS classes.
+        properties:
+          wrapper:
+            type: object
+          headline:
+            type: object
+          content_container:
+            type: string
+          content:
+            type: string

@@ -1,0 +1,31 @@
+# src/core/dev/templates/widgets/GenericWidget.spec.yaml
+components:
+  GenericWidget:
+    type: object
+    description: A generic widget component template.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [GenericWidget]
+        description: "Specifies the component type. Must be 'GenericWidget'."
+      customProp:
+        type: string
+        description: A custom property example.
+      # Standard widget properties
+      id:
+        type: string
+        description: An optional HTML id attribute.
+      bg:
+        type: string
+        description: An optional background image URL.
+      classes:
+        type: object
+        description: Override default CSS classes.
+        properties:
+          wrapper:
+            type: object
+          container:
+            type: string
+          text:
+            type: string

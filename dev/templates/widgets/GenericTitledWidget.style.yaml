@@ -1,0 +1,11 @@
+# src/core/dev/templates/widgets/GenericTitledWidget.style.yaml
+# -----------------------------------------------------------------------------
+# Component+GenericTitledWidget Style Group
+# -----------------------------------------------------------------------------
+Component+GenericTitledWidget:
+  wrapper:
+    container: ''
+  headline:
+    title: ''
+  content_container: 'mt-8 flex flex-col gap-6'
+  content: 'text-muted'

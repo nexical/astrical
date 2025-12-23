@@ -1,0 +1,36 @@
+# src/core/dev/templates/sections/GenericSection.spec.yaml
+components:
+  GenericSection:
+    type: object
+    description: A generic section component template.
+    properties:
+      type:
+        type: string
+        required: true
+        enum: [GenericSection]
+        description: "Specifies the component type. Must be 'GenericSection'."
+      id:
+        type: string
+        description: An optional HTML id attribute for the section.
+      bg:
+        type: string
+        description: An optional URL for a background image.
+      classes:
+        type: object
+        description: Override default CSS classes.
+        properties:
+          wrapper:
+            type: object
+          container:
+            type: string
+          content:
+            type: string
+      components:
+        type: object
+        properties:
+          main:
+            type: array
+            items:
+              type: object
+              # Use the $ref to allow any registered component
+              $ref: "#/definitions/EmbeddableComponent"
