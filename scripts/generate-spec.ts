@@ -4,8 +4,8 @@
  * Specification Generator Script
  *
  * This script generates aggregated specification files for content and themes.
- * It merges all *.spec.yaml files from `src/components` into `dev/content.spec.yaml`
- * and copies `src/themes/style.spec.yaml` to `dev/theme.spec.yaml`.
+ * It merges all *.spec.yaml files from `src/components` into `dev/03_content_ops/content.spec.yaml`
+ * and copies `src/themes/style.spec.yaml` to `dev/04_design_system/theme.spec.yaml`.
  *
  * Usage:
  * `npm run generate-specs`
@@ -26,8 +26,8 @@ const CWD = process.cwd();
 const CONTENT_SPEC_DIRECTORIES = ['src/components'];
 const THEME_SPEC_FILE = path.join(CWD, 'src/themes/style.spec.yaml');
 const OUTPUT_DIR = path.join(CWD, 'dev');
-const CONTENT_SPEC_OUTPUT_FILE = path.join(OUTPUT_DIR, 'content.spec.yaml');
-const THEME_SPEC_OUTPUT_FILE = path.join(OUTPUT_DIR, 'theme.spec.yaml');
+const CONTENT_SPEC_OUTPUT_FILE = path.join(OUTPUT_DIR, '03_content_ops', 'content.spec.yaml');
+const THEME_SPEC_OUTPUT_FILE = path.join(OUTPUT_DIR, '04_design_system', 'theme.spec.yaml');
 
 /**
  * Deeply merges two objects. The source object's properties overwrite the target's.

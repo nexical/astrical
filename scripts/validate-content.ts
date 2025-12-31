@@ -22,7 +22,7 @@ import { exit } from 'process';
 
 const CWD = process.cwd();
 
-const SPEC_FILE = path.join(CWD, 'dev/content.spec.yaml');
+const SPEC_FILE = path.join(CWD, 'dev/03_content_ops/content.spec.yaml');
 const CONTENT_DIRECTORIES = ['content/pages', 'content/shared'];
 
 /**

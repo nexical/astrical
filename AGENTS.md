@@ -29,7 +29,7 @@ This project is designed for **AI-driven development**. The content and structur
 Run these commands to verify your work:
 
 *   **Start Server**: `npm run dev` (Runs at `http://localhost:4321`)
-*   **Validate Content**: `npm run validate` (Checks YAML against schemas in `dev/content.spec.yaml`)
+*   **Validate Content**: `npm run validate` (Checks YAML against schemas in `dev/03_content_ops/content.spec.yaml`)
 *   **Lint & Check**: `npm run check` (Runs ESLint, Prettier, and Astro diagnostics)
 *   **Build**: `npm run build` (Generates `dist/`)
 

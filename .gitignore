@@ -21,8 +21,8 @@ playwright-report/
 data/
 
 # Development specifications
-dev/content.spec.yaml 
-dev/theme.spec.yaml
+dev/03_content_ops/content.spec.yaml 
+dev/04_design_system/theme.spec.yaml
 
 # Dependencies
 node_modules/
